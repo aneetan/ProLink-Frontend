@@ -1,12 +1,22 @@
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
 import './App.css'
+import CustomLayout from './components/landing/CustomLayout'
+import LandingPage from './pages/LandingPage'
 
 function App() {
 
   return (
     <>
-       <h1 className="text-3xl font-bold underline">
-        Hello world!
-      </h1>
+      <BrowserRouter>
+          <Routes>
+              <Route path='/' element={<CustomLayout/>}>
+                <Route path="/" element={<LandingPage />} />
+              </Route>
+                 
+                <Route path="*" element={<Navigate to="/" replace />} />
+
+          </Routes>
+        </BrowserRouter>
     </>
   )
 }

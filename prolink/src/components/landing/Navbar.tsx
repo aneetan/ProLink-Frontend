@@ -4,10 +4,11 @@ import Logo from "../Logo";
 
 const AppRoutes = {
   HOME: "/",
-  FIRST_AID_CHAT: "/chatbot",
-  HEALTH_CAMPS: "/camps",
-  ABOUT: "/about",
-  ADD_CAMPS: "/add-camp"
+  HOW_IT_WORKS: "/chatbot",
+  ABOUT_US: "/camps",
+  TESTIMONIALS: "/about",
+  CONTACT: "/add-camp",
+  COMPANY: "/company"
 } as const;
 
 interface NavItem {
@@ -28,9 +29,11 @@ const Navbar = () => {
 
  const navItems: NavItem[] = [
   { key: "HOME", label: "Home", path: AppRoutes.HOME },
-  { key: "FIRST_AID_CHAT", label: "Chatbot", path: AppRoutes.FIRST_AID_CHAT },
-  { key: "HEALTH_CAMPS", label: "Health Camps", path: AppRoutes.HEALTH_CAMPS },
-  { key: "ABOUT", label: "About", path: AppRoutes.ABOUT },
+  { key: "HOW_IT_WORKS", label: "How it works", path: AppRoutes.HOW_IT_WORKS },
+  { key: "ABOUT_US", label: "About Us", path: AppRoutes.ABOUT_US },
+  { key: "TESTIMONIALS", label: "Testimonials", path: AppRoutes.TESTIMONIALS },
+  { key: "CONTACT", label: "Contact", path: AppRoutes.CONTACT },
+  { key: "COMPANY", label: "Login as Company", path: AppRoutes.COMPANY},
 ];
 
   const handleActiveState = (itemName : NavRoutes):void => {
@@ -57,14 +60,14 @@ const Navbar = () => {
 
     if (path === AppRoutes.HOME && !hash) {
       setIsActive("HOME");
-    } else if (hash === AppRoutes.FIRST_AID_CHAT) {
-      setIsActive("FIRST_AID_CHAT");
-    } else if (hash === AppRoutes.ABOUT) {
-      setIsActive("ABOUT");
-    } else if (hash === AppRoutes.HEALTH_CAMPS) {
-      setIsActive("HEALTH_CAMPS");
-    } else if (hash === AppRoutes.ADD_CAMPS) {
-      setIsActive("ADD_CAMPS");
+    } else if (hash === AppRoutes.HOW_IT_WORKS) {
+      setIsActive("HOW_IT_WORKS");
+    } else if (hash === AppRoutes.ABOUT_US) {
+      setIsActive("ABOUT_US");
+    } else if (hash === AppRoutes.TESTIMONIALS) {
+      setIsActive("TESTIMONIALS");
+    } else if (hash === AppRoutes.CONTACT) {
+      setIsActive("CONTACT");
     } 
   }, [location]);
 

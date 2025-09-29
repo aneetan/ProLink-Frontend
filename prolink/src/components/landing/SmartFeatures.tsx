@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
 import { FaMapMarkerAlt, FaRobot } from 'react-icons/fa';
+import { IoPeople } from 'react-icons/io5';
+import { MdRequestQuote, MdVerifiedUser } from 'react-icons/md';
 
 const SmartFeatures = () => {
   return (
@@ -15,11 +17,10 @@ const SmartFeatures = () => {
           >
             <div className="space-y-6">
               <h2 className="text-4xl lg:text-5xl font-bold text-foreground">
-                Smart healthcare<br />
-                at your fingertips
+                From Quote to Connection
               </h2>
               <p className="text-xl text-gray-600">
-                Access instant first-aid guidance and find nearby health facilities.
+                Because every project deserves the right connection, the right price, and the right outcome.
               </p>
             </div>
 
@@ -32,12 +33,12 @@ const SmartFeatures = () => {
                 viewport={{ once: true }}
               >
                 <div className="w-12 h-12 bg-[var(--primary-color)] rounded-xl flex items-center justify-center flex-shrink-0">
-                  <FaRobot className="text-white text-xl" />
+                  <MdRequestQuote className="text-white text-xl" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-foreground mb-2">AI First-Aid Chatbot</h3>
+                  <h3 className="text-xl font-semibold text-foreground mb-2">Smart Quotations</h3>
                   <p className="text-muted-foreground">
-                    Get instant, step-by-step emergency response guidance with our intelligent chatbot trained on medical protocols.
+                    Get transparent, competitive quotations from trusted service providers - all in one place.
                   </p>
                 </div>
               </motion.div>
@@ -50,12 +51,30 @@ const SmartFeatures = () => {
                 viewport={{ once: true }}
               >
                 <div className="w-12 h-12 bg-[var(--primary-color)] rounded-xl flex items-center justify-center flex-shrink-0">
-                  <FaMapMarkerAlt className="text-white text-xl" />
+                  <IoPeople className="text-white text-xl" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-foreground mb-2">Health Camp Locator</h3>
+                  <h3 className="text-xl font-semibold text-foreground mb-2">Seamless Communication</h3>
                   <p className="text-muted-foreground">
-                    Find the nearest health camps in your area.
+                    Initiate chat, share details, and finalize tasks with ease once a bid is approved.
+                  </p>
+                </div>
+              </motion.div>
+
+              <motion.div 
+                className="flex items-start space-x-4"
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                viewport={{ once: true }}
+              >
+                <div className="w-12 h-12 bg-[var(--primary-color)] rounded-xl flex items-center justify-center flex-shrink-0">
+                  <MdVerifiedUser className="text-white text-xl" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-foreground mb-2"> Verified Connections </h3>
+                  <p className="text-muted-foreground">
+                    Connect only with verified companies and clients to ensure trust and reliability in every project.
                   </p>
                 </div>
               </motion.div>
@@ -71,9 +90,9 @@ const SmartFeatures = () => {
           >
             <div className="relative">
               <motion.img 
-                src="https://www.improvingphc.org/sites/default/files/case-study/image/2019/08/B4%20Nepal%20%28possible%29.jpg" 
-                alt="Health Camps Map Interface"
-                className="w-95 h-auto drop-shadow-2xl"
+                src="https://media.istockphoto.com/id/952625346/photo/businessmen-shaking-hands-after-meeting-in-a-cafe.jpg?s=612x612&w=0&k=20&c=dpfUuBGPdTi4b4gbBg9kkpg8KauUSzGLpVByJsa5_KY=" 
+                alt="Connection Image"
+                className="w-120 h-auto drop-shadow-2xl rounded-2xl"
                 animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               />
@@ -85,8 +104,8 @@ const SmartFeatures = () => {
                 transition={{ duration: 0.6, delay: 0.8 }}
                 viewport={{ once: true }}
               >
-                <div className="text-2xl font-bold text-[var(--primary-color)]">12</div>
-                <div className="text-sm text-gray-600">Health camps nearby</div>
+                <div className="text-2xl font-bold text-[var(--primary-color)]">200+</div>
+                <div className="text-sm text-gray-600"> Users Enrolled</div>
               </motion.div>
             </div>
           </motion.div>

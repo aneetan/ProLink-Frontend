@@ -6,7 +6,7 @@ const HeroSection = () => {
   const navigate = useNavigate();
   return (
     <div>
-      <section className="w-full min-h-screen py-40 px-8 lg:px-8 bg-gradient-to-b from-gray-50 to-white">
+      <section className="w-full min-h-screen py-10 px-8 lg:px-8 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
         <motion.div
           className="space-y-8"
@@ -21,10 +21,11 @@ const HeroSection = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              <span className='text-[var(--primary-color)]'> First Aid </span>
-              at Hand, <br/>
-              Health Camps
-              at <span className='text-[var(--primary-color)]'> Heart </span>!
+              Turning Client
+              <span className='text-[var(--primary-color)]'> Needs </span>
+                <br/>
+                into Company
+                <span className='text-[var(--primary-color)]'> Opportunities!</span>
             </motion.h1>
             
             <motion.p 
@@ -33,8 +34,8 @@ const HeroSection = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
             >
-              Bringing essential first-aid guidance and rural health camps to your doorstep 
-              - because every community deserves access to care.
+             From quotation to completion,
+             connect only with vetted service providers who deliver on their promise.
             </motion.p>
           </div>
 
@@ -49,15 +50,7 @@ const HeroSection = () => {
                 className="bg-[var(--primary-color)] px-5 md:px-6 py-4 rounded-xl text-white font-semibold
                 hover:bg-[var(--primary-dark)] shadow-lg hover:shadow-xl transition-all duration-300"
               >
-                First Aid Chatbot
-              </button>
-
-              <button
-                onClick={() => navigate('/camps')}
-                className="border-2 border-[var(--primary-color)] px-6 py-4 rounded-xl text-[var(--primary-color)]
-                font-semibold hover:bg-[var(--primary-color)] hover:text-white shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                Find Health Camps
+                Find Trusted Providers
               </button>
             </div>
           </motion.div>
@@ -79,26 +72,26 @@ const HeroSection = () => {
             />
             
             <motion.div 
-              className="absolute -top-8 -left-8 w-48 h-32 bg-white rounded-xl shadow-lg p-4 z-20"
+              className="absolute -bottom-6 -right-0  w-32 h-32 bg-white rounded-full shadow-lg p-4 z-20"
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 1.2 }}
             >
               <img 
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9RLvDL-Y0KBJwlKIp1XwxfDxm9hS0593Z8g&s" 
+                src="https://img.freepik.com/free-vector/people-connecting-web-network-diagram-background_1017-53236.jpg?semt=ais_hybrid&w=740&q=80" 
                 alt="Rural Image"
                 className="w-full h-full object-cover rounded-lg"
               />
             </motion.div>
 
             <motion.div 
-              className="absolute -bottom-4 -right-8 w-24 h-24 bg-[var(--primary-color)] rounded-full shadow-lg flex flex-col items-center justify-center z-20"
+              className="absolute -top-2 left-20 w-24 h-24 bg-[var(--primary-color)] rounded-full shadow-lg flex flex-col items-center justify-center z-20"
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 1.4 }}
             >
               <div className="text-2xl text-white font-bold text-health-primary">24 + </div>
-              <div className="text-sm text-white text-muted-foreground">Services</div>
+              <div className="text-sm text-white text-muted-foreground"> Companies</div>
             </motion.div>
           </div>
         </motion.div>

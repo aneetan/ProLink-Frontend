@@ -4,11 +4,10 @@ import Logo from "../Logo";
 
 const AppRoutes = {
   HOME: "/",
-  HOW_IT_WORKS: "/chatbot",
-  ABOUT_US: "/camps",
-  TESTIMONIALS: "/about",
-  CONTACT: "/add-camp",
-  COMPANY: "/company"
+  HOW_IT_WORKS: "/how-it-works",
+  ABOUT_US: "/about-us",
+  TESTIMONIALS: "/testimonials",
+  COMPANIES: "/companies",
 } as const;
 
 interface NavItem {
@@ -32,8 +31,8 @@ const Navbar = () => {
   { key: "HOW_IT_WORKS", label: "How it works", path: AppRoutes.HOW_IT_WORKS },
   { key: "ABOUT_US", label: "About Us", path: AppRoutes.ABOUT_US },
   { key: "TESTIMONIALS", label: "Testimonials", path: AppRoutes.TESTIMONIALS },
-  { key: "CONTACT", label: "Contact", path: AppRoutes.CONTACT },
-  { key: "COMPANY", label: "Login as Company", path: AppRoutes.COMPANY},
+  // { key: "COMPANY", label: "Login as Company", path: AppRoutes.COMPANY},
+  { key: "COMPANIES", label: "Companies", path: AppRoutes.COMPANIES},
 ];
 
   const handleActiveState = (itemName : NavRoutes):void => {
@@ -66,8 +65,8 @@ const Navbar = () => {
       setIsActive("ABOUT_US");
     } else if (hash === AppRoutes.TESTIMONIALS) {
       setIsActive("TESTIMONIALS");
-    } else if (hash === AppRoutes.CONTACT) {
-      setIsActive("CONTACT");
+    } else if (hash === AppRoutes.COMPANIES) {
+      setIsActive("COMPANIES");
     } 
   }, [location]);
 
@@ -117,7 +116,7 @@ const Navbar = () => {
                 <li key={item.key}
                 onClick={() => handleNavigate(item.path)}
                 className={`${isActive === item.key ? 'text-[var(--primary-color)] font-semibold': ''} 
-                cursor-pointer  hover:text-[var(--primary-color)] text-lg`}
+                cursor-pointer  hover:text-[var(--primary-color)] text-base`}
                 >
                   <NavLink to={item.path} end
                   onClick={() => handleActiveState(item.key)}> {item.label}

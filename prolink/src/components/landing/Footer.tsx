@@ -15,10 +15,10 @@ const Footer = () => {
                         <h2 className="mb-6 text-base font-semibold text-gray-900 uppercase"> Services </h2>
                         <ul className="text-gray-500 font-medium">
                             <li className="mb-4">
-                                <a href="/chatbot" className="hover:underline"> First Aid Chatbot </a>
+                                <a href="/companies" className="hover:underline"> View Companies</a>
                             </li>
                             <li className="mb-4">
-                                <a href="/camps" className="hover:underline"> Health Camps </a>
+                                <a href="/how-it-works" className="hover:underline"> How it works </a>
                             </li>
                         </ul>
                     </div>

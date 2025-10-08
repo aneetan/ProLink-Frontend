@@ -1,11 +1,10 @@
 import { motion } from 'framer-motion';
-import { FaMapMarkerAlt, FaRobot } from 'react-icons/fa';
 import { IoPeople } from 'react-icons/io5';
 import { MdRequestQuote, MdVerifiedUser } from 'react-icons/md';
 
 const SmartFeatures = () => {
   return (
-   <section className="w-full py-20 px-8 lg:px-8 bg-gray-50">
+   <section className="w-full py-20 px-8 lg:px-8 bg-[var(--primary-bg)]/50">
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <motion.div

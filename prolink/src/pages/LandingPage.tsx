@@ -1,3 +1,5 @@
+import CompaniesSection from "../components/landing/CompaniesSection"
+import CompanyRegisterSection from "../components/landing/CompanyRegisterSection"
 import HeroSection from "../components/landing/HeroSection"
 import HowItWorks from "../components/landing/HowItWorks"
 import SmartFeatures from "../components/landing/SmartFeatures"
@@ -9,8 +11,10 @@ const LandingPage = () => {
       <div className="landing-page">
         <section id="home">
           <HeroSection />
+          <CompanyRegisterSection/>
           <HowItWorks/>
           <SmartFeatures/>
+          <CompaniesSection/>
           <Testimonials/>
         </section>
     

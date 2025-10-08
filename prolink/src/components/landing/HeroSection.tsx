@@ -90,8 +90,8 @@ const HeroSection = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 1.4 }}
             >
-              <div className="text-2xl text-white font-bold text-health-primary">24 + </div>
-              <div className="text-sm text-white text-muted-foreground"> Companies</div>
+              <div className="text-2xl text-white font-bold text-health-primary">24/7</div>
+              <div className="text-sm text-white text-muted-foreground"> Support </div>
             </motion.div>
           </div>
         </motion.div>

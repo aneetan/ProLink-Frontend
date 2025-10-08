@@ -105,7 +105,7 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
 
 const Testimonials = () => {
   return (
-    <section className="py-24 px-4 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
+    <section className="py-24 px-4 bg-[var(--primary-bg)]/50 relative overflow-hidden">
       {/* Background elements */}
       <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-white to-transparent" />
       <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-white to-transparent" />

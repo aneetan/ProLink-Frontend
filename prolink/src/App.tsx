@@ -1,12 +1,32 @@
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
 import './App.css'
+import CustomLayout from './components/landing/CustomLayout'
+import LandingPage from './pages/LandingPage'
+import HowItWorks from './components/landing/HowItWorks'
+import SmartFeatures from './components/landing/SmartFeatures'
+import CompaniesSection from './components/landing/CompaniesSection'
+import Testimonials from './components/landing/Testimonials'
 
 function App() {
 
   return (
     <>
-       <h1 className="text-3xl font-bold underline">
-        Hello world!
-      </h1>
+      <BrowserRouter>
+          <Routes>
+              <Route path='/' element={<CustomLayout/>}>
+                <Route path="/" element={<LandingPage />} />
+                <Route path='/how-it-works' element={<HowItWorks/>} />
+                <Route path='/about-us' element={<SmartFeatures/>} />
+                <Route path='/companies' element={<CompaniesSection/>} />
+                <Route path='/testimonials' element={<Testimonials/>} />
+
+
+
+              </Route>
+                <Route path="*" element={<Navigate to="/" replace />} />
+
+          </Routes>
+        </BrowserRouter>
     </>
   )
 }

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Logo from '../../components/Logo';
 import { FcGoogle } from 'react-icons/fc';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import GoogleSignupButton from '../../components/auth/GoogleSignupButton';
 
 interface RegisterProps {
    name: string;
@@ -129,11 +130,6 @@ const Register: React.FC = () => {
         formError: ''
       }));
     }
-  };
-
-  const handleGoogleSignIn = () => {
-    // Handle Google sign-in logic here
-    console.log('Google sign-in');
   };
 
   return (
@@ -307,13 +303,7 @@ const Register: React.FC = () => {
               <div className="flex-grow border-t border-gray-300"></div>
             </div>
 
-            <button
-              onClick={handleGoogleSignIn}
-              className="w-full mt-4 flex items-center justify-center gap-3 bg-white border border-gray-300 hover:bg-[var(--primary-lighter)]/50 text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors duration-200"
-            >
-              <FcGoogle/>
-              Sign up with Google
-            </button>
+            <GoogleSignupButton/>
           </div>
 
           <div className="mt-4 text-center">

@@ -30,9 +30,9 @@ const Navbar = () => {
   { key: "HOME", label: "Home", path: AppRoutes.HOME },
   { key: "HOW_IT_WORKS", label: "How it works", path: AppRoutes.HOW_IT_WORKS },
   { key: "ABOUT_US", label: "About Us", path: AppRoutes.ABOUT_US },
+  { key: "COMPANIES", label: "Companies", path: AppRoutes.COMPANIES},
   { key: "TESTIMONIALS", label: "Testimonials", path: AppRoutes.TESTIMONIALS },
   // { key: "COMPANY", label: "Login as Company", path: AppRoutes.COMPANY},
-  { key: "COMPANIES", label: "Companies", path: AppRoutes.COMPANIES},
 ];
 
   const handleActiveState = (itemName : NavRoutes):void => {

@@ -6,6 +6,7 @@ import HowItWorks from './components/landing/HowItWorks'
 import SmartFeatures from './components/landing/SmartFeatures'
 import CompaniesSection from './components/landing/CompaniesSection'
 import Testimonials from './components/landing/Testimonials'
+import CompanyLogin from './components/company/CompanyLogin'
 
 function App() {
 
@@ -19,10 +20,8 @@ function App() {
                 <Route path='/about-us' element={<SmartFeatures/>} />
                 <Route path='/companies' element={<CompaniesSection/>} />
                 <Route path='/testimonials' element={<Testimonials/>} />
-
-
-
               </Route>
+                <Route path='/company-login' element={<CompanyLogin/>} />
                 <Route path="*" element={<Navigate to="/" replace />} />
 
           </Routes>

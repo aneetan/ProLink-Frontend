@@ -6,7 +6,8 @@ import HowItWorks from './components/landing/HowItWorks'
 import SmartFeatures from './components/landing/SmartFeatures'
 import CompaniesSection from './components/landing/CompaniesSection'
 import Testimonials from './components/landing/Testimonials'
-import CompanyLogin from './components/company/CompanyLogin'
+import Login from './pages/auth/Login'
+import Register from './pages/auth/Register'
 
 function App() {
 
@@ -21,7 +22,8 @@ function App() {
                 <Route path='/companies' element={<CompaniesSection/>} />
                 <Route path='/testimonials' element={<Testimonials/>} />
               </Route>
-                <Route path='/company-login' element={<CompanyLogin/>} />
+                <Route path='/login' element={<Login/>} />
+                <Route path='/register' element={<Register/>} />
                 <Route path="*" element={<Navigate to="/" replace />} />
 
           </Routes>

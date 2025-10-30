@@ -6,9 +6,13 @@ import HowItWorks from './components/landing/HowItWorks'
 import SmartFeatures from './components/landing/SmartFeatures'
 import CompaniesSection from './components/landing/CompaniesSection'
 import Testimonials from './components/landing/Testimonials'
+import Login from './pages/auth/Login'
+import Register from './pages/auth/Register'
+import OtpVerify from './pages/auth/OtpVerify'
+import CompanyLayout from './components/company/CompanyLayout'
+import Dashboard from './components/company/Dashboard'
 
 function App() {
-
   return (
     <>
       <BrowserRouter>
@@ -19,11 +23,15 @@ function App() {
                 <Route path='/about-us' element={<SmartFeatures/>} />
                 <Route path='/companies' element={<CompaniesSection/>} />
                 <Route path='/testimonials' element={<Testimonials/>} />
-
-
-
               </Route>
+                <Route path='/login' element={<Login/>} />
+                <Route path='/register' element={<Register/>} />
+                <Route path='/otp' element={<OtpVerify/>} />
                 <Route path="*" element={<Navigate to="/" replace />} />
+
+              <Route path='/company' element={<CompanyLayout/>}>
+                <Route path='' element={<Dashboard/>} />
+              </Route>
 
           </Routes>
         </BrowserRouter>

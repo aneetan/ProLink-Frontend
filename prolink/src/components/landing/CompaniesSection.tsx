@@ -28,8 +28,6 @@ const CompaniesSection = () => {
     }
   };
 
-  
-
   // Sample data for IT companies
   const itCompanies = [
     {
@@ -153,55 +151,55 @@ const CompaniesSection = () => {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="py-8 px-8"
+      className="py-8 sm:py-12 lg:py-16 px-4 sm:px-6 lg:px-8 bg-gray-50"
     >
-      <div className="container mx-auto md:px-12">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4">
         {/* Section Header */}
         <motion.div 
-          className="text-center mb-8 md:mb-12"
+          className="text-center mb-8 sm:mb-10 lg:mb-12"
         >
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
             Trusted Companies
           </h2>
-          <p className="text-sm sm:text-base lg:text-lg text-gray-600 max-w-2xl mx-auto px-4">
+          <p className="text-sm sm:text-base lg:text-lg text-gray-600 max-w-2xl mx-auto px-2 sm:px-4">
             Discover top-rated IT and MEP companies ready to bring your projects to life with expertise and innovation.
           </p>
         </motion.div>
 
         {/* Tabs Navigation */}
         <motion.div 
-          className="flex justify-center mb-8 md:mb-12"
+          className="flex justify-center mb-6 sm:mb-8 lg:mb-12"
         >
           <div className="bg-white rounded-lg shadow-sm p-1 border border-gray-200 max-w-md w-full">
             <div className="flex">
               <button
                 onClick={() => setActiveTab('it')}
-                className={`flex-1 px-4 py-2 sm:px-6 sm:py-3 rounded-md font-semibold transition-all duration-300 text-sm sm:text-base ${
+                className={`flex-1 px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-md font-semibold transition-all duration-300 text-xs sm:text-sm md:text-base ${
                   activeTab === 'it'
                     ? 'bg-[var(--primary-color)] text-white shadow-md'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
-                <div className="flex items-center justify-center space-x-2">
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex items-center justify-center space-x-1 sm:space-x-2">
+                  <svg className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
-                  <span>IT Companies</span>
+                  <span className="whitespace-nowrap">IT Companies</span>
                 </div>
               </button>
               <button
                 onClick={() => setActiveTab('mep')}
-                className={`flex-1 px-4 py-2 sm:px-6 sm:py-3 rounded-md font-semibold transition-all duration-300 text-sm sm:text-base ${
+                className={`flex-1 px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-md font-semibold transition-all duration-300 text-xs sm:text-sm md:text-base ${
                   activeTab === 'mep'
                     ? 'bg-[var(--primary-color)] text-white shadow-md'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
-                <div className="flex items-center justify-center space-x-2">
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex items-center justify-center space-x-1 sm:space-x-2">
+                  <svg className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                   </svg>
-                  <span>MEP Companies</span>
+                  <span className="whitespace-nowrap">MEP Companies</span>
                 </div>
               </button>
             </div>
@@ -216,24 +214,24 @@ const CompaniesSection = () => {
             initial="hidden"
             animate="visible"
             exit="hidden"
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 xl:gap-8"
           >
             {companies.map((company) => (
               <motion.div
                 key={company.id}
-                whileHover="hover"
-                className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                whileHover={{ y: -4 }}
+                className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100"
               >
-                <div className="p-4 sm:p-6">
+                <div className="p-4 sm:p-5 lg:p-6">
                   {/* Company Header */}
                   <div className="flex items-start space-x-3 sm:space-x-4 mb-3 sm:mb-4">
                     <img
                       src={company.logo}
                       alt={`${company.name} logo`}
-                      className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg object-cover border border-gray-200"
+                      className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-lg object-cover border border-gray-200 flex-shrink-0"
                     />
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-gray-900 text-base sm:text-lg mb-1 truncate">
+                      <h3 className="font-bold text-gray-900 text-sm sm:text-base md:text-lg mb-1 truncate">
                         {company.name}
                       </h3>
                       <div className="flex items-center space-x-2">
@@ -241,7 +239,7 @@ const CompaniesSection = () => {
                           {[...Array(5)].map((_, i) => (
                             <svg
                               key={i}
-                              className={`w-3 h-3 sm:w-4 sm:h-4 ${
+                              className={`w-3 h-3 sm:w-3 sm:h-3 md:w-4 md:h-4 ${
                                 i < Math.floor(company.rating)
                                   ? 'text-yellow-400'
                                   : 'text-gray-300'
@@ -284,10 +282,10 @@ const CompaniesSection = () => {
 
                   {/* Action Buttons */}
                   <div className="flex space-x-2 sm:space-x-3 pt-3 sm:pt-4 border-t border-gray-100">
-                    <button className="flex-1 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white font-medium py-2 px-3 sm:px-4 rounded-lg transition duration-300 text-xs sm:text-sm">
+                    <button className="flex-1 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white font-medium py-2 px-2 sm:px-3 md:px-4 rounded-lg transition duration-300 text-xs sm:text-sm whitespace-nowrap">
                       View Profile
                     </button>
-                    <button className="flex-1 border border-gray-300 hover:border-gray-400 text-gray-700 font-medium py-2 px-3 sm:px-4 rounded-lg transition duration-300 text-xs sm:text-sm">
+                    <button className="flex-1 border border-gray-300 hover:border-gray-400 text-gray-700 font-medium py-2 px-2 sm:px-3 md:px-4 rounded-lg transition duration-300 text-xs sm:text-sm whitespace-nowrap">
                       Contact
                     </button>
                   </div>
@@ -299,12 +297,12 @@ const CompaniesSection = () => {
 
         {/* View More Button */}
         <motion.div 
-          className="text-center mt-8 md:mt-12"
+          className="text-center mt-6 sm:mt-8 lg:mt-12"
         >
           <motion.button 
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="bg-white hover:bg-gray-50 text-[var(--primary-color)] font-semibold py-2 sm:py-3 px-6 sm:px-8 rounded-lg border border-[var(--primary-color)] transition duration-300 text-sm sm:text-base"
+            className="bg-white hover:bg-gray-50 text-[var(--primary-color)] font-semibold py-2 sm:py-3 px-4 sm:px-6 md:px-8 rounded-lg border border-[var(--primary-color)] transition duration-300 text-xs sm:text-sm md:text-base"
           >
             View All {activeTab === 'it' ? 'IT' : 'MEP'} Companies
             <svg className="w-3 h-3 sm:w-4 sm:h-4 inline-block ml-1 sm:ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

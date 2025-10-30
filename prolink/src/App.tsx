@@ -9,6 +9,8 @@ import Testimonials from './components/landing/Testimonials'
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
 import OtpVerify from './pages/auth/OtpVerify'
+import CompanyLayout from './components/company/CompanyLayout'
+import Dashboard from './components/company/Dashboard'
 
 function App() {
   return (
@@ -26,6 +28,10 @@ function App() {
                 <Route path='/register' element={<Register/>} />
                 <Route path='/otp' element={<OtpVerify/>} />
                 <Route path="*" element={<Navigate to="/" replace />} />
+
+              <Route path='/company' element={<CompanyLayout/>}>
+                <Route path='' element={<Dashboard/>} />
+              </Route>
 
           </Routes>
         </BrowserRouter>

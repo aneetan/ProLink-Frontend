@@ -99,7 +99,7 @@ const Navbar = () => {
         </span>
 
         <div className="md:hidden md:mr-12 mr-6">
-          <button onClick={()=> setIsOpen(!isOpen)} className="text-gray-600 focus:outline-none hover:text-[#F86C23]">
+          <button onClick={()=> setIsOpen(!isOpen)} className="text-gray-600 focus:outline-none hover:text-[var(--primary-color)]">
              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               {isOpen ? (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -111,12 +111,12 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex justify-center items-center">
-            <ul className="flex space-x-8 text-base">
+            <ul className="flex space-x-8 text-sm">
               {navItems.map((item) => ( 
                 <li key={item.key}
                 onClick={() => handleNavigate(item.path)}
                 className={`${isActive === item.key ? 'text-[var(--primary-color)] font-semibold': ''} 
-                cursor-pointer  hover:text-[var(--primary-color)] text-base`}
+                cursor-pointer  hover:text-[var(--primary-color)] text-sm`}
                 >
                   <NavLink to={item.path} end
                   onClick={() => handleActiveState(item.key)}> {item.label}
@@ -150,7 +150,7 @@ const Navbar = () => {
       </div>
 
       {isOpen && (
-        <div className="md:hidden bg-gray-100 pb-4 px-6 shadow-md">
+        <div className="md:hidden bg-gray-100 pb-4 px-4 shadow-md">
           <ul className="flex flex-col space-y-4 text-base mx-8">
              {navItems.map((item) => (
               <li 

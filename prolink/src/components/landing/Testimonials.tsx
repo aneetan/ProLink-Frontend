@@ -93,7 +93,7 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
         </div>
       </div>
       
-      <blockquote className="text-gray-700 leading-relaxed text-lg relative z-10">
+      <blockquote className="text-gray-700 leading-relaxed text-base relative z-10">
         "{testimonial.quote}"
       </blockquote>
 
@@ -110,7 +110,7 @@ const Testimonials = () => {
       <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-white to-transparent" />
       <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-white to-transparent" />
       
-      <div className="max-w-7xl mx-auto relative">
+      <div className="max-w-7xl mx-4 md:mx-12 relative">
         <header className="text-center mb-20">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full  bg-[var(--primary-lighter)]/50 border border-[var(--secondary-color)]  text-[var(--secondary-color)]  text-sm font-medium mb-6">
             <span className="w-2 h-2 bg-[var(--secondary-color)] rounded-full animate-pulse" />
@@ -121,7 +121,7 @@ const Testimonials = () => {
             What Our Clients Say
           </h2>
           
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-base text-gray-600 max-w-3xl mx-auto leading-relaxed">
             Don't just take our word for it. Hear from some of our amazing clients 
             who have transformed their business with our platform.
           </p>

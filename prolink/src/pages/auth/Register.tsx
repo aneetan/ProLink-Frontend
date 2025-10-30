@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Logo from '../../components/Logo';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import GoogleSignupButton from '../../components/auth/GoogleSignupButton';
-import type { User } from '../../components/types/user';
+import type { User } from '../../types/auth.types';
 import { validateEmail, validatePassword, validatePhone } from '../../components/helpers/validateRegisterForm';
 import RegisterRightPanel from '../../components/auth/RegisterRightPanel';
 

@@ -36,7 +36,7 @@ const steps = [
 const HowItWorks = () => {
   return (
     <section className="py-20 px-4 bg-background">
-      <div className="container mx-auto max-w-7xl">
+      <div className="container md:mx-12 max-w-4xl">
         <h2 className="text-4xl font-bold text-center mb-16 text-foreground">
           How it works?
         </h2>

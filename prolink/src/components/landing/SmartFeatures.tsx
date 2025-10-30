@@ -5,7 +5,7 @@ import { MdRequestQuote, MdVerifiedUser } from 'react-icons/md';
 const SmartFeatures = () => {
   return (
    <section className="w-full py-20 px-8 lg:px-8 bg-[var(--primary-bg)]/50">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-4 md:mx-12">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <motion.div
             className="space-y-8"
@@ -14,11 +14,11 @@ const SmartFeatures = () => {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <div className="space-y-6">
-              <h2 className="text-4xl lg:text-5xl font-bold text-foreground">
-                From Quote to Connection
+            <div className="space-y-3">
+              <h2 className="text-4xl lg:text-4xl font-bold text-foreground">
+                From Quote to <br/> Connection
               </h2>
-              <p className="text-xl text-gray-600">
+              <p className="text-base text-gray-600">
                 Because every project deserves the right connection, the right price, and the right outcome.
               </p>
             </div>

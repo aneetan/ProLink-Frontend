@@ -7,7 +7,7 @@ const HeroSection = () => {
   return (
     <div>
       <section className="w-full min-h-screen py-10 px-8 lg:px-8 bg-gradient-to-b from-gray-50 to-white">
-      <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+      <div className="max-w-7xl mx-2 md:mx-12 grid lg:grid-cols-2 gap-12 items-center">
         <motion.div
           className="space-y-8"
           initial={{ opacity: 0, x: -50 }}
@@ -84,7 +84,7 @@ const HeroSection = () => {
               />
             </motion.div>
 
-            <motion.div 
+            {/* <motion.div 
               className="absolute -top-2 left-20 w-24 h-24 bg-[var(--primary-color)] rounded-full shadow-lg flex flex-col items-center justify-center z-20"
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
@@ -92,7 +92,7 @@ const HeroSection = () => {
             >
               <div className="text-2xl text-white font-bold text-health-primary">24/7</div>
               <div className="text-sm text-white text-muted-foreground"> Support </div>
-            </motion.div>
+            </motion.div> */}
           </div>
         </motion.div>
       </div>

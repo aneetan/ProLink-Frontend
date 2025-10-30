@@ -153,9 +153,9 @@ const CompaniesSection = () => {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="py-8 md:py-16 px-8 md:px-28"
+      className="py-8 px-8"
     >
-      <div className="container mx-auto">
+      <div className="container mx-auto md:px-12">
         {/* Section Header */}
         <motion.div 
           className="text-center mb-8 md:mb-12"

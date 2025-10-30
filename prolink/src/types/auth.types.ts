@@ -14,3 +14,9 @@ export interface User {
    confirmPassword: string;
    status?: Status;
 }
+
+export interface OTPVerifyData{
+    token: string;
+    email: string;
+    otp: string;
+}

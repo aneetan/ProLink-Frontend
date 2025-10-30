@@ -8,9 +8,9 @@ import CompaniesSection from './components/landing/CompaniesSection'
 import Testimonials from './components/landing/Testimonials'
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
+import OtpVerify from './pages/auth/OtpVerify'
 
 function App() {
-
   return (
     <>
       <BrowserRouter>
@@ -24,6 +24,7 @@ function App() {
               </Route>
                 <Route path='/login' element={<Login/>} />
                 <Route path='/register' element={<Register/>} />
+                <Route path='/otp' element={<OtpVerify/>} />
                 <Route path="*" element={<Navigate to="/" replace />} />
 
           </Routes>

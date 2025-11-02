@@ -38,7 +38,7 @@ const CompanyHeader = ({ setIsSidebarOpen }: CompanyHeaderProps) => {
           <div className="flex items-center space-x-3">
             <div className="hidden sm:block text-right">
               <p className="text-sm font-medium text-gray-900">John Doe</p>
-              <p className="text-xs text-gray-500">Administrator</p>
+              <p className="text-xs text-gray-500">Company</p>
             </div>
             <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
               <FiUser className="w-4 h-4 text-gray-600" />

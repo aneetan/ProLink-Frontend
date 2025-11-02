@@ -1,89 +1,154 @@
-import { FiBarChart2, FiFileText, FiSettings, FiUsers } from "react-icons/fi";
+import { 
+  BarChart, Bar, Line, XAxis, YAxis, CartesianGrid, 
+  Tooltip, ResponsiveContainer, 
+  LineChart
+} from 'recharts';
 
-const Dashboard = () => {
+const dashboardData = {
+  performance: {
+    totalRevenue: 8450,
+    acceptanceRate: 42,
+    activeProjects: 12,
+    avgRating: 4.8,
+    revenueChange: 18,
+    acceptanceChange: 5,
+  },
+  quoteFunnel: [
+    { stage: 'New Requests', count: 25 },
+    { stage: 'Proposals Sent', count: 18 },
+    { stage: 'Pending Review', count: 10 },
+    { stage: 'Accepted', count: 7 },
+  ],
+  monthlyRevenue: [
+    { month: 'Jan', revenue: 4000 },
+    { month: 'Feb', revenue: 5200 },
+    { month: 'Mar', revenue: 3800 },
+    { month: 'Apr', revenue: 6100 },
+    { month: 'May', revenue: 8450 },
+  ],
+  serviceDistribution: [
+    { name: 'Plumbing', value: 35 },
+    { name: 'Electrical', value: 25 },
+    { name: 'Design', value: 20 },
+    { name: 'Other', value: 20 },
+  ],
+};
+
+
+export default function CompanyDashboard() {
   return (
-    <div className="p-6">
-      {/* Welcome Section */}
-      <div className="mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-          Welcome back, John!
-        </h1>
-        <p className="text-gray-600">
-          Here's what's happening with your projects today.
-        </p>
+    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+      {/* Page Title */}
+      <div className="mb-6 md:mb-8">
+        <h1 className="text-2xl font-bold text-gray-900">Company Dashboard</h1>
+        <p className="text-gray-600 mt-2 text-sm">Welcome back! Here's your business overview.</p>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {[
-          { title: 'Total Users', value: '2,846', change: '+12%' },
-          { title: 'Projects', value: '156', change: '+8%' },
-          { title: 'Revenue', value: '$24,500', change: '+23%' },
-          { title: 'Conversion', value: '4.8%', change: '+2.1%' },
-        ].map((stat, index) => (
-          <div key={index} className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <p className="text-sm font-medium text-gray-600 mb-2">{stat.title}</p>
-            <div className="flex items-end justify-between">
-              <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-              <span className="text-sm font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
-                {stat.change}
-              </span>
-            </div>
-          </div>
-        ))}
+      {/* Performance Snapshot */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 md:mb-8">
+        <MetricCard
+          title="Total Revenue"
+          value={`$${dashboardData.performance.totalRevenue.toLocaleString()}`}
+          change={dashboardData.performance.revenueChange}
+          subtitle="+18% from last month"
+        />
+        <MetricCard
+          title="Acceptance Rate"
+          value={`${dashboardData.performance.acceptanceRate}%`}
+          change={dashboardData.performance.acceptanceChange}
+          subtitle="+5% from last month"
+        />
+        <MetricCard
+          title="Active Projects"
+          value={dashboardData.performance.activeProjects.toString()}
+        />
+        <MetricCard
+          title="Average Rating"
+          value={`${dashboardData.performance.avgRating}`}
+          subtitle="128 reviews"
+        />
       </div>
 
-      {/* Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Activity */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h2>
-          <div className="space-y-4">
-            {[1, 2, 3].map((item) => (
-              <div key={item} className="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg transition-colors">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <FiUsers className="w-5 h-5 text-blue-600" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900">New user registered</p>
-                  <p className="text-xs text-gray-500">2 hours ago</p>
-                </div>
-              </div>
-            ))}
+      {/* Charts and Detailed Metrics */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 md:mb-8">
+        {/* Quote Funnel Chart */}
+        <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Quote Pipeline</h3>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={dashboardData.quoteFunnel}>
+                <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                <XAxis 
+                  dataKey="stage" 
+                  angle={-45}
+                  textAnchor="end"
+                  height={80}
+                  fontSize={12}
+                />
+                <YAxis fontSize={12} />
+                <Tooltip />
+                <Bar 
+                  dataKey="count" 
+                  fill="#3B82F6"
+                  radius={[4, 4, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              { icon: FiUsers, label: 'Add User', color: 'blue' },
-              { icon: FiFileText, label: 'New Project', color: 'green' },
-              { icon: FiBarChart2, label: 'Reports', color: 'purple' },
-              { icon: FiSettings, label: 'Settings', color: 'gray' },
-            ].map((action, index) => {
-              const Icon = action.icon;
-              return (
-                <button
-                  key={index}
-                  className="flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <Icon className={`w-6 h-6 text-${action.color}-600 mb-2`} />
-                  <span className="text-sm font-medium text-gray-700">{action.label}</span>
-                </button>
-              );
-            })}
+          <div className="mt-4 text-center text-sm text-gray-600">
+            Conversion Rate: <span className="font-semibold">28%</span>
           </div>
         </div>
-      </div>
 
-      {/* Empty State for Demo */}
-      <div className="mt-8 bg-gray-50 rounded-xl p-8 text-center">
-        <p className="text-gray-500">Dashboard content will be added here...</p>
+        {/* Revenue Trend */}
+        <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue Trend</h3>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={dashboardData.monthlyRevenue}>
+                <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                <XAxis dataKey="month" fontSize={12} />
+                <YAxis fontSize={12} />
+                <Tooltip />
+                <Line 
+                  type="monotone" 
+                  dataKey="revenue" 
+                  stroke="#10B981"
+                  strokeWidth={2}
+                  dot={{ fill: '#10B981', strokeWidth: 2 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       </div>
     </div>
   );
-};
+}
 
-export default Dashboard
+// Component for metric cards
+interface MetricCardProps {
+  title: string;
+  value: string;
+  change?: number;
+  subtitle?: string;
+}
+
+function MetricCard({ title, value, change, subtitle }: MetricCardProps) {
+  return (
+    <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-200">
+      <h3 className="text-sm font-medium text-gray-600 mb-2">{title}</h3>
+      <div className="flex items-baseline justify-between">
+        <p className="text-2xl md:text-3xl font-bold text-gray-900">{value}</p>
+        {change && (
+          <span className={`text-sm font-semibold ${change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            {change >= 0 ? '↗' : '↘'} {Math.abs(change)}%
+          </span>
+        )}
+      </div>
+      {subtitle && (
+        <p className="text-sm text-gray-500 mt-2">{subtitle}</p>
+      )}
+    </div>
+  );
+}

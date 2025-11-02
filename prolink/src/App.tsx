@@ -10,7 +10,9 @@ import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
 import OtpVerify from './pages/auth/OtpVerify'
 import CompanyLayout from './components/company/CompanyLayout'
-import Dashboard from './components/company/Dashboard'
+import AdminDashboard from './components/admin/Dashboard'
+import CompanyDashboard from './components/company/Dashboard'
+import AdminLayout from './components/admin/AdminLayout'
 
 function App() {
   return (
@@ -30,7 +32,11 @@ function App() {
                 <Route path="*" element={<Navigate to="/" replace />} />
 
               <Route path='/company' element={<CompanyLayout/>}>
-                <Route path='' element={<Dashboard/>} />
+                <Route path='' element={<CompanyDashboard/>} />
+              </Route>
+
+              <Route path='/admin' element={<AdminLayout/>}>
+                <Route path='' element={<AdminDashboard/>} />
               </Route>
 
           </Routes>

@@ -5,7 +5,7 @@ interface SidebarProps {
    isOpen: boolean;
    setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
-const AdminSidebar:React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
+const ClientSidebar:React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
   const menuItems = [
     { icon: FiHome, label: 'Dashboard', path: '/dashboard' },
     { icon: FiUsers, label: 'Users', path: '/users' },
@@ -82,7 +82,7 @@ const AdminSidebar:React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-gray-900 truncate">John Doe</p>
-              <p className="text-xs text-gray-500 truncate">Admin</p>
+              <p className="text-xs text-gray-500 truncate">Client</p>
             </div>
             <FiChevronDown className="w-4 h-4 text-gray-400" />
           </div>
@@ -92,4 +92,4 @@ const AdminSidebar:React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
   );
 };
 
-export default AdminSidebar;
+export default ClientSidebar;

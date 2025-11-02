@@ -2,11 +2,11 @@ import type { Dispatch, SetStateAction } from "react";
 import { FiBell, FiMail, FiMenu, FiUser } from "react-icons/fi";
 
 
-type AdminHeaderProps = {
+type ClientHeaderProps = {
   setIsSidebarOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-const AdminHeader = ({ setIsSidebarOpen }: AdminHeaderProps) => {
+const ClientHeader = ({ setIsSidebarOpen }: ClientHeaderProps) => {
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 z-10">
       <div className="flex items-center justify-between px-4 sm:px-6 py-4">
@@ -50,4 +50,4 @@ const AdminHeader = ({ setIsSidebarOpen }: AdminHeaderProps) => {
   );
 };
 
-export default AdminHeader;
+export default ClientHeader;

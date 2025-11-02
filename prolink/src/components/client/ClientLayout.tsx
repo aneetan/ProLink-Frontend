@@ -1,20 +1,20 @@
 import { useState } from "react";
-import AdminHeader from "./AdminHeader";
+import ClientHeader from "./ClientHeader";
 import Dashboard from "./Dashboard";
-import AdminSidebar from "./AdminSidebar";
+import ClientSidebar from "./ClientSidebar";
 
-const AdminLayout = () => {
+const ClientLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
-      <AdminSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+      <ClientSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <AdminHeader setIsSidebarOpen={setIsSidebarOpen} />
+        <ClientHeader setIsSidebarOpen={setIsSidebarOpen} />
 
         {/* Main Content Area */}
         <main className="flex-1 overflow-auto">
@@ -25,4 +25,4 @@ const AdminLayout = () => {
   );
 };
 
-export default AdminLayout
+export default ClientLayout

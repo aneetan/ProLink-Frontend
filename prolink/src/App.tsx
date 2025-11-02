@@ -12,7 +12,9 @@ import OtpVerify from './pages/auth/OtpVerify'
 import CompanyLayout from './components/company/CompanyLayout'
 import AdminDashboard from './components/admin/Dashboard'
 import CompanyDashboard from './components/company/Dashboard'
+import ClientDashboard from './components/client/Dashboard'
 import AdminLayout from './components/admin/AdminLayout'
+import ClientLayout from './components/client/ClientLayout'
 
 function App() {
   return (
@@ -39,6 +41,9 @@ function App() {
                 <Route path='' element={<AdminDashboard/>} />
               </Route>
 
+              <Route path='/client' element={<ClientLayout/>}>
+                <Route path='' element={<ClientDashboard/>} />
+              </Route>
           </Routes>
         </BrowserRouter>
     </>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import CompanySidebar from "./CompanySidebar";
 import CompanyHeader from "./CompanyHeader";
-import Dashboard from "./Dashboard";
+import { Outlet } from "react-router";
 
 const CompanyLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -18,7 +18,7 @@ const CompanyLayout = () => {
 
         {/* Main Content Area */}
         <main className="flex-1 overflow-auto">
-          <Dashboard />
+          <Outlet/>
         </main>
       </div>
     </div>

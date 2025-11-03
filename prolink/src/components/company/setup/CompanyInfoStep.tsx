@@ -57,9 +57,11 @@ const CompanyInfoStep: React.FC<StepProps> = ({
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      onNext();
-    }
+    // if (validateForm()) {
+    //   onNext();
+    // }
+    onNext();
+
   };
 
   return (

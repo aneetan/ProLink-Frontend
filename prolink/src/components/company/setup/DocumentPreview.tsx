@@ -19,7 +19,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ document, onRemove })
             {getFileIcon(document.type)}
           </span>
           <div>
-            <p className="text-sm font-medium text-gray-700 truncate">
+            <p className="text-sm font-medium text-gray-700 truncate w-1/2">
               {document.name}
             </p>
             <p className="text-xs text-gray-500">

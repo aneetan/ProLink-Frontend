@@ -1,9 +1,16 @@
 // components/UploadDocuments.tsx
 import { useState } from 'react';
 import type { CompanyVerificationData, StepProps } from '../../../types/company.types';
-import { ALLOWED_FILE_TYPES, DOCUMENT_TYPES, MAX_FILE_SIZE } from '../../../utils/docs.utils';
+import { ALLOWED_FILE_TYPES, ALLOWED_LOGO_TYPES, DOCUMENT_TYPES, MAX_FILE_SIZE } from '../../../utils/docs.utils';
 import DocumentUploadArea from './DocumentUploadArea';
 import { validateFileSize, validateFileType } from '../../../helpers/validateFiles';
+
+const defaultDocs= {
+  logo: null,
+  businessLicense: null,
+  taxCertificate: null,
+  ownerId: null
+}
 
 const UploadDocuments: React.FC<StepProps> = ({ 
   formData,
@@ -14,12 +21,15 @@ const UploadDocuments: React.FC<StepProps> = ({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isDragging, setIsDragging] = useState(false);
 
+  const docs = formData.docs || defaultDocs;
+
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
     // Check each required document individually
     DOCUMENT_TYPES.forEach(docType => {
-      if (!formData.docs[docType.value as keyof CompanyVerificationData]) {
+      const document = docs[docType.value as keyof CompanyVerificationData];
+      if (!document) {
         newErrors[docType.value] = `${docType.label} is required`;
       }
     });
@@ -38,11 +48,20 @@ const UploadDocuments: React.FC<StepProps> = ({
       });
     }
 
-    // Validate file type
+     // Validate file type with specific rules for logo
     if (!validateFileType(file, ALLOWED_FILE_TYPES)) {
       setErrors(prev => ({ 
         ...prev, 
         [type]: 'Only JPEG, PNG, and PDF files are allowed' 
+      }));
+      return;
+    }
+
+    // Additional validation for logo - prevent PDF files
+    if (type === 'logo' && !validateFileType(file, ALLOWED_LOGO_TYPES)) {
+      setErrors(prev => ({ 
+        ...prev, 
+        [type]: 'Only JPEG and PNG files are allowed for logo' 
       }));
       return;
     }
@@ -57,14 +76,20 @@ const UploadDocuments: React.FC<StepProps> = ({
     }
 
     // Update form data with the file
-    updateFormData({
-      [type]: file
+     updateFormData({
+      docs: {
+        ...docs,
+        [type]: file
+      }
     });
   };
 
   const removeDocument = (type: string) => {
-    updateFormData({
-      [type]: null
+     updateFormData({
+      docs: {
+        ...docs,
+        [type]: null
+      }
     });
 
     // Also remove any error for this type
@@ -85,7 +110,7 @@ const UploadDocuments: React.FC<StepProps> = ({
   };
 
   const getDocumentForType = (type: string) => {
-    return formData.docs[type as keyof CompanyVerificationData] as File | null;
+    return docs[type as keyof typeof docs] as File | null;
   };
 
   return (

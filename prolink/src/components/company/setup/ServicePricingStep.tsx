@@ -90,9 +90,10 @@ const ServicePricingStep: React.FC<StepProps> = ({ formData, updateFormData, onN
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      onNext();
-    }
+    // if (validateForm()) {
+    //   onNext();
+    // }
+    onNext();
   };
 
   const handleBack = () => {

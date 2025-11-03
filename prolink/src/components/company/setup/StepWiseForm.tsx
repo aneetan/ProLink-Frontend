@@ -136,13 +136,8 @@ const StepWiseForm: React.FC<StepWiseProps> = ({initialData, onSubmit}) => {
          </div>
 
         {/* Form Content */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 sm:p-8">
+        <div className="bg-white rounded-2xl p-6 sm:p-8">
           {renderCurrentForm()}
-
-          {/* Navigation Buttons */}
-          <div className="flex justify-between items-center pt-8 mt-8 border-t border-gray-200">
-            
-          </div>
         </div>
       </div>
     </div>

@@ -6,7 +6,7 @@
  * @param allowedTypes - Array of allowed MIME types
  * @returns boolean - True if file type is allowed
  */
-export const validateFileType = (file: File, allowedTypes: string[]): boolean => {
+export const validateFileType = (file: File | null, allowedTypes: string[]): boolean => {
   if (!file || !file.type) {
     return false;
   }

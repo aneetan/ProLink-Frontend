@@ -2,6 +2,9 @@
 import { type ChangeEvent, type DragEvent } from 'react';
 import DocumentPreview from './DocumentPreview';
 import { ALLOWED_FILE_TYPES } from '../../../utils/docs.utils';
+import { FaFileUpload } from 'react-icons/fa';
+import { FcSurvey } from 'react-icons/fc';
+import { GrAttachment } from 'react-icons/gr';
 
 interface DocumentUploadAreaProps {
   docType: { value: string; label: string };
@@ -77,7 +80,7 @@ const DocumentUploadArea: React.FC<DocumentUploadAreaProps> = ({
           />
         ) : (
           <>
-            <div className="text-4xl mb-3">📎</div>
+            <div className="text-4xl items-center justify-center flex mb-6 "> <GrAttachment/> </div>
             <p className="text-sm text-gray-500 mb-3">
               Drag & drop or click to upload
             </p>

@@ -1,13 +1,15 @@
 import { useState, type ChangeEvent, type KeyboardEvent } from "react";
 import type { ServicePricing, StepProps } from "../../../types/company.types";
+import { validateField } from "../../../helpers/validateCompanyInfo";
+import { FaAngleLeft, FaArrowRight } from "react-icons/fa";
 
 
-const ServicePricingStep: React.FC<StepProps> = ({ formData, updateFormData }) => {
+const ServicePricingStep: React.FC<StepProps> = ({ formData, updateFormData, onNext, onBack }) => {
   //service input
   const [currentServiceInput, setCurrentServiceInput] = useState<string>("");
   const [error, setError] = useState<string>('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  
   const handleServiceInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setCurrentServiceInput(e.target.value);
     setError(''); // Clear error when user types
@@ -20,7 +22,7 @@ const ServicePricingStep: React.FC<StepProps> = ({ formData, updateFormData }) =
     }
   };
 
-   const addService = (): void => {
+  const addService = (): void => {
     const service = currentServiceInput.trim();
     
     // Validation checks
@@ -53,14 +55,13 @@ const ServicePricingStep: React.FC<StepProps> = ({ formData, updateFormData }) =
         ...formData.servicePricing,
         [field]: value }
     });
+
+    if(errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: ''}))
+    }
   };
 
   const removeService = (serviceToRemove: string): void => {
-    if (formData.servicePricing.servicesOffered.length <= 3) {
-      setError('Minimum 3 services required');
-      return;
-    }
-
     const updatedServices = formData.servicePricing.servicesOffered.filter(
       service => service !== serviceToRemove
     );
@@ -68,11 +69,41 @@ const ServicePricingStep: React.FC<StepProps> = ({ formData, updateFormData }) =
     setError('');
   };
 
+  const validateForm = (): boolean => {
+      const newErrors: Record<string, string> = {};
+      const fields: (keyof Omit<ServicePricing, "servicesOffered">)[] = [
+        "priceRangeMin",
+        "priceRangeMax",
+        "avgDeliveryTime"
+      ]
+  
+      fields.forEach(field => {
+        const error = validateField(field, formData.servicePricing[field]);
+        if (error) {
+          newErrors[field] = error;
+        }
+      });
+  
+      setErrors(newErrors);
+      return Object.keys(newErrors).length === 0;
+    }
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validateForm()) {
+      onNext();
+    }
+  };
+
+  const handleBack = () => {
+      onBack!();
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Service & Pricing</h2>
       
-      <div className="space-y-6">
+      <form className="space-y-6" onSubmit={handleFormSubmit}>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Services Offered
@@ -170,8 +201,28 @@ const ServicePricingStep: React.FC<StepProps> = ({ formData, updateFormData }) =
               placeholder="e.g., 2 weeks, 30 days"
             />
           </div>
+
+          <div className="flex items-center justify-between w-full md:col-span-2">
+            <div>
+              <button
+              type="button"
+              onClick={handleBack}
+              className="px-6 py-3 rounded-lg font-medium transition-colors text-gray-700  cursor-pointer"
+            >
+               <div className='flex gap-1 items-center'>
+                  <FaAngleLeft/> Back
+             </div>
+            </button>
+            </div>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium flex  gap-2 items-center"
+            >
+              Next <FaArrowRight/>
+            </button>
+          </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

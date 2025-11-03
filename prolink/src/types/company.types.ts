@@ -3,7 +3,6 @@ export interface CompanyInfo {
   registrationNo: string;
   description: string;
   establishedYear: string;
-  logo: string;
   serviceCategory: string;
   websiteUrl: string;
 }
@@ -13,6 +12,22 @@ export interface ServicePricing {
   priceRangeMin: string;
   priceRangeMax: string;
   avgDeliveryTime: string;
+}
+
+export interface VerificationDocument {
+  id: string;
+  type: string;
+  file: File | null;
+  previewUrl?: string;
+  status: 'pending' | 'uploaded' | 'rejected';
+  uploadedAt?: Date;
+}
+
+export interface CompanyVerificationData {
+  logo: File | null;
+  businessLicense: File | null;
+  taxCertificate: File | null;
+  ownerId: File | null;
 }
 
 export interface PastProject {
@@ -31,11 +46,14 @@ export interface PaymentMethod {
 export type  FormData = {
   companyInfo: CompanyInfo;
   servicePricing: ServicePricing;
-  pastProjects: PastProject[];
-  paymentMethods: PaymentMethod[];
+  docs: CompanyVerificationData
 };
+
+
 
 export interface StepProps {
   formData: FormData;
   updateFormData: (updates: Partial<FormData>) => void;
+  onNext: () => void;
+  onBack?: () => void;
 }

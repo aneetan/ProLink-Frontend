@@ -202,8 +202,8 @@ const ServicePricingStep: React.FC<StepProps> = ({ formData, updateFormData, onN
               placeholder="e.g., 2 weeks, 30 days"
             />
           </div>
-
-          <div className="flex items-center justify-between w-full md:col-span-2">
+        </div>
+        <div className="flex items-center justify-between w-full md:col-span-2">
             <div>
               <button
               type="button"
@@ -222,7 +222,6 @@ const ServicePricingStep: React.FC<StepProps> = ({ formData, updateFormData, onN
               Next <FaArrowRight/>
             </button>
           </div>
-        </div>
       </form>
     </div>
   );

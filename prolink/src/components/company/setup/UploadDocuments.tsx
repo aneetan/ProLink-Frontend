@@ -4,6 +4,7 @@ import type { CompanyVerificationData, StepProps } from '../../../types/company.
 import { ALLOWED_FILE_TYPES, ALLOWED_LOGO_TYPES, DOCUMENT_TYPES, MAX_FILE_SIZE } from '../../../utils/docs.utils';
 import DocumentUploadArea from './DocumentUploadArea';
 import { validateFileSize, validateFileType } from '../../../helpers/validateFiles';
+import { FaAngleLeft } from 'react-icons/fa';
 
 const defaultDocs= {
   logo: null,
@@ -155,16 +156,18 @@ const UploadDocuments: React.FC<StepProps> = ({
           <button
             type="button"
             onClick={onBack}
-            className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+            className="px-6 py-3 rounded-lg font-medium transition-colors text-gray-700  cursor-pointer"
           >
-            Back
+              <div className='flex gap-1 items-center'>
+                <FaAngleLeft/> Back
+            </div>
           </button>
           <button
             type="submit"
             className="px-6 py-2 bg-teal-500 text-white rounded-md hover:bg-teal-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
             disabled={!Object.values(formData).every(Boolean)}
           >
-            Next
+            Submit
           </button>
         </div>
       </form>

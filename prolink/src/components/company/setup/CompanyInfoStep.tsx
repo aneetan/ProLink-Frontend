@@ -2,14 +2,9 @@ import type { CompanyInfo, StepProps } from "../../../types/company.types";
 
 
 const SERVICE_CATEGORIES = [
-  'Plumbing',
-  'Electrical',
-  'Graphic Design',
-  'Web Development',
-  'Event Management',
-  'Construction',
-  'Cleaning',
-  'Consulting'
+  'MEP (Mechanical, Electrical and Plumbing)',
+  'IT (Information Technology)',
+  'Others'
 ];
 
 const CompanyInfoStep = ({ formData, updateFormData }: StepProps) => {
@@ -35,7 +30,7 @@ const CompanyInfoStep = ({ formData, updateFormData }: StepProps) => {
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Company Information</h2>
       
       {/* Logo Upload */}
-      <div className="flex flex-col items-center mb-6">
+      {/* <div className="flex flex-col items-center mb-6">
         <div className="w-24 h-24 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center mb-4 overflow-hidden bg-gray-50">
           {formData.companyInfo.logo ? (
             <img 
@@ -58,12 +53,12 @@ const CompanyInfoStep = ({ formData, updateFormData }: StepProps) => {
             Upload Logo
           </span>
         </label>
-      </div>
+      </div> */}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Company Name *
+            Company Name
           </label>
           <input
             type="text"
@@ -104,7 +99,7 @@ const CompanyInfoStep = ({ formData, updateFormData }: StepProps) => {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Service Category *
+            Service Category
           </label>
           <select
             value={formData.companyInfo.serviceCategory}

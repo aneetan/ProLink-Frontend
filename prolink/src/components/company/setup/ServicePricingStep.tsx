@@ -1,11 +1,71 @@
+import { useState, type ChangeEvent, type KeyboardEvent } from "react";
 import type { ServicePricing, StepProps } from "../../../types/company.types";
 
 
-export default function ServicePricingStep({ formData, updateFormData }: StepProps) {
-  const updateServicePricing = (field: keyof ServicePricing, value: string) => {
+const ServicePricingStep: React.FC<StepProps> = ({ formData, updateFormData }) => {
+  //service input
+  const [currentServiceInput, setCurrentServiceInput] = useState<string>("");
+  const [error, setError] = useState<string>('');
+
+  
+  const handleServiceInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setCurrentServiceInput(e.target.value);
+    setError(''); // Clear error when user types
+  };
+
+  const handleServiceKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addService();
+    }
+  };
+
+   const addService = (): void => {
+    const service = currentServiceInput.trim();
+    
+    // Validation checks
+    if (!service) {
+      setError('Service cannot be empty');
+      return;
+    }
+
+    if (formData.servicePricing.servicesOffered.includes(service)) {
+      setError('Service already exists');
+      return;
+    }
+
+    if (formData.servicePricing.servicesOffered.length >= 5) {
+      setError('Maximum 5 services allowed');
+      return;
+    }
+
+    // Add service
+    const updatedServices = [...formData.servicePricing.servicesOffered, service];
+    updateServicePricing('servicesOffered', updatedServices);
+    setCurrentServiceInput('');
+    setError('');
+  };
+
+
+  const updateServicePricing = (field: keyof ServicePricing, value: string[] | string) => {
     updateFormData({
-      servicePricing: { ...formData.servicePricing, [field]: value }
+      servicePricing: {
+        ...formData.servicePricing,
+        [field]: value }
     });
+  };
+
+  const removeService = (serviceToRemove: string): void => {
+    if (formData.servicePricing.servicesOffered.length <= 3) {
+      setError('Minimum 3 services required');
+      return;
+    }
+
+    const updatedServices = formData.servicePricing.servicesOffered.filter(
+      service => service !== serviceToRemove
+    );
+    updateServicePricing('servicesOffered', updatedServices);
+    setError('');
   };
 
   return (
@@ -15,21 +75,64 @@ export default function ServicePricingStep({ formData, updateFormData }: StepPro
       <div className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Services Offered *
+            Services Offered
+              <span className="text-xs text-gray-500 ml-2">
+          ({formData.servicePricing.servicesOffered.length}/5) - Minimum 3 required
+        </span>
           </label>
-          <textarea
-            value={formData.servicePricing.servicesOffered}
-            onChange={(e) => updateServicePricing('servicesOffered', e.target.value)}
-            rows={4}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors resize-none"
-            placeholder="List the services you offer (e.g., Web Development, Mobile App Design, UI/UX Consulting)"
-          />
+           {formData.servicePricing.servicesOffered.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-3">
+          {formData.servicePricing.servicesOffered.map((service, index) => (
+            <div
+              key={index}
+              className='flex items-center px-3 py-1 rounded-full text-sm bg-teal-100 text-teal-800'
+            >
+              <span>{service}</span>
+              <button
+                type="button"
+                onClick={() => removeService(service)}
+                className="ml-2 focus:outline-none text-teal-600 hover:text-teal-800 cursor-pointer"
+              >
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Textarea */}
+      <textarea
+        value={currentServiceInput}
+        onChange={handleServiceInputChange}
+        onKeyDown={handleServiceKeyDown}
+        rows={3}
+        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors resize-none
+           bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed' 
+        } ${error ? 'border-red-500' : ''}`}
+        placeholder="e.g., Web Development, Mobile App Design, UI/UX Consulting"
+      />
+      
+      {/* Error and Helper text */}
+      {error && (
+        <p className="text-xs text-red-500 mt-1">{error}</p>
+      )}
+      
+      <p className="text-xs text-gray-500 mt-1">
+        Type and press Enter to add each service as a tag ({formData.servicePricing.servicesOffered.length}/5)
+      </p>
+
+      {/* Validation status */}
+      {formData.servicePricing.servicesOffered.length < 3 && (
+        <p className="text-xs text-amber-600 mt-1">
+          {3 - formData.servicePricing.servicesOffered.length} more service(s) required
+        </p>
+      )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Minimum Price ($)
+              Minimum Price Range (Rs)
             </label>
             <input
               type="number"
@@ -43,7 +146,7 @@ export default function ServicePricingStep({ formData, updateFormData }: StepPro
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Maximum Price ($)
+              Maximum Price Range (Rs)
             </label>
             <input
               type="number"
@@ -57,7 +160,7 @@ export default function ServicePricingStep({ formData, updateFormData }: StepPro
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Avg. Delivery Time
+              Average Delivery Time
             </label>
             <input
               type="text"
@@ -72,3 +175,5 @@ export default function ServicePricingStep({ formData, updateFormData }: StepPro
     </div>
   );
 }
+
+export default ServicePricingStep

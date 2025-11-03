@@ -2,10 +2,10 @@ import { useState } from 'react';
 import type { FormData } from '../../types/company.types';
 import CompanyInfoStep from '../../components/company/setup/CompanyInfoStep';
 import ServicePricingStep from '../../components/company/setup/ServicePricingStep';
-import PastProjectsStep from '../../components/company/setup/PasProjectsStep';
 import PaymentMethodsStep from '../../components/company/setup/PaymentMethodSteps';
 import { FaAngleLeft } from 'react-icons/fa6';
 import { FaArrowRight } from 'react-icons/fa';
+import UploadDocuments from '../../components/company/setup/UploadDocuments';
 
 export default function CompanyProfileSetup() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -20,7 +20,7 @@ export default function CompanyProfileSetup() {
       websiteUrl: ''
     },
     servicePricing: {
-      servicesOffered: '',
+      servicesOffered: [],
       priceRangeMin: '',
       priceRangeMax: '',
       avgDeliveryTime: ''
@@ -32,8 +32,7 @@ export default function CompanyProfileSetup() {
   const steps = [
     { number: 1, title: 'Company Info' },
     { number: 2, title: 'Service & Pricing' },
-    { number: 3, title: 'Past Projects' },
-    { number: 4, title: 'Payment Methods' }
+    { number: 3, title: 'Verification Document' },
   ];
 
   const handleNext = () => {
@@ -69,9 +68,7 @@ export default function CompanyProfileSetup() {
       case 2:
         return <ServicePricingStep {...stepProps} />;
       case 3:
-        return <PastProjectsStep {...stepProps} />;
-      case 4:
-        return <PaymentMethodsStep {...stepProps} />;
+        return <UploadDocuments onSubmit={handleSubmit} {...stepProps} />;
       default:
         return <CompanyInfoStep {...stepProps} />;
     }

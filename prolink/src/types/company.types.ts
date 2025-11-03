@@ -9,7 +9,7 @@ export interface CompanyInfo {
 }
 
 export interface ServicePricing {
-  servicesOffered: string;
+  servicesOffered: string[];
   priceRangeMin: string;
   priceRangeMax: string;
   avgDeliveryTime: string;

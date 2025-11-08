@@ -1,18 +1,14 @@
-type Role = "client" | "company";
-enum Status {
-   verified,
-   pending
-};
+ export type Status = "VERIFIED" | "PENDING" | "DECLINED";
 
 export interface User {
    name: string;
    email: string;
    phone: string;
    address: string;
-   role: Role;
+   role: "CLIENT" | "COMPANY" | "ADMIN";
    password: string;
    confirmPassword: string;
-   status?: Status;
+   status?: Status; 
 }
 
 export interface OTPVerifyData{

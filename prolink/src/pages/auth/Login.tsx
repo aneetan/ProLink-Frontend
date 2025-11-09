@@ -7,7 +7,7 @@ import { useMutation } from '@tanstack/react-query';
 import type { LoginResponse } from '../../types/auth.types';
 import type { AxiosError } from 'axios';
 import { loginUser } from '../../api/user.api';
-import { showErrorToast, showSuccessToast } from '../../utils/toast.utils';
+import { showErrorToast } from '../../utils/toast.utils';
 import { useAuth } from '../../hooks/useAuth';
 import { getRoleFromToken } from '../../utils/jwt.utils';
 

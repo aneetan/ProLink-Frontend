@@ -48,10 +48,13 @@ const Register: React.FC = () => {
                } 
             });
          },
-        onError: (e: any) => {
-          if(e.response.status === 409) errors.formError = "Email already exists"
-          else errors.formError = 'An issue persist! Please try again later'
-          if(e.response){
+        onError: (e: AxiosError) => {
+          if (e.response?.status === 409) {
+            setErrors(prev => ({ ...prev, formError: "Email already exists" }));
+          } else {
+            setErrors(prev => ({ ...prev, formError: 'An issue persist! Please try again later' }));
+          }
+          if (e.response) {
                 console.log('Error response data:', e.response.data);
                 console.log('Error status:', e.response.status);
           }

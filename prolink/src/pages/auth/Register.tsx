@@ -41,10 +41,11 @@ const Register: React.FC = () => {
   const mutation = useMutation<AxiosResponse, AxiosError, User>({
         mutationFn: registerUser,
         onSuccess: (response) => {
-            navigate("/verify-otp", { 
+          console.log(response.data)
+            navigate("/otp", { 
                state: { 
-               email: formData.email, 
-               token: response.data.token 
+                email: formData.email, 
+                token: response.data.token 
                } 
             });
          },

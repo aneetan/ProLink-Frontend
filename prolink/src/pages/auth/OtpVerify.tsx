@@ -1,9 +1,12 @@
 import { useLocation, useNavigate } from 'react-router';
 import { useEffect, useState } from 'react';
 import type { OTPVerifyData } from '../../types/auth.types';
-import { showErrorToast } from '../../utils/toast.utils';
+import { showErrorToast, showSuccessToast } from '../../utils/toast.utils';
 import OTPInput from '../../components/auth/OtpInput';
 import Logo from '../../components/Logo';
+import { useMutation } from '@tanstack/react-query';
+import type { AxiosError } from 'axios';
+import { verifyOTP } from '../../api/user.api';
 
 const OtpVerify = () => {
    const navigate = useNavigate();
@@ -16,25 +19,92 @@ const OtpVerify = () => {
             otp: ""
     })
 
+    const [timer, setTimer] = useState(60);
+    const [isTimerActive, setIsTimerActive] = useState(true);
+
    useEffect(() => {
         if(email && token){
+            console.log(email);
+            console.log(token);
             setFormData({
                 token: token,
                 email: email,
                 otp: ""
-            })
+            });
+
+            setIsTimerActive(true);
+            setTimer(60);
         } else {
             showErrorToast("Session expired. Please try again.");
         }
-   }, [email, token, navigate])
+   }, [email, token, navigate]);
+
+   useEffect(() => {
+    let interval = null;
+
+    if(isTimerActive && timer > 0) {
+        interval = setInterval(() => {
+            setTimer((prevTimer) => prevTimer - 1)
+        }, 1000);
+    } else if(timer === 0){
+        setIsTimerActive(false);
+    }
+
+    return () => {
+        if(interval) clearInterval(interval);
+    };
+   }, [isTimerActive, timer]);
+
+   const mutation = useMutation<{ resetToken: string }, AxiosError, OTPVerifyData>({
+        mutationFn: verifyOTP,
+        onSuccess: () => navigate("/login"),
+        onError: (err) => {
+            if (err.response) {
+                console.log(err.response.data);
+                if(err.response.status === 400){
+                    const error = err.response.data as { message?: string };
+                    showErrorToast(error.message!);
+                }
+            }
+        }
+    })
  
     const handleOTPComplete = (otp:string) => {
         const submissionData = {
             ...formData,
             otp: otp
         };
-        console.log(submissionData);
+        mutation.mutate(submissionData);
     };
+
+    const handleResendOTP = () => {
+        if (!isTimerActive) {
+            // Add your resend OTP logic here
+            console.log('Resending OTP to:', email);
+            
+            // Reset timer
+            setTimer(60);
+            setIsTimerActive(true);
+            
+            // Show success message
+            showSuccessToast('OTP has been resent to your email');
+            
+            // You would typically call your API to resend OTP here
+            // Example:
+            // resendOTP({ email }).then(() => {
+            //     setTimer(60);
+            //     setIsTimerActive(true);
+            //     showSuccessToast('OTP has been resent to your email');
+            // });
+        }
+    };
+
+    const formatTime = (seconds: number) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    };
+
 
   return (
    <>
@@ -57,12 +127,11 @@ const OtpVerify = () => {
 
                         <button
                             type="submit"
-                           //  disabled={mutation.isPending}
-                           // css ${mutation.isPending ? 'opacity-70 cursor-not-allowed
+                            disabled={mutation.isPending}
                             className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-[var(--primary-color)]
                                 hover:bg-[var(--primary-dark)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary-color)] transition ' : ''}`}
-                        > Verify
-                            {/* {mutation.isPending ? (
+                        >
+                            {mutation.isPending ? (
                                 <>
                                     <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -70,7 +139,7 @@ const OtpVerify = () => {
                                     </svg>
                                     Redirecting....
                                 </>
-                            ) : 'Verify'} */}
+                            ) : 'Verify'}
                         </button>
                     </form>
                 </div>
@@ -79,7 +148,7 @@ const OtpVerify = () => {
                     <p className="text-sm text-gray-600">
                         Didn't get an OTP?{' '}
                         <a href="/resend-otp" className="font-medium text-[var(--primary-color)] hover:text-[var(--primary-color-hover)">
-                            Resend
+                            {isTimerActive ? `Resend in ${formatTime(timer)}` : 'Resend'}
                         </a>
                     </p>
                 </div>

@@ -35,10 +35,11 @@ function App() {
                       <Route path='/companies' element={<CompaniesSection/>} />
                       <Route path='/testimonials' element={<Testimonials/>} />
                     </Route>
-                      <Route path='/login' element={<Login/>} />
-                      <Route path='/register' element={<Register/>} />
-                      <Route path='/otp' element={<OtpVerify/>} />
-                      <Route path="*" element={<Navigate to="/" replace />} />
+                    
+                    <Route path='/login' element={<Login/>} />
+                    <Route path='/register' element={<Register/>} />
+                    <Route path='/otp' element={<OtpVerify/>} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
 
                     <Route path='/company' element={<CompanyLayout/>}>
                       <Route path='' element={<CompanyDashboard/>} />

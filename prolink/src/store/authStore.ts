@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { logoutUser } from '../api/user.api';
 
 interface AuthStore {
   userId: number | null;
@@ -25,7 +26,7 @@ export const useAuthStore = create<AuthStore>()(
         });
       },
       logout: async(userId: number): Promise<void> => {
-      //   await logoutUser(userId);
+        await logoutUser(userId);
         localStorage.removeItem("token");
         set({ 
           token: null, 

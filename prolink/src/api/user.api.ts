@@ -22,3 +22,13 @@ export const loginUser = async(formData: LoginProps): Promise<LoginResponse> => 
    const response = await axios.post(`${API_URL}/auth/login`, formData);
    return response.data;
 }
+
+export const logoutUser = async(userId: number) : Promise<AxiosResponse> => {
+   const token = localStorage.getItem("token");
+   const response = await axios.post(`${API_URL}/auth/logout`, {userId}, {
+      headers: {
+         Authorization: `Bearer ${token}`
+      }
+   });
+   return response.data;
+}

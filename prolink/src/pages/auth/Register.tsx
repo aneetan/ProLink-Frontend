@@ -2,19 +2,23 @@ import React, { useState } from 'react';
 import Logo from '../../components/Logo';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import GoogleSignupButton from '../../components/auth/GoogleSignupButton';
-import type { User } from '../../types/auth.types';
-import { validateEmail, validatePassword, validatePhone } from '../../components/helpers/validateRegisterForm';
+import type { Status, User } from '../../types/auth.types';
+import { validateEmail, validatePassword, validatePhone } from '../../helpers/validateRegisterForm';
 import RegisterRightPanel from '../../components/auth/RegisterRightPanel';
+import { useNavigate } from 'react-router';
+import type { AxiosError, AxiosResponse } from 'axios';
+import { useMutation } from '@tanstack/react-query';
+import { registerUser } from '../../api/user.api';
 
 interface ErrorProps {
-  formError: string;
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-  role: string;
-  password: string;
-  confirmPassword: string;
+  formError?: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  role?: string;
+  password?: string;
+  confirmPassword?: string;
 }
 
 const Register: React.FC = () => {
@@ -23,24 +27,40 @@ const Register: React.FC = () => {
     email: '',
     phone: '',
     address: '',
-    role: 'client',
+    role: 'CLIENT',
     password: '',
     confirmPassword: ''
   });
   
-  const [errors, setErrors] = useState<ErrorProps>({
-    formError: '',
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-    role: '',
-    password: '',
-    confirmPassword: ''
-  });
+  const [errors, setErrors] = useState<ErrorProps>({});
+  const navigate = useNavigate();
   
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const mutation = useMutation<AxiosResponse, AxiosError, User>({
+        mutationFn: registerUser,
+        onSuccess: (response) => {
+            navigate("/otp", { 
+               state: { 
+                email: formData.email, 
+                token: response.data.token 
+               } 
+            });
+         },
+        onError: (e: AxiosError) => {
+          if (e.response?.status === 409) {
+            setErrors(prev => ({ ...prev, formError: "Email already exists" }));
+          } else {
+            setErrors(prev => ({ ...prev, formError: 'An issue persist! Please try again later' }));
+          }
+          if (e.response) {
+                console.log('Error response data:', e.response.data);
+                console.log('Error status:', e.response.status);
+          }
+
+        }
+    });
 
   const validateForm = (): boolean => {
     const newErrors: ErrorProps = {
@@ -139,17 +159,15 @@ const Register: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (validateForm()) {
-      // Handle successful registration logic here
-      console.log('Registration successful:', formData);
-      // You can make API call here
-    } else {
-      setErrors(prev => ({
-        ...prev,
-        formError: 'Please fix the errors above'
-      }));
-    }
+    if(!validateForm()) return;
+    const status: Status = formData.role === 'CLIENT' ? 'VERIFIED' : 'PENDING';
+
+    const submissionData: User = {
+      ...formData,
+      status
+    };
+
+    mutation.mutate(submissionData);
   };
 
   return (
@@ -171,9 +189,7 @@ const Register: React.FC = () => {
 
             {/* Form Error Message */}
             {errors.formError && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-600 text-sm font-medium">{errors.formError}</p>
-              </div>
+                <p className="text-red-600 text-sm font-medium mb-4">{errors.formError}</p>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -255,8 +271,8 @@ const Register: React.FC = () => {
                       errors.role ? 'border-red-300 bg-red-50' : 'border-gray-300'
                     }`}
                   >
-                    <option value="client">Client</option>
-                    <option value="company">Company</option>
+                    <option value="CLIENT">Client</option>
+                    <option value="COMPANY">Company</option>
                   </select>
                   {errors.role && (
                     <p className="mt-1 text-sm text-red-600">{errors.role}</p>
@@ -349,11 +365,16 @@ const Register: React.FC = () => {
                 </div>
               </div>
 
-              <button
+               <button
                 type="submit"
-                className="w-full bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 mt-6"
+                disabled={mutation.isPending}
+                className={`w-full ${
+                  mutation.isPending 
+                    ? 'bg-gray-400 cursor-not-allowed' 
+                    : 'bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] focus:ring-2 focus:ring-teal-500 focus:ring-offset-2'
+                } text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 mt-6`}
               >
-                Create Account
+                {mutation.isPending ? 'Creating Account...' : 'Create Account'}
               </button>
             </form>
 

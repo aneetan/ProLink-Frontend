@@ -2,11 +2,11 @@ import type { Dispatch, SetStateAction } from "react";
 import { FiBell, FiMail, FiMenu, FiUser } from "react-icons/fi";
 
 
-type CompanyHeaderProps = {
+type AdminHeaderProps = {
   setIsSidebarOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-const CompanyHeader = ({ setIsSidebarOpen }: CompanyHeaderProps) => {
+const AdminHeader = ({ setIsSidebarOpen }: AdminHeaderProps) => {
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 z-10">
       <div className="flex items-center justify-between px-4 sm:px-6 py-4">
@@ -38,7 +38,7 @@ const CompanyHeader = ({ setIsSidebarOpen }: CompanyHeaderProps) => {
           <div className="flex items-center space-x-3">
             <div className="hidden sm:block text-right">
               <p className="text-sm font-medium text-gray-900">John Doe</p>
-              <p className="text-xs text-gray-500">Company</p>
+              <p className="text-xs text-gray-500">Administrator</p>
             </div>
             <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
               <FiUser className="w-4 h-4 text-gray-600" />
@@ -50,4 +50,4 @@ const CompanyHeader = ({ setIsSidebarOpen }: CompanyHeaderProps) => {
   );
 };
 
-export default CompanyHeader;
+export default AdminHeader;

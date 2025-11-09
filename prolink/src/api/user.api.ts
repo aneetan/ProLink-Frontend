@@ -1,0 +1,34 @@
+import type { AxiosResponse } from "axios";
+import type { LoginProps, LoginResponse, OTPVerifyData, User } from "../types/auth.types";
+import axios from "axios";
+import { API_URL } from "../utils/url.utils";
+
+export const registerUser = async(formData: User): Promise<AxiosResponse> => {
+   const response = await axios.post(`${API_URL}/auth/register`, formData);
+   return response;
+}
+
+export const verifyOTP = async(formData: OTPVerifyData): Promise<{ resetToken: string }> => {
+   const response = await axios.post(`${API_URL}/auth/verify-otp`, formData);
+   return response.data;
+}
+
+export const resendOTP = async (data: { email: string; token?: string }): Promise<{ message: string; token?: string; email: string }> => {
+  const response = await axios.post(`${API_URL}/auth/resend-otp`, data);
+  return response.data;
+};
+
+export const loginUser = async(formData: LoginProps): Promise<LoginResponse> => {
+   const response = await axios.post(`${API_URL}/auth/login`, formData);
+   return response.data;
+}
+
+export const logoutUser = async(userId: number) : Promise<AxiosResponse> => {
+   const token = localStorage.getItem("token");
+   const response = await axios.post(`${API_URL}/auth/logout`, {userId}, {
+      headers: {
+         Authorization: `Bearer ${token}`
+      }
+   });
+   return response.data;
+}

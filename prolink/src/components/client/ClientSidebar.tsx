@@ -1,23 +1,19 @@
 import type { Dispatch, SetStateAction } from "react";
-import { FaNetworkWired } from "react-icons/fa";
-import { FiHome, FiUsers, FiFileText, FiX, FiLogOut, FiMessageCircle} from 'react-icons/fi';
-import { MdOutlinePerson, MdOutlineReviews } from "react-icons/md";
-import Logo from "../Logo";
+import { FiHome, FiUsers, FiSettings, FiBarChart2, FiFileText, FiCalendar,FiMail, FiX, FiChevronDown, FiUser} from 'react-icons/fi';
 
 interface SidebarProps {
    isOpen: boolean;
    setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
-const CompanySidebar:React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
+const ClientSidebar:React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
   const menuItems = [
     { icon: FiHome, label: 'Dashboard', path: '/dashboard' },
-    { icon: FiUsers, label: 'Quote Requests', path: '/users' },
-    { icon: FiFileText, label: 'My Quotes', path: '/analytics' },
-    { icon: FaNetworkWired, label: 'Projects', path: '/projects' },
-    { icon: FiMessageCircle, label: 'Inbox', path: '/inbox' },
-    { icon: MdOutlinePerson, label: 'Profile Setup', path: '/company/setup' },
-    { icon: MdOutlineReviews, label: 'Reviews', path: '/setup' },
-
+    { icon: FiUsers, label: 'Users', path: '/users' },
+    { icon: FiBarChart2, label: 'Analytics', path: '/analytics' },
+    { icon: FiFileText, label: 'Projects', path: '/projects' },
+    { icon: FiCalendar, label: 'Calendar', path: '/calendar' },
+    { icon: FiMail, label: 'Messages', path: '/messages' },
+    { icon: FiSettings, label: 'Settings', path: '/settings' },
   ];
 
   return (
@@ -40,7 +36,10 @@ const CompanySidebar:React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
         {/* Logo Section */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
-            <Logo isName={true}/>
+            <div className="w-8 h-8 bg-[var(--primary-color)] rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">L</span>
+            </div>
+            <span className="text-xl font-bold text-gray-800">Logo</span>
           </div>
           <button 
             onClick={() => setIsOpen(false)}
@@ -75,13 +74,17 @@ const CompanySidebar:React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
           })}
         </nav>
 
-        {/* Logout Section */}
+        {/* User Profile Section */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
           <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-            <div className="w-10 h-5 bg-gray-100 rounded-full flex items-center justify-center">
-              <FiLogOut className="w-5 h-5 text-red-600" />
+            <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+              <FiUser className="w-5 h-5 text-gray-600" />
             </div>
-            <p className="text-sm font-medium text-red-600 truncate">Logout</p>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900 truncate">John Doe</p>
+              <p className="text-xs text-gray-500 truncate">Client</p>
+            </div>
+            <FiChevronDown className="w-4 h-4 text-gray-400" />
           </div>
         </div>
       </div>
@@ -89,4 +92,4 @@ const CompanySidebar:React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
   );
 };
 
-export default CompanySidebar;
+export default ClientSidebar;

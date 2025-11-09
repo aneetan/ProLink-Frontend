@@ -1,28 +1,28 @@
 import { useState } from "react";
-import CompanySidebar from "./CompanySidebar";
-import CompanyHeader from "./CompanyHeader";
-import { Outlet } from "react-router";
+import AdminHeader from "./AdminHeader";
+import Dashboard from "./Dashboard";
+import AdminSidebar from "./AdminSidebar";
 
-const CompanyLayout = () => {
+const AdminLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
-      <CompanySidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+      <AdminSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <CompanyHeader setIsSidebarOpen={setIsSidebarOpen} />
+        <AdminHeader setIsSidebarOpen={setIsSidebarOpen} />
 
         {/* Main Content Area */}
         <main className="flex-1 overflow-auto">
-          <Outlet/>
+          <Dashboard />
         </main>
       </div>
     </div>
   );
 };
 
-export default CompanyLayout
+export default AdminLayout

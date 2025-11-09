@@ -1,5 +1,5 @@
 import type { AxiosResponse } from "axios";
-import type { OTPVerifyData, User } from "../types/auth.types";
+import type { LoginProps, LoginResponse, OTPVerifyData, User } from "../types/auth.types";
 import axios from "axios";
 import { API_URL } from "../utils/url.utils";
 
@@ -17,3 +17,8 @@ export const resendOTP = async (data: { email: string; token?: string }): Promis
   const response = await axios.post(`${API_URL}/auth/resend-otp`, data);
   return response.data;
 };
+
+export const loginUser = async(formData: LoginProps): Promise<LoginResponse> => {
+   const response = await axios.post(`${API_URL}/auth/login`, formData);
+   return response.data;
+}

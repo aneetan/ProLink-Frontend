@@ -16,3 +16,14 @@ export interface OTPVerifyData{
     email: string;
     otp: string;
 }
+
+export interface LoginProps {
+    email: string;
+    password: string;
+}
+
+export interface LoginResponse {
+    accessToken: string;
+    message: string;
+    id: number;
+}

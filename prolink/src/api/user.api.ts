@@ -12,3 +12,8 @@ export const verifyOTP = async(formData: OTPVerifyData): Promise<{ resetToken: s
    const response = await axios.post(`${API_URL}/auth/verify-otp`, formData);
    return response.data;
 }
+
+export const resendOTP = async (data: { email: string; token?: string }): Promise<{ message: string; token?: string; email: string }> => {
+  const response = await axios.post(`${API_URL}/auth/resend-otp`, data);
+  return response.data;
+};

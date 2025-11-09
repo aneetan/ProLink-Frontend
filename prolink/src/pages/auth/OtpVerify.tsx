@@ -6,7 +6,7 @@ import OTPInput from '../../components/auth/OtpInput';
 import Logo from '../../components/Logo';
 import { useMutation } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
-import { verifyOTP } from '../../api/user.api';
+import { resendOTP, verifyOTP } from '../../api/user.api';
 
 const OtpVerify = () => {
    const navigate = useNavigate();
@@ -24,8 +24,6 @@ const OtpVerify = () => {
 
    useEffect(() => {
         if(email && token){
-            console.log(email);
-            console.log(token);
             setFormData({
                 token: token,
                 email: email,
@@ -36,6 +34,7 @@ const OtpVerify = () => {
             setTimer(60);
         } else {
             showErrorToast("Session expired. Please try again.");
+            navigate('/register');
         }
    }, [email, token, navigate]);
 
@@ -64,10 +63,40 @@ const OtpVerify = () => {
                 if(err.response.status === 400){
                     const error = err.response.data as { message?: string };
                     showErrorToast(error.message!);
+                } else {
+                    showErrorToast("Something went wrong!")
                 }
             }
         }
-    })
+    });
+
+    // Mutation for resending OTP
+    const resendMutation = useMutation({
+        mutationFn: resendOTP,
+        onSuccess: (data) => {
+        // Update the token if a new one is returned
+        if (data.token) {
+            setFormData(prev => ({
+            ...prev,
+            token: data.token!
+            }));
+        }
+        
+        // Reset timer
+        setTimer(60);
+        setIsTimerActive(true);
+        
+        showSuccessToast(data.message || 'OTP has been resent to your email');
+        },
+        onError: (err: AxiosError) => {
+        if (err.response) {
+            const error = err.response.data as { message?: string };
+            showErrorToast(error.message || 'Failed to resend OTP');
+        } else {
+            showErrorToast('Network error. Please try again.');
+        }
+        }
+    });
  
     const handleOTPComplete = (otp:string) => {
         const submissionData = {
@@ -78,25 +107,15 @@ const OtpVerify = () => {
     };
 
     const handleResendOTP = () => {
-        if (!isTimerActive) {
-            // Add your resend OTP logic here
-            console.log('Resending OTP to:', email);
-            
-            // Reset timer
-            setTimer(60);
-            setIsTimerActive(true);
-            
-            // Show success message
-            showSuccessToast('OTP has been resent to your email');
-            
-            // You would typically call your API to resend OTP here
-            // Example:
-            // resendOTP({ email }).then(() => {
-            //     setTimer(60);
-            //     setIsTimerActive(true);
-            //     showSuccessToast('OTP has been resent to your email');
-            // });
+        if (!isTimerActive && email) {
+            // Call the resend OTP API
+            resendMutation.mutate({ 
+                email: email, 
+                token: formData.token
+            });
+            showSuccessToast("OTP sent to email");
         }
+
     };
 
     const formatTime = (seconds: number) => {
@@ -147,9 +166,18 @@ const OtpVerify = () => {
                 <div className="px-8 py-6 text-center">
                     <p className="text-sm text-gray-600">
                         Didn't get an OTP?{' '}
-                        <a href="/resend-otp" className="font-medium text-[var(--primary-color)] hover:text-[var(--primary-color-hover)">
-                            {isTimerActive ? `Resend in ${formatTime(timer)}` : 'Resend'}
-                        </a>
+                        <button
+                        onClick={handleResendOTP}
+                        className="font-medium text-[var(--primary-color)] hover:text-[var(--primary-color-hover) pointer"
+                        >
+                            {resendMutation.isPending ? (
+                                'Resending...'
+                            ) : isTimerActive ? (
+                                `Resend in ${formatTime(timer)}`
+                            ) : (
+                                'Resend'
+                            )}
+                        </button>
                     </p>
                 </div>
             </div>

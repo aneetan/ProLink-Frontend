@@ -41,7 +41,6 @@ const Register: React.FC = () => {
   const mutation = useMutation<AxiosResponse, AxiosError, User>({
         mutationFn: registerUser,
         onSuccess: (response) => {
-          console.log(response.data)
             navigate("/otp", { 
                state: { 
                 email: formData.email, 
@@ -50,10 +49,13 @@ const Register: React.FC = () => {
             });
          },
         onError: (e: any) => {
-            if(e.response){
+          if(e.response.status === 409) errors.formError = "Email already exists"
+          else errors.formError = 'An issue persist! Please try again later'
+          if(e.response){
                 console.log('Error response data:', e.response.data);
                 console.log('Error status:', e.response.status);
-            }
+          }
+
         }
     });
 
@@ -184,9 +186,7 @@ const Register: React.FC = () => {
 
             {/* Form Error Message */}
             {errors.formError && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-600 text-sm font-medium">{errors.formError}</p>
-              </div>
+                <p className="text-red-600 text-sm font-medium mb-4">{errors.formError}</p>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">

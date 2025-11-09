@@ -1,6 +1,7 @@
  export type Status = "VERIFIED" | "PENDING" | "DECLINED";
 
 export interface User {
+   id?: number;
    name: string;
    email: string;
    phone: string;

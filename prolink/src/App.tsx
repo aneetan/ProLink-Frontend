@@ -18,6 +18,7 @@ import ClientLayout from './components/client/ClientLayout'
 import CompanyProfileSetup from './pages/company/ProfileSetup'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ToastContainer } from 'react-toastify'
+import ProtectedRoute from './pages/auth/ProtectedRoutes'
 
 function App() {
    const queryClient = new QueryClient();
@@ -41,18 +42,23 @@ function App() {
                     <Route path='/otp' element={<OtpVerify/>} />
                     <Route path="*" element={<Navigate to="/" replace />} />
 
-                    <Route path='/company' element={<CompanyLayout/>}>
-                      <Route path='' element={<CompanyDashboard/>} />
-                      <Route path='setup' element={<CompanyProfileSetup/>}/>
+                    <Route element={<ProtectedRoute requiredRole='COMPANY'/>}>
+                      <Route path='/company' element={<CompanyLayout/>}>
+                        <Route path='' element={<CompanyDashboard/>} />
+                        <Route path='setup' element={<CompanyProfileSetup/>}/>
+                      </Route>
                     </Route>
 
-
-                    <Route path='/admin' element={<AdminLayout/>}>
-                      <Route path='' element={<AdminDashboard/>} />
+                    <Route element={<ProtectedRoute requiredRole='ADMIN'/>}>
+                      <Route path='/admin' element={<AdminLayout/>}>
+                        <Route path='' element={<AdminDashboard/>} />
+                      </Route>
                     </Route>
 
-                    <Route path='/client' element={<ClientLayout/>}>
-                      <Route path='' element={<ClientDashboard/>} />
+                    <Route element={<ProtectedRoute requiredRole='CLIENT'/>}>
+                      <Route path='/client' element={<ClientLayout/>}>
+                        <Route path='' element={<ClientDashboard/>} />
+                      </Route>
                     </Route>
                 </Routes>
               </BrowserRouter>

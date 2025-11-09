@@ -9,6 +9,7 @@ import type { AxiosError } from 'axios';
 import { loginUser } from '../../api/user.api';
 import { showErrorToast, showSuccessToast } from '../../utils/toast.utils';
 import { useAuth } from '../../hooks/useAuth';
+import { getRoleFromToken } from '../../utils/jwt.utils';
 
 interface LoginProps {
    email: string;
@@ -37,8 +38,11 @@ const Login: React.FC = () => {
       mutationFn: loginUser,
       onSuccess: (data) => {
           login(data.accessToken, data.id);
-          // navigate("/")
-          showSuccessToast("Login Successful")
+          const role = getRoleFromToken(data.accessToken);
+
+          if(role === 'CLIENT') navigate('/client')
+          else if(role === 'COMPANY') navigate("/company")
+          else if(role === 'ADMIN') navigate('/admin');
       },
       onError: (err) => {
           if(err.response){

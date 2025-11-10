@@ -42,12 +42,12 @@ function App() {
                     <Route path='/otp' element={<OtpVerify/>} />
                     <Route path="*" element={<Navigate to="/" replace />} />
 
-                    <Route element={<ProtectedRoute requiredRole='COMPANY'/>}>
+                    {/* <Route element={<ProtectedRoute requiredRole='COMPANY'/>}> */}
                       <Route path='/company' element={<CompanyLayout/>}>
                         <Route path='' element={<CompanyDashboard/>} />
                         <Route path='setup' element={<CompanyProfileSetup/>}/>
                       </Route>
-                    </Route>
+                    {/* </Route> */}
 
                     <Route element={<ProtectedRoute requiredRole='ADMIN'/>}>
                       <Route path='/admin' element={<AdminLayout/>}>

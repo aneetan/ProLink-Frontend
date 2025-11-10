@@ -9,8 +9,8 @@ export interface CompanyInfo {
 
 export interface ServicePricing {
   servicesOffered: string[];
-  priceRangeMin: string;
-  priceRangeMax: string;
+  priceRangeMin: number;
+  priceRangeMax: number;
   avgDeliveryTime: string;
 }
 
@@ -42,14 +42,11 @@ export interface PaymentMethod {
   details: string;
 }
 
-
 export type  FormData = {
   companyInfo: CompanyInfo;
   servicePricing: ServicePricing;
   docs: CompanyVerificationData
 };
-
-
 
 export interface StepProps {
   formData: FormData;

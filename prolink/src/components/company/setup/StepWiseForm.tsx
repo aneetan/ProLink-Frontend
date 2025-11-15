@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import ServicePricingStep from './ServicePricingStep';
 import CompanyInfoStep from './CompanyInfoStep';
-import UploadDocuments from './UploadDocuments';
 import type { FormData } from '../../../types/company.types';
+import UploadDocuments from './UploadDocuments';
 
 interface StepWiseProps {
    initialData: FormData;
@@ -53,7 +53,7 @@ const StepWiseForm: React.FC<StepWiseProps> = ({initialData, onSubmit}) => {
           <UploadDocuments
             formData={formData}
             updateFormData={updateFormData}
-            onNext={handleFinalSubmit}
+            onNext={handleFinalSubmit} 
             onBack={prevStep}
           />
         );

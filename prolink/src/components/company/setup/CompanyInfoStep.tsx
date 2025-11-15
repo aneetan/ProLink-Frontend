@@ -57,11 +57,9 @@ const CompanyInfoStep: React.FC<StepProps> = ({
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // if (validateForm()) {
-    //   onNext();
-    // }
-    onNext();
-
+    if (validateForm()) {
+      onNext();
+    }
   };
 
   return (
@@ -83,7 +81,7 @@ const CompanyInfoStep: React.FC<StepProps> = ({
             placeholder="Enter company name"
           />
           {errors.name && (
-            <p className="text-red-500 text-sm mt-1 flex items-center"> {errors.name} </p>
+            <p className="text-red-500 text-xs mt-1 flex items-center"> {errors.name} </p>
           )}
         </div>
 
@@ -101,7 +99,7 @@ const CompanyInfoStep: React.FC<StepProps> = ({
             placeholder="Enter registration number"
           />
           {errors.registrationNo && (
-            <p className="text-red-500 text-sm mt-1 flex items-center"> {errors.registrationNo} </p>
+            <p className="text-red-500 text-xs mt-1 flex items-center"> {errors.registrationNo} </p>
           )}
         </div>
 
@@ -121,7 +119,7 @@ const CompanyInfoStep: React.FC<StepProps> = ({
             max={new Date().getFullYear()}
           />
           {errors.establishedYear && (
-            <p className="text-red-500 text-sm mt-1 flex items-center"> {errors.establishedYear} </p>
+            <p className="text-red-500 text-xs mt-1 flex items-center"> {errors.establishedYear} </p>
           )}
         </div>
 
@@ -142,7 +140,7 @@ const CompanyInfoStep: React.FC<StepProps> = ({
             ))}
           </select>
           {errors.serviceCategory && (
-            <p className="text-red-500 text-sm mt-1 flex items-center"> {errors.serviceCategory} </p>
+            <p className="text-red-500 text-xs mt-1 flex items-center"> {errors.serviceCategory} </p>
           )}
         </div>
 
@@ -159,7 +157,7 @@ const CompanyInfoStep: React.FC<StepProps> = ({
             placeholder="https://example.com"
           />
           {errors.websiteUrl && (
-            <p className="text-red-500 text-sm mt-1 flex items-center"> {errors.websiteUrl} </p>
+            <p className="text-red-500 text-xs mt-1 flex items-center"> {errors.websiteUrl} </p>
           )}
         </div>
 
@@ -176,7 +174,7 @@ const CompanyInfoStep: React.FC<StepProps> = ({
             placeholder="Tell us about your company, mission, and values..."
           />
           {errors.description && (
-            <p className="text-red-500 text-sm mt-1 flex items-center"> {errors.description} </p>
+            <p className="text-red-500 text-xs mt-1 flex items-center"> {errors.description} </p>
           )}
         </div>
 

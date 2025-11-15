@@ -1,14 +1,11 @@
-import React, { useState } from 'react';
-import type { CompanyInfo, FormData, ServicePricing, VerificationDocuments } from '../../types/company.types';
+import type { CompanyInfo, ServicePricing, VerificationDocuments } from '../../types/company.types';
 import StepWiseForm from '../../components/company/setup/StepWiseForm';
 import { getUserIdFromToken } from '../../utils/jwt.utils';
 import { useMutation } from '@tanstack/react-query';
 import type { AxiosError, AxiosResponse } from 'axios';
 import { createCompanyProfile } from '../../api/company.api';
-import { useNavigate } from 'react-router';
 import { showSuccessToast } from '../../utils/toast.utils';
 
-type CompanyInputSchema = FormData;
 
 const defaultCompanyInfo: CompanyInfo = {
   name: '',
@@ -32,13 +29,6 @@ const defaultDocs: VerificationDocuments = {
 };
 
 function CompanySetupPage() {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState<CompanyInputSchema>({
-    companyInfo: defaultCompanyInfo,
-    servicePricing: defaultServicePricing,
-    docs: defaultDocs,
-    userId: 0
-  });
 
   const mutation = useMutation<AxiosResponse, AxiosError, any>({
     mutationFn: createCompanyProfile,
@@ -67,9 +57,7 @@ function CompanySetupPage() {
     };
 
     mutation.mutate(formattedData.body);
-
-    // Log formatted data for verification
-    console.log('CompanySchema body format:', JSON.stringify(formattedData, null, 2));
+    showSuccessToast("Data added successfully")
   };
 
   return (

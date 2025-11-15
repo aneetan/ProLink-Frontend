@@ -7,8 +7,7 @@ export const createCompanyProfile = async(formData: FormData) : Promise<AxiosRes
    const token = localStorage.getItem("token");
    const response = await axios.post(`${API_URL}/company/create`, formData, {
       headers: {
-         Authorization: `Bearer ${token}`,
-         'Content-Type': "multipart/form-data",
+         Authorization: `Bearer ${token}`
       }
    });
    return response;

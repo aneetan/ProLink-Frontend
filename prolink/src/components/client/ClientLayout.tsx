@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ClientHeader from "./ClientHeader";
-import Dashboard from "./Dashboard";
+import Dashboard from "../../pages/client/Dashboard";
 import ClientSidebar from "./ClientSidebar";
 
 const ClientLayout = () => {

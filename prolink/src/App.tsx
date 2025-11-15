@@ -12,7 +12,7 @@ import OtpVerify from './pages/auth/OtpVerify'
 import CompanyLayout from './components/company/CompanyLayout'
 import AdminDashboard from './components/admin/Dashboard'
 import CompanyDashboard from './pages/company/Dashboard'
-import ClientDashboard from './components/client/Dashboard'
+import ClientDashboard from './pages/client/Dashboard'
 import AdminLayout from './components/admin/AdminLayout'
 import ClientLayout from './components/client/ClientLayout'
 import CompanyProfileSetup from './pages/company/ProfileSetup'
@@ -42,12 +42,12 @@ function App() {
                     <Route path='/otp' element={<OtpVerify/>} />
                     <Route path="*" element={<Navigate to="/" replace />} />
 
-                    {/* <Route element={<ProtectedRoute requiredRole='COMPANY'/>}> */}
+                    <Route element={<ProtectedRoute requiredRole='COMPANY'/>}>
                       <Route path='/company' element={<CompanyLayout/>}>
                         <Route path='' element={<CompanyDashboard/>} />
                         <Route path='setup' element={<CompanyProfileSetup/>}/>
                       </Route>
-                    {/* </Route> */}
+                    </Route>
 
                     <Route element={<ProtectedRoute requiredRole='ADMIN'/>}>
                       <Route path='/admin' element={<AdminLayout/>}>
@@ -55,11 +55,11 @@ function App() {
                       </Route>
                     </Route>
 
-                    <Route element={<ProtectedRoute requiredRole='CLIENT'/>}>
+                    {/* <Route element={<ProtectedRoute requiredRole='CLIENT'/>}> */}
                       <Route path='/client' element={<ClientLayout/>}>
                         <Route path='' element={<ClientDashboard/>} />
                       </Route>
-                    </Route>
+                    {/* </Route> */}
                 </Routes>
               </BrowserRouter>
         </QueryClientProvider>

@@ -19,6 +19,7 @@ import CompanyProfileSetup from './pages/company/ProfileSetup'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ToastContainer } from 'react-toastify'
 import ProtectedRoute from './pages/auth/ProtectedRoutes'
+import AddRequirement from './pages/client/AddRequirement'
 
 function App() {
    const queryClient = new QueryClient();
@@ -55,9 +56,13 @@ function App() {
                       </Route>
                     </Route>
 
+                        <Route path='/requirement' element={<AddRequirement/>} />
+
+
                     {/* <Route element={<ProtectedRoute requiredRole='CLIENT'/>}> */}
                       <Route path='/client' element={<ClientLayout/>}>
                         <Route path='' element={<ClientDashboard/>} />
+                        <Route path='create-requirement' element={<AddRequirement/>} />
                       </Route>
                     {/* </Route> */}
                 </Routes>

@@ -9,25 +9,16 @@ export interface CompanyInfo {
 
 export interface ServicePricing {
   servicesOffered: string[];
-  priceRangeMin: string;
-  priceRangeMax: string;
+  priceRangeMin: number;
+  priceRangeMax: number;
   avgDeliveryTime: string;
 }
 
-export interface VerificationDocument {
-  id: string;
-  type: string;
-  file: File | null;
-  previewUrl?: string;
-  status: 'pending' | 'uploaded' | 'rejected';
-  uploadedAt?: Date;
-}
-
-export interface CompanyVerificationData {
-  logo: File | null;
-  businessLicense: File | null;
-  taxCertificate: File | null;
-  ownerId: File | null;
+export interface VerificationDocuments {
+  logo: string;
+  taxCertificate: string;
+  businessLicense: string;
+  ownerId: string;
 }
 
 export interface PastProject {
@@ -42,18 +33,21 @@ export interface PaymentMethod {
   details: string;
 }
 
-
-export type  FormData = {
+export interface FormData {
   companyInfo: CompanyInfo;
   servicePricing: ServicePricing;
-  docs: CompanyVerificationData
-};
+  docs: VerificationDocuments;
+  userId: number | null;
+}
 
-
-
+// Component props types
 export interface StepProps {
   formData: FormData;
   updateFormData: (updates: Partial<FormData>) => void;
   onNext: () => void;
   onBack?: () => void;
+}
+
+export interface CreateCompanyRequest {
+  formData: FormData;
 }

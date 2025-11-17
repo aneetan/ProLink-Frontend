@@ -7,10 +7,13 @@
  * @returns boolean - True if file type is allowed
  */
 export const validateFileType = (file: File | null, allowedTypes: string[]): boolean => {
-  if (!file || !file.type) {
-    return false;
-  }
-  return allowedTypes.includes(file.type);
+  const fileExtension = file!.name.split('.').pop()?.toLowerCase();
+  const fileType = file!.type;
+  
+  return allowedTypes.some(allowedType => 
+    fileType.includes(allowedType) || 
+    fileExtension === allowedType.replace('image/', '').replace('application/', '')
+  );
 };
 
 /**

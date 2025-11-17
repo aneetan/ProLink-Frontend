@@ -78,7 +78,7 @@ const ServicePricingStep: React.FC<StepProps> = ({ formData, updateFormData, onN
       ]
   
       fields.forEach(field => {
-        const error = validateField(field, formData.servicePricing[field]);
+        const error = validateField(field, String(formData.servicePricing[field] ?? ''));
         if (error) {
           newErrors[field] = error;
         }
@@ -90,10 +90,9 @@ const ServicePricingStep: React.FC<StepProps> = ({ formData, updateFormData, onN
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // if (validateForm()) {
-    //   onNext();
-    // }
-    onNext();
+    if (validateForm()) {
+      onNext();
+    }
   };
 
   const handleBack = () => {

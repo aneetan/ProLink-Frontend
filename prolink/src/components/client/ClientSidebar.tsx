@@ -8,7 +8,7 @@ interface SidebarProps {
 const ClientSidebar:React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
   const menuItems = [
     { icon: FiHome, label: 'Dashboard', path: '/dashboard' },
-    { icon: FiUsers, label: 'Users', path: '/users' },
+    { icon: FiUsers, label: 'Requirements', path: '/requirement' },
     { icon: FiBarChart2, label: 'Analytics', path: '/analytics' },
     { icon: FiFileText, label: 'Projects', path: '/projects' },
     { icon: FiCalendar, label: 'Calendar', path: '/calendar' },

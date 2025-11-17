@@ -3,6 +3,11 @@ import { FiFileText, FiUpload, FiX } from 'react-icons/fi';
 import { validateRequirementForm } from '../../helpers/validateRequirement';
 import type { RequirementFormData } from '../../types/requirement.types';
 import { uploadToCloudinary } from '../../utils/cloudinary.utils';
+import { getUserIdFromToken } from '../../utils/jwt.utils';
+import { useMutation } from '@tanstack/react-query';
+import type { AxiosError, AxiosResponse } from 'axios';
+import { addRequirement } from '../../api/requirement.api';
+import { showSuccessToast } from '../../utils/toast.utils';
 
 interface AddRequirementProps {
   onCancel?: () => void;
@@ -10,26 +15,40 @@ interface AddRequirementProps {
 }
 
 const AddRequirement = ({ onCancel, onSuccess }: AddRequirementProps) => {
+  const token = localStorage.getItem("token") || '';
   const [formData, setFormData] = useState<RequirementFormData>({
     title: '',
     description: '',
-    workType: 'remote',
+    workType: 'REMOTE',
     category: '',
     timeline: '',
     skills: [],
     attachment: '',
-    urgency: 'medium',
+    urgency: 'MEDIUM',
     minimumBudget: 0,
     maximumBudget: 0
   });
 
   const [currentSkill, setCurrentSkill] = useState('');
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const categories = ['IT Services', 'MEP', 'Other'];
   const timelines = ['2-4 weeks', '1-2 months', '2-4 months', '4+ months', 'Flexible'];
-  const urgencyOptions = ['low', 'medium', 'high'] as const;
+  const urgencyOptions = ['LOW', 'MEDIUM', 'HIGH'] as const;
+
+  const mutation = useMutation<AxiosResponse, AxiosError, any>({
+    mutationFn: addRequirement,
+    onSuccess: (response) => {
+      showSuccessToast("Requirement created");
+      console.log(response);
+    },
+    onError: (e: AxiosError) => {
+      if (e.response) {
+        console.log('Error response data:', e.response);
+        console.log('Error status:', e.response.status);
+      }
+    }
+  });
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({
@@ -84,27 +103,29 @@ const AddRequirement = ({ onCancel, onSuccess }: AddRequirementProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
 
     // Validate entire form
     const { isValid, errors } = validateRequirementForm(formData);
     if (isValid === true) {
-      console.log('Submitting requirement:', formData);
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      alert('Requirement posted successfully!');
+      const submittedData = {
+        ...formData,
+        userId: getUserIdFromToken(token)
+      }
+      console.log('Submitting requirement:', submittedData);
+      mutation.mutate(submittedData);
+
       setValidationErrors({});
-      setIsSubmitting(false);
       
       // Reset form and call success callback
       setFormData({
         title: '',
         description: '',
-        workType: 'remote',
+        workType: 'REMOTE',
         category: '',
         timeline: '',
         skills: [],
         attachment: '',
-        urgency: 'medium',
+        urgency: 'MEDIUM',
         minimumBudget: 0,
         maximumBudget: 0
       });
@@ -114,7 +135,6 @@ const AddRequirement = ({ onCancel, onSuccess }: AddRequirementProps) => {
       }
     } else {
       setValidationErrors(errors);
-      setIsSubmitting(false);
     }
   };
 
@@ -323,8 +343,8 @@ const AddRequirement = ({ onCancel, onSuccess }: AddRequirementProps) => {
                   onChange={(e) => handleInputChange('workType', e.target.value as any)}
                   className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                 >
-                  <option value="remote">Remote</option>
-                  <option value="onsite">On-site</option>
+                  <option value="REMOTE">Remote</option>
+                  <option value="ONSITE">On-site</option>
                 </select>
               </div>
 
@@ -410,10 +430,10 @@ const AddRequirement = ({ onCancel, onSuccess }: AddRequirementProps) => {
             </button>
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={mutation.isPending}
               className="px-6 py-2 sm:px-8 sm:py-3 bg-[var(--primary-color)] text-white rounded-lg hover:bg-[var(--primary-dark)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 order-1 sm:order-2"
             >
-              {isSubmitting ? (
+              {mutation.isPending ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   <span className="whitespace-nowrap">Posting Requirement...</span>

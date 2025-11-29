@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 
 export interface PaymentMethod {
   id: string;
-  type: 'card' | 'bank_transfer' | 'digital_wallet';
-  details: string;
+  type: 'eSewa' | 'Stripe';
+  accountName: string;
+  accountNumber: string;
   isDefault: boolean;
 }
 
@@ -17,15 +18,16 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
   onPaymentMethodsUpdate 
 }) => {
   const [showAddPayment, setShowAddPayment] = useState(false);
-  const [newPayment, setNewPayment] = useState({
-    type: 'card' as const,
-    details: '',
+  const [newPayment, setNewPayment] = useState<Omit<PaymentMethod, 'id'>>({
+    type: 'eSewa',
+    accountName: '',
+    accountNumber: '',
     isDefault: false
   });
 
   const handleAddPayment = (e: React.FormEvent) => {
     e.preventDefault();
-    if (newPayment.details.trim()) {
+    if (newPayment.accountName.trim() && newPayment.accountNumber.trim()) {
       const updatedMethods = newPayment.isDefault 
         ? paymentMethods.map(method => ({ ...method, isDefault: false }))
         : [...paymentMethods];
@@ -36,7 +38,12 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
       });
       
       onPaymentMethodsUpdate(updatedMethods);
-      setNewPayment({ type: 'card', details: '', isDefault: false });
+      setNewPayment({ 
+        type: 'eSewa', 
+        accountName: '', 
+        accountNumber: '', 
+        isDefault: false 
+      });
       setShowAddPayment(false);
     }
   };
@@ -52,15 +59,6 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
   const removePayment = (id: string) => {
     const updatedMethods = paymentMethods.filter(method => method.id !== id);
     onPaymentMethodsUpdate(updatedMethods);
-  };
-
-  const getPaymentIcon = (type: string) => {
-    switch (type) {
-      case 'card': return '💳';
-      case 'bank_transfer': return '🏦';
-      case 'digital_wallet': return '📱';
-      default: return '💰';
-    }
   };
 
   return (
@@ -84,22 +82,32 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
               <label className="block text-sm font-medium text-gray-700 mb-2">Type</label>
               <select
                 value={newPayment.type}
-                onChange={(e) => setNewPayment({...newPayment, type: e.target.value as any})}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                onChange={(e) => setNewPayment({...newPayment, type: e.target.value as 'eSewa' | 'Stripe'})}
+                className="w-full p-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
               >
-                <option value="card">Credit/Debit Card</option>
-                <option value="bank_transfer">Bank Transfer</option>
-                <option value="digital_wallet">Digital Wallet</option>
+                <option value="eSewa">eSewa</option>
+                <option value="Stripe">Stripe</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Details</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Account Name</label>
               <input
                 type="text"
-                value={newPayment.details}
-                onChange={(e) => setNewPayment({...newPayment, details: e.target.value})}
-                placeholder="Card number, account details, etc."
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                value={newPayment.accountName}
+                onChange={(e) => setNewPayment({...newPayment, accountName: e.target.value})}
+                placeholder="Account holder name"
+                className="w-full p-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Account Number</label>
+              <input
+                type="text"
+                value={newPayment.accountNumber}
+                onChange={(e) => setNewPayment({...newPayment, accountNumber: e.target.value})}
+                placeholder="Account number"
+                className="w-full p-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
                 required
               />
             </div>
@@ -109,7 +117,7 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
                 id="defaultPayment"
                 checked={newPayment.isDefault}
                 onChange={(e) => setNewPayment({...newPayment, isDefault: e.target.checked})}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                className="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded"
               />
               <label htmlFor="defaultPayment" className="ml-2 text-sm text-gray-700">
                 Set as default payment method
@@ -118,7 +126,7 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
             <div className="flex space-x-3">
               <button
                 type="submit"
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+                className="bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700 transition-colors text-sm font-medium"
               >
                 Add Payment Method
               </button>
@@ -163,9 +171,8 @@ const PaymentMethodCard: React.FC<{
 }> = ({ method, onSetDefault, onRemove }) => {
   const getPaymentIcon = (type: string) => {
     switch (type) {
-      case 'card': return '💳';
-      case 'bank_transfer': return '🏦';
-      case 'digital_wallet': return '📱';
+      case 'eSewa': return '📱';
+      case 'Stripe': return '💳';
       default: return '💰';
     }
   };
@@ -176,14 +183,17 @@ const PaymentMethodCard: React.FC<{
         <div className="flex items-center space-x-4">
           <span className="text-2xl">{getPaymentIcon(method.type)}</span>
           <div>
-            <p className="font-medium text-gray-900">{method.details}</p>
-            <p className="text-sm text-gray-500 capitalize">
-              {method.type.replace('_', ' ')}
+            <p className="font-medium text-gray-900">{method.accountName}</p>
+            <p className="text-sm text-gray-500">
+              {method.accountNumber}
               {method.isDefault && (
                 <span className="ml-2 bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
                   Default
                 </span>
               )}
+            </p>
+            <p className="text-sm text-gray-500 capitalize">
+              {method.type}
             </p>
           </div>
         </div>
@@ -191,7 +201,7 @@ const PaymentMethodCard: React.FC<{
           {!method.isDefault && (
             <button
               onClick={() => onSetDefault(method.id)}
-              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+              className="text-teal-600 hover:text-teal-800 text-sm font-medium"
             >
               Set Default
             </button>

@@ -420,7 +420,7 @@ const AddRequirement = ({ onCancel, onSuccess }: AddRequirementProps) => {
           </div>
           
           {/* Submit Button */}
-          <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6 sm:mt-8">
+          <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6 sm:mt-8 mb-4 mr-2">
             <button
               type="button"
               onClick={handleCancel}

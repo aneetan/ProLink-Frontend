@@ -20,6 +20,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ToastContainer } from 'react-toastify'
 import ProtectedRoute from './pages/auth/ProtectedRoutes'
 import AddRequirement from './pages/client/AddRequirement'
+import Profile from './pages/company/Profile'
 
 function App() {
    const queryClient = new QueryClient();
@@ -43,12 +44,13 @@ function App() {
                     <Route path='/otp' element={<OtpVerify/>} />
                     <Route path="*" element={<Navigate to="/" replace />} />
 
-                    <Route element={<ProtectedRoute requiredRole='COMPANY'/>}>
+                    {/* <Route element={<ProtectedRoute requiredRole='COMPANY'/>}> */}
                       <Route path='/company' element={<CompanyLayout/>}>
                         <Route path='' element={<CompanyDashboard/>} />
                         <Route path='setup' element={<CompanyProfileSetup/>}/>
+                        <Route path='profile' element={<Profile/>}/>
                       </Route>
-                    </Route>
+                    {/* </Route> */}
 
                     <Route element={<ProtectedRoute requiredRole='ADMIN'/>}>
                       <Route path='/admin' element={<AdminLayout/>}>

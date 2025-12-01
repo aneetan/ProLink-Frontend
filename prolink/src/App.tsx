@@ -44,7 +44,6 @@ function App() {
                     <Route path='/register' element={<Register/>} />
                     <Route path='/otp' element={<OtpVerify/>} />
                     <Route path="*" element={<Navigate to="/" replace />} />
-                    <Route path='/client/7/companies' element={<SimilarCompanies/>} />
 
 
                     {/* <Route element={<ProtectedRoute requiredRole='COMPANY'/>}> */}
@@ -61,13 +60,13 @@ function App() {
                       </Route>
                     </Route>
 
-                        <Route path='/requirement' element={<AddRequirement/>} />
-
+                        {/* <Route path='/requirement' element={<AddRequirement/>} /> */}
 
                     {/* <Route element={<ProtectedRoute requiredRole='CLIENT'/>}> */}
                       <Route path='/client' element={<ClientLayout/>}>
-                        <Route path='' element={<ClientDashboard/>} />
+                        <Route index element={<ClientDashboard/>} />
                         <Route path='create-requirement' element={<AddRequirement/>} />
+                        <Route path='7/companies' element={<SimilarCompanies/>} />
                       </Route>
                     {/* </Route> */}
                 </Routes>

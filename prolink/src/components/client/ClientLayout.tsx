@@ -1,7 +1,7 @@
 import { useState } from "react";
 import ClientHeader from "./ClientHeader";
-import Dashboard from "../../pages/client/Dashboard";
 import ClientSidebar from "./ClientSidebar";
+import { Outlet } from "react-router";
 
 const ClientLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -18,7 +18,7 @@ const ClientLayout = () => {
 
         {/* Main Content Area */}
         <main className="flex-1 overflow-auto">
-          <Dashboard />
+          <Outlet />
         </main>
       </div>
     </div>

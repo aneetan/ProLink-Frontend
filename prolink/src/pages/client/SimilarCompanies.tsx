@@ -1,6 +1,5 @@
 import React from 'react';
 import { useSimilarCompanies } from '../../hooks/useSimilarCompanies';
-import { useParams } from 'react-router';
 import CompanyCard from '../../components/cards/CompanyCards';
 
 // Define TypeScript interfaces
@@ -51,7 +50,7 @@ const SimilarCompanies: React.FC<SimilarCompaniesProps> = ({ topK = 5 }) => {
 
   if (!parsedRequirementId) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
+      <div className="min-h-screen py-8 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -69,7 +68,7 @@ const SimilarCompanies: React.FC<SimilarCompaniesProps> = ({ topK = 5 }) => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
+      <div className="min-h-screen  py-8 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="text-center">
             <div className="inline-flex items-center justify-center">
@@ -85,7 +84,7 @@ const SimilarCompanies: React.FC<SimilarCompaniesProps> = ({ topK = 5 }) => {
 
   if (isError) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
+      <div className="min-h-screen  py-8 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -110,17 +109,17 @@ const SimilarCompanies: React.FC<SimilarCompaniesProps> = ({ topK = 5 }) => {
   const { matches, totalMatches } = data as SimilarCompaniesData;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-teal-100 py-8 px-4">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-100 p-8">
+      <div className=" w-full mx-auto">
         {/* Header */}
         <div className="mb-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
-              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">
                 Similar Companies
               </h1>
               <p className="text-gray-600">
-                Companies that match your requirement #{parsedRequirementId}
+                Top (5) Companies that match your requirement
               </p>
             </div>
             <div className="flex items-center gap-4">

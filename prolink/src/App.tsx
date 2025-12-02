@@ -21,6 +21,7 @@ import { ToastContainer } from 'react-toastify'
 import ProtectedRoute from './pages/auth/ProtectedRoutes'
 import AddRequirement from './pages/client/AddRequirement'
 import Profile from './pages/company/Profile'
+import SimilarCompanies from './pages/client/SimilarCompanies'
 
 function App() {
    const queryClient = new QueryClient();
@@ -44,6 +45,7 @@ function App() {
                     <Route path='/otp' element={<OtpVerify/>} />
                     <Route path="*" element={<Navigate to="/" replace />} />
 
+
                     {/* <Route element={<ProtectedRoute requiredRole='COMPANY'/>}> */}
                       <Route path='/company' element={<CompanyLayout/>}>
                         <Route path='' element={<CompanyDashboard/>} />
@@ -58,13 +60,13 @@ function App() {
                       </Route>
                     </Route>
 
-                        <Route path='/requirement' element={<AddRequirement/>} />
-
+                        {/* <Route path='/requirement' element={<AddRequirement/>} /> */}
 
                     {/* <Route element={<ProtectedRoute requiredRole='CLIENT'/>}> */}
                       <Route path='/client' element={<ClientLayout/>}>
-                        <Route path='' element={<ClientDashboard/>} />
+                        <Route index element={<ClientDashboard/>} />
                         <Route path='create-requirement' element={<AddRequirement/>} />
+                        <Route path='7/companies' element={<SimilarCompanies/>} />
                       </Route>
                     {/* </Route> */}
                 </Routes>

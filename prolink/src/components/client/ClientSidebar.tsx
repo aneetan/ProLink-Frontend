@@ -9,7 +9,7 @@ const ClientSidebar:React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
   const menuItems = [
     { icon: FiHome, label: 'Dashboard', path: '/dashboard' },
     { icon: FiUsers, label: 'Requirements', path: '/requirement' },
-    { icon: FiBarChart2, label: 'Analytics', path: '/analytics' },
+    { icon: FiBarChart2, label: 'Analytics', path: '/client/7/companies' },
     { icon: FiFileText, label: 'Projects', path: '/projects' },
     { icon: FiCalendar, label: 'Calendar', path: '/calendar' },
     { icon: FiMail, label: 'Messages', path: '/messages' },

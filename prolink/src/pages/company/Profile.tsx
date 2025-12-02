@@ -1,6 +1,6 @@
 // components/CompanyProfileContainer.tsx
 import React, { useState } from 'react';
-import type { CompanyInfo, ServicePricing } from '../../types/company.types';
+import type { CompanyInfo, ServicePricing } from '../../types/company/company.types';
 import type { Project } from './profile/PastProjects';
 import type { PaymentMethod } from './profile/PaymentMethods';
 import CompanyProfile from './profile/CompanyProfile';

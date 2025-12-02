@@ -1,4 +1,4 @@
-import type { FormData as CompanyData} from "../types/company.types";
+import type { FormData as CompanyData} from "../types/company/company.types";
 
 export const createCompanyFormData = (data: CompanyData): FormData => {
   const formData = new FormData();

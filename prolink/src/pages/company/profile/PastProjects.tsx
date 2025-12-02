@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import AddProjectModal from '../../../components/modal/AddProjectModal';
 import ProjectCard from '../../../components/company/project/ProjectCard';
-import type { Project } from '../../../types/project.types';
+import type { Project } from '../../../types/company/project.types';
 
 interface PastProjectsProps {
   projects: Project[];

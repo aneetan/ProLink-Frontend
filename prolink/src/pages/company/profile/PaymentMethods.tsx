@@ -1,12 +1,5 @@
 import React, { useState } from 'react';
-
-export interface PaymentMethod {
-  id: string;
-  type: 'eSewa' | 'Stripe';
-  accountName: string;
-  accountNumber: string;
-  isDefault: boolean;
-}
+import type { PaymentMethod } from '../../../types/company/payment.type';
 
 interface PaymentMethodsProps {
   paymentMethods: PaymentMethod[];
@@ -19,7 +12,7 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
 }) => {
   const [showAddPayment, setShowAddPayment] = useState(false);
   const [newPayment, setNewPayment] = useState<Omit<PaymentMethod, 'id'>>({
-    type: 'eSewa',
+    type: 'ESEWA',
     accountName: '',
     accountNumber: '',
     isDefault: false
@@ -39,7 +32,7 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
       
       onPaymentMethodsUpdate(updatedMethods);
       setNewPayment({ 
-        type: 'eSewa', 
+        type: 'ESEWA', 
         accountName: '', 
         accountNumber: '', 
         isDefault: false 
@@ -82,11 +75,11 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
               <label className="block text-sm font-medium text-gray-700 mb-2">Type</label>
               <select
                 value={newPayment.type}
-                onChange={(e) => setNewPayment({...newPayment, type: e.target.value as 'eSewa' | 'Stripe'})}
+                onChange={(e) => setNewPayment({...newPayment, type: e.target.value as 'ESEWA' | 'STRIPE'})}
                 className="w-full p-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
               >
-                <option value="eSewa">eSewa</option>
-                <option value="Stripe">Stripe</option>
+                <option value="ESEWA">eSewa</option>
+                <option value="STRIPE">Stripe</option>
               </select>
             </div>
             <div>

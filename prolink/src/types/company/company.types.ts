@@ -21,18 +21,6 @@ export interface VerificationDocuments {
   ownerId: string;
 }
 
-export interface PastProject {
-  title: string;
-  description: string;
-  image: string;
-  year: string;
-}
-
-export interface PaymentMethod {
-  type: string;
-  details: string;
-}
-
 export interface FormData {
   companyInfo: CompanyInfo;
   servicePricing: ServicePricing;

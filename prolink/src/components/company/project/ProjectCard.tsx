@@ -1,4 +1,4 @@
-import type { Project } from "../../../types/project.types";
+import type { Project } from "../../../types/company/project.types";
 
 const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
   return (

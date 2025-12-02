@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent, type KeyboardEvent } from "react";
-import type { ServicePricing, StepProps } from "../../../types/company.types";
+import type { ServicePricing, StepProps } from "../../../types/company/company.types";
 import { validateField } from "../../../helpers/validateCompanyInfo";
 import { FaAngleLeft, FaArrowRight } from "react-icons/fa";
 

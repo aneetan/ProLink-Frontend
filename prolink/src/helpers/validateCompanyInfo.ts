@@ -1,4 +1,4 @@
-import type { CompanyInfo, ServicePricing } from "../types/company.types";
+import type { CompanyInfo, ServicePricing } from "../types/company/company.types";
 
 export const validateField = (field: keyof CompanyInfo | keyof Omit<ServicePricing, 'servicesOffered'>, value: string): string => {
    switch(field){

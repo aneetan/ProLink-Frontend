@@ -1,11 +1,10 @@
-// components/CompanyProfileContainer.tsx
 import React, { useState } from 'react';
 import type { CompanyInfo, ServicePricing } from '../../types/company/company.types';
-import type { Project } from './profile/PastProjects';
-import type { PaymentMethod } from './profile/PaymentMethods';
 import CompanyProfile from './profile/CompanyProfile';
 import PastProjects from './profile/PastProjects';
 import PaymentMethods from './profile/PaymentMethods';
+import type { Project } from '../../types/company/project.types';
+import type { PaymentMethod } from '../../types/company/payment.type';
 
 // Sample data
 const sampleCompanyInfo: CompanyInfo = {
@@ -30,34 +29,62 @@ const sampleServicePricing: ServicePricing = {
   avgDeliveryTime: "4-8 weeks"
 };
 
-const sampleProjects: Project[] = [
-  {
-    id: "1",
-    title: "E-commerce Platform",
-    description: "Built a scalable e-commerce platform with React and Node.js",
-    completionDate: "2024-01-15",
-    projectUrl: "https://example.com/project1"
-  },
-  {
-    id: "2",
-    title: "Mobile Banking App",
-    description: "Developed a secure mobile banking application for financial institution",
-    completionDate: "2023-11-20",
-    projectUrl: "https://example.com/project2"
-  }
-];
-
 const CompanyProfileContainer: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'profile' | 'projects' | 'payments'>('profile');
-  const [projects] = useState<Project[]>(sampleProjects);
+  const companyId = Number(localStorage.getItem("token")) || null
+  const [projects, setProjects] = useState<Project[]>([
+    {
+      id: "1",
+      title: "E-commerce Platform",
+      description: "Built a scalable e-commerce platform with React and Node.js",
+      completionDate: "2024-01-15",
+      projectUrl: "https://example.com/project1"
+    },
+    {
+      id: "2",
+      title: "Mobile Banking App",
+      description: "Developed a secure mobile banking application for financial institution",
+      completionDate: "2023-11-20",
+      projectUrl: "https://example.com/project2"
+    }
+  ]);
+  
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
     {
       id: "1",
-      type: "card",
-      details: "Visa ending in 4242",
+      type: "ESEWA",
+      accountName: "Anita Neupane",
+      accountNumber: "9845766733",
       isDefault: true
     }
   ]);
+
+  // Handle adding a new project
+  const handleProjectAdd = (projectData: Omit<Project, 'id'>) => {
+    // In a real app, this would be an API call
+    const newProject: Project = {
+      ...projectData,
+      companyId: companyId
+    };
+    
+    // Add the new project to the state
+    setProjects(prev => [newProject, ...prev]); // Add to beginning
+    console.log(projectData)
+    
+    // You would typically make an API call here:
+    // try {
+    //   const response = await api.post('/projects', projectData);
+    //   setProjects(prev => [response.data, ...prev]);
+    // } catch (error) {
+    //   console.error('Failed to add project:', error);
+    //   // Show error message to user
+    // }
+  };
+
+  // Handle payment methods update
+  const handlePaymentMethodsUpdate = (updatedMethods: PaymentMethod[]) => {
+    setPaymentMethods(updatedMethods);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -96,13 +123,16 @@ const CompanyProfileContainer: React.FC = () => {
             )}
             
             {activeTab === 'projects' && (
-              <PastProjects projects={projects} />
+              <PastProjects 
+                projects={projects} 
+                onProjectAdd={handleProjectAdd} 
+              />
             )}
             
             {activeTab === 'payments' && (
               <PaymentMethods 
                 paymentMethods={paymentMethods}
-                onPaymentMethodsUpdate={setPaymentMethods}
+                onPaymentMethodsUpdate={handlePaymentMethodsUpdate}
               />
             )}
           </div>

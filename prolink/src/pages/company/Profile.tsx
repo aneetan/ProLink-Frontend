@@ -3,8 +3,10 @@ import type { CompanyInfo, ServicePricing } from '../../types/company/company.ty
 import CompanyProfile from './profile/CompanyProfile';
 import PastProjects from './profile/PastProjects';
 import PaymentMethods from './profile/PaymentMethods';
-import type { PaymentMethod } from '../../types/company/payment.type';
 import { useProjectStore } from '../../store/useProjectStore';
+import { usePaymentMethodStore } from '../../store/usePaymentMethodStore';
+
+type TabId = 'profile' | 'projects' | 'payments';
 
 // Sample data
 const sampleCompanyInfo: CompanyInfo = {
@@ -33,18 +35,9 @@ const CompanyProfileContainer: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'profile' | 'projects' | 'payments'>('profile');
   const companyId = Number(localStorage.getItem("token")) || null;
   
-  // Use the project store
+  // Use the stores
   const { setProjects } = useProjectStore();
-  
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
-    {
-      id: "1",
-      type: "ESEWA",
-      accountName: "Anita Neupane",
-      accountNumber: "9845766733",
-      isDefault: true
-    }
-  ]);
+  const { setPaymentMethods } = usePaymentMethodStore();
 
   // Fetch projects on component mount
   useEffect(() => {
@@ -61,16 +54,25 @@ const CompanyProfileContainer: React.FC = () => {
       }
     };
 
+    // Fetch payment methods
+    const fetchPaymentMethods = async () => {
+      try {
+        // Replace with your actual API call
+        const response = await fetch(`/api/payment-methods?companyId=${companyId}`);
+        if (response.ok) {
+          const paymentMethodsData = await response.json();
+          setPaymentMethods(paymentMethodsData);
+        }
+      } catch (error) {
+        console.error('Failed to fetch payment methods:', error);
+      }
+    };
+
     if (companyId) {
       fetchProjects();
+      fetchPaymentMethods();
     }
-  }, [companyId, setProjects]);
-
-  // Handle payment methods update
-  const handlePaymentMethodsUpdate = (updatedMethods) => {
-    setPaymentMethods(updatedMethods);
-    console.log(updatedMethods);
-  };
+  }, [companyId, setProjects, setPaymentMethods]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -86,7 +88,7 @@ const CompanyProfileContainer: React.FC = () => {
               ].map(tab => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => setActiveTab(tab.id as TabId)} 
                   className={`py-4 px-6 text-center border-b-2 font-medium text-sm ${
                     activeTab === tab.id
                       ? 'border-[var(--primary-color)] text-[var(--primary-color)]'
@@ -113,10 +115,7 @@ const CompanyProfileContainer: React.FC = () => {
             )}
             
             {activeTab === 'payments' && (
-              <PaymentMethods 
-                paymentMethods={paymentMethods}
-                onPaymentMethodsUpdate={handlePaymentMethodsUpdate}
-              />
+              <PaymentMethods />
             )}
           </div>
         </div>

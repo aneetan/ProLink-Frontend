@@ -5,8 +5,7 @@ import { useProjectMutation, useProjects } from "../../../hooks/useProjectMutati
 import ProjectCard from "../../../components/company/project/ProjectCard";
 
 const PastProjects: React.FC = () => {
-  // Local UI state (NO Zustand)
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
 
   // React Query
@@ -15,11 +14,11 @@ const PastProjects: React.FC = () => {
   const { createProject, updateProject, deleteProject } = useProjectMutation();
 
   // Add
-  const handleAddProject = (projectData: Omit<Project, "id">) => {
-    console.log(projectData)
-    createProject.mutate(projectData, {
+  const handleAddProject = (projectData: Omit<Project, 'id'> | Project) => {
+    createProject.mutate(projectData as Omit<Project, 'id'>, {
       onSuccess: () => {
-        setShowAddModal(false);
+        setShowModal(false);
+        setEditingProject(null);
       },
     });
   };
@@ -27,22 +26,36 @@ const PastProjects: React.FC = () => {
   // Edit
   const handleEditProject = (project: Project) => {
     setEditingProject(project);
-    setShowAddModal(true); // open modal as edit mode
+    setShowModal(true);
   };
 
   // Update
-  const handleUpdateProject = (updates: Partial<Project>) => {
+  const handleUpdateProject = (updatedProject: Omit<Project, 'id'> | Project) => {
     if (!editingProject) return;
 
-    updateProject.mutate(
-      { id: editingProject.id!, updates },
-      {
-        onSuccess: () => {
-          setEditingProject(null);
-          setShowAddModal(false);
-        },
-      }
-    );
+    // Type guard to check if it's a full Project with id
+    if ('id' in updatedProject) {
+      updateProject.mutate(
+        { id: updatedProject.id!, updates: updatedProject },
+        {
+          onSuccess: () => {
+            setEditingProject(null);
+            setShowModal(false);
+          },
+        }
+      );
+    } else {
+      // Handle case where id might not be passed
+      updateProject.mutate(
+        { id: editingProject.id!, updates: updatedProject },
+        {
+          onSuccess: () => {
+            setEditingProject(null);
+            setShowModal(false);
+          },
+        }
+      );
+    }
   };
 
   // Delete
@@ -52,17 +65,24 @@ const PastProjects: React.FC = () => {
     }
   };
 
+  // Handle save based on mode
+  const handleSave = (project: Omit<Project, 'id'> | Project) => {
+    if (editingProject) {
+      handleUpdateProject(project);
+    } else {
+      handleAddProject(project);
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
-
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold text-gray-900">Past Projects</h2>
-
         <button
           onClick={() => {
-            setEditingProject(null); // reset editing
-            setShowAddModal(true);
+            setEditingProject(null);
+            setShowModal(true);
           }}
           className="bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white px-4 py-2 rounded-md"
         >
@@ -90,21 +110,16 @@ const PastProjects: React.FC = () => {
       )}
 
       {/* Modal */}
-      {showAddModal && (
+      {showModal && (
         <AddProjectModal
           onClose={() => {
-            setShowAddModal(false);
+            setShowModal(false);
             setEditingProject(null);
           }}
-          onSave={
-            editingProject
-              ? handleUpdateProject
-              : handleAddProject
-          }
-          project={editingProject || undefined}
-          loading={
-            createProject.isPending || updateProject.isPending
-          }
+          onSave={handleSave}
+          project={editingProject}
+          loading={editingProject ? updateProject.isPending : createProject.isPending}
+          isEdit={!!editingProject}
         />
       )}
     </div>

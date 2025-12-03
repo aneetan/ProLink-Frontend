@@ -1,25 +1,64 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Project } from "../../types/company/project.types";
 import { getUserIdFromToken } from "../../utils/jwt.utils";
 
 interface AddProjectModalProps {
   onClose: () => void;
-  onSave: (project: Omit<Project, 'id'>) => void;
+  onSave: (project: Omit<Project, 'id'> | Project) => void;
   loading?: boolean;
-  project?: Partial<Project>
+  project?: Project | null;
+  isEdit?: boolean;
 }
 
-const AddProjectModal: React.FC<AddProjectModalProps> = ({ onClose, onSave, loading = false }) => {
+const AddProjectModal: React.FC<AddProjectModalProps> = ({ 
+  onClose, 
+  onSave, 
+  loading = false, 
+  project = null,
+  isEdit = false 
+}) => {
   const [formData, setFormData] = useState<Omit<Project, 'id'>>({
     title: '',
     description: '',
     completionDate: '',
     projectUrl: '',
-    imageUrl: ''
+    imageUrl: '',
+    userId: null
   });
+  
   const token = localStorage.getItem("token") || null;
   const userId = getUserIdFromToken(token!);
   const [errors, setErrors] = useState<Partial<Record<keyof Omit<Project, 'id'>, string>>>({});
+
+  // Initialize form data when project prop changes or component mounts
+  useEffect(() => {
+    if (isEdit && project) {
+      setFormData({
+        ...project,
+        completionDate: formatDateForInput(project.completionDate),
+        userId: project.userId || null
+      });
+    } else {
+      // Reset form for add mode
+      setFormData({
+        title: '',
+        description: '',
+        completionDate: '',
+        projectUrl: '',
+        imageUrl: '',
+        userId: userId || null
+      });
+    }
+  }, [project, isEdit, userId]);
+
+  const formatDateForInput = (date: string | Date): string => {
+    try {
+      const d = new Date(date);
+      return d.toISOString().split('T')[0];
+    } catch {
+      return '';
+    }
+  };
 
   const validateForm = (): boolean => {
     const newErrors: Partial<Record<keyof Omit<Project, 'id'>, string>> = {};
@@ -61,6 +100,7 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ onClose, onSave, load
   };
 
   const isValidUrl = (url: string): boolean => {
+    if (!url.trim()) return true;
     try {
       new URL(url);
       return true;
@@ -71,13 +111,21 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ onClose, onSave, load
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()  && !loading) {
-      onSave({
+    if (validateForm() && !loading) {
+      const projectData = {
         ...formData,
-        projectUrl: formData.projectUrl || undefined,
-        imageUrl: formData.imageUrl || undefined,
-        userId: userId
-      });
+        projectUrl: formData.projectUrl || '',
+        imageUrl: formData.imageUrl || '',
+        userId: formData.userId || userId
+      };
+      
+      if (isEdit && project && 'id' in project) {
+        // For edit mode, include the id
+        onSave({ ...projectData, id: project.id });
+      } else {
+        // For add mode, exclude id
+        onSave(projectData);
+      }
     }
   };
 
@@ -89,14 +137,20 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ onClose, onSave, load
     }
   };
 
+  const handleCancel = () => {
+    onClose();
+  };
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Add New Project</h3>
+            <h3 className="text-lg font-semibold text-gray-900">
+              {isEdit ? 'Edit Project' : 'Add New Project'}
+            </h3>
             <button
-              onClick={onClose}
+              onClick={handleCancel}
               className="text-gray-400 hover:text-gray-600 transition-colors"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -158,7 +212,7 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ onClose, onSave, load
 
             <div>
               <label htmlFor="projectUrl" className="block text-sm font-medium text-gray-700 mb-1">
-                Project URL
+                Project URL *
               </label>
               <input
                 type="url"
@@ -175,7 +229,7 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ onClose, onSave, load
 
             <div>
               <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-1">
-                Image URL (if any)
+                Image URL (optional)
               </label>
               <input
                 type="url"
@@ -194,13 +248,16 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ onClose, onSave, load
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 bg-[var(--primary-color)] text-white px-4 py-2 rounded-md hover:bg-[var(--primary-dark)] transition-colors font-medium"
+                className="flex-1 bg-[var(--primary-color)] text-white px-4 py-2 rounded-md hover:bg-[var(--primary-dark)] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                 {loading ? 'Adding...' : 'Add Project'}
+                {loading 
+                  ? (isEdit ? 'Updating...' : 'Adding...') 
+                  : (isEdit ? 'Update Project' : 'Add Project')
+                }
               </button>
               <button
                 type="button"
-                onClick={onClose}
+                onClick={handleCancel}
                 className="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-colors font-medium"
               >
                 Cancel

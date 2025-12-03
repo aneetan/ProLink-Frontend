@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { CompanyInfo, ServicePricing } from '../../types/company/company.types';
 import CompanyProfile from './profile/CompanyProfile';
 import PastProjects from './profile/PastProjects';
 import PaymentMethods from './profile/PaymentMethods';
-import type { Project } from '../../types/company/project.types';
 import type { PaymentMethod } from '../../types/company/payment.type';
+import { useProjectStore } from '../../store/useProjectStore';
 
 // Sample data
 const sampleCompanyInfo: CompanyInfo = {
@@ -31,23 +31,10 @@ const sampleServicePricing: ServicePricing = {
 
 const CompanyProfileContainer: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'profile' | 'projects' | 'payments'>('profile');
-  const companyId = Number(localStorage.getItem("token")) || null
-  const [projects, setProjects] = useState<Project[]>([
-    {
-      id: "1",
-      title: "E-commerce Platform",
-      description: "Built a scalable e-commerce platform with React and Node.js",
-      completionDate: "2024-01-15",
-      projectUrl: "https://example.com/project1"
-    },
-    {
-      id: "2",
-      title: "Mobile Banking App",
-      description: "Developed a secure mobile banking application for financial institution",
-      completionDate: "2023-11-20",
-      projectUrl: "https://example.com/project2"
-    }
-  ]);
+  const companyId = Number(localStorage.getItem("token")) || null;
+  
+  // Use the project store
+  const { setProjects } = useProjectStore();
   
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
     {
@@ -59,31 +46,30 @@ const CompanyProfileContainer: React.FC = () => {
     }
   ]);
 
-  // Handle adding a new project
-  const handleProjectAdd = (projectData: Omit<Project, 'id'>) => {
-    // In a real app, this would be an API call
-    const newProject: Project = {
-      ...projectData,
-      companyId: companyId
+  // Fetch projects on component mount
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        // Replace with your actual API call
+        const response = await fetch(`/api/projects?companyId=${companyId}`);
+        if (response.ok) {
+          const projectsData = await response.json();
+          setProjects(projectsData);
+        }
+      } catch (error) {
+        console.error('Failed to fetch projects:', error);
+      }
     };
-    
-    // Add the new project to the state
-    setProjects(prev => [newProject, ...prev]); // Add to beginning
-    console.log(projectData)
-    
-    // You would typically make an API call here:
-    // try {
-    //   const response = await api.post('/projects', projectData);
-    //   setProjects(prev => [response.data, ...prev]);
-    // } catch (error) {
-    //   console.error('Failed to add project:', error);
-    //   // Show error message to user
-    // }
-  };
+
+    if (companyId) {
+      fetchProjects();
+    }
+  }, [companyId, setProjects]);
 
   // Handle payment methods update
-  const handlePaymentMethodsUpdate = (updatedMethods: PaymentMethod[]) => {
+  const handlePaymentMethodsUpdate = (updatedMethods) => {
     setPaymentMethods(updatedMethods);
+    console.log(updatedMethods);
   };
 
   return (
@@ -123,10 +109,7 @@ const CompanyProfileContainer: React.FC = () => {
             )}
             
             {activeTab === 'projects' && (
-              <PastProjects 
-                projects={projects} 
-                onProjectAdd={handleProjectAdd} 
-              />
+              <PastProjects />
             )}
             
             {activeTab === 'payments' && (

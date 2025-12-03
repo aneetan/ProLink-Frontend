@@ -4,9 +4,10 @@ import type { Project } from "../../types/company/project.types";
 interface AddProjectModalProps {
   onClose: () => void;
   onSave: (project: Omit<Project, 'id'>) => void;
+  loading?: boolean;
 }
 
-const AddProjectModal: React.FC<AddProjectModalProps> = ({ onClose, onSave }) => {
+const AddProjectModal: React.FC<AddProjectModalProps> = ({ onClose, onSave, loading = false }) => {
   const [formData, setFormData] = useState<Omit<Project, 'id'>>({
     title: '',
     description: '',
@@ -66,7 +67,7 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ onClose, onSave }) =>
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
+    if (validateForm()  && !loading) {
       onSave({
         ...formData,
         projectUrl: formData.projectUrl || undefined,
@@ -187,9 +188,10 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ onClose, onSave }) =>
             <div className="flex space-x-3 pt-4">
               <button
                 type="submit"
+                disabled={loading}
                 className="flex-1 bg-[var(--primary-color)] text-white px-4 py-2 rounded-md hover:bg-[var(--primary-dark)] transition-colors font-medium"
               >
-                Add Project
+                 {loading ? 'Adding...' : 'Add Project'}
               </button>
               <button
                 type="button"

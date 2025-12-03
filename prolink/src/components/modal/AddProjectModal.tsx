@@ -1,10 +1,12 @@
 import { useState } from "react";
 import type { Project } from "../../types/company/project.types";
+import { getUserIdFromToken } from "../../utils/jwt.utils";
 
 interface AddProjectModalProps {
   onClose: () => void;
   onSave: (project: Omit<Project, 'id'>) => void;
   loading?: boolean;
+  project?: Partial<Project>
 }
 
 const AddProjectModal: React.FC<AddProjectModalProps> = ({ onClose, onSave, loading = false }) => {
@@ -15,6 +17,8 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ onClose, onSave, load
     projectUrl: '',
     imageUrl: ''
   });
+  const token = localStorage.getItem("token") || null;
+  const userId = getUserIdFromToken(token!);
   const [errors, setErrors] = useState<Partial<Record<keyof Omit<Project, 'id'>, string>>>({});
 
   const validateForm = (): boolean => {
@@ -71,7 +75,8 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ onClose, onSave, load
       onSave({
         ...formData,
         projectUrl: formData.projectUrl || undefined,
-        imageUrl: formData.imageUrl || undefined
+        imageUrl: formData.imageUrl || undefined,
+        userId: userId
       });
     }
   };

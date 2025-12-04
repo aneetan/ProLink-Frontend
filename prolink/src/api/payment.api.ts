@@ -21,7 +21,7 @@ export const paymentService = {
   // Add a new project
   addPayment: async (data: Omit<PaymentMethodUnion, "id">): Promise<{ message: string; body: PaymentMethodUnion }> => {
     try {
-       const response = await api.post("/payment-methods", data);
+       const response = await api.post("/company/add-payment", data);
       return response.data;
     } catch (error) {
       console.error("Error adding payment:", error);
@@ -30,7 +30,7 @@ export const paymentService = {
   },
 
   // Update a project
-   updatePaymentMethod: async (id: string, updates: Partial<PaymentMethodUnion>): Promise<PaymentMethodUnion> => {
+   updatePaymentMethod: async (id: number, updates: Partial<PaymentMethodUnion>): Promise<PaymentMethodUnion> => {
     const response = await api.put(`/payment-methods/${id}`, updates);
     return response.data;
   },

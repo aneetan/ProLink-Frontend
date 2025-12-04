@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import ServicePricingStep from './ServicePricingStep';
 import CompanyInfoStep from './CompanyInfoStep';
-import type { FormData } from '../../../types/company.types';
+import type { FormData } from '../../../types/company/company.types';
 import UploadDocuments from './UploadDocuments';
 
 interface StepWiseProps {

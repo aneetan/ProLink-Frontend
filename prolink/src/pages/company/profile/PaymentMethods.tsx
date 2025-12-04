@@ -1,219 +1,199 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import AddPaymentModal, { type PaymentMethodUnion } from "../../../components/modal/AddPaymentModal";
+import { usePaymentMethods, usePaymentMethodMutations } from "../../../hooks/usePaymentMethodMutation";
 
-export interface PaymentMethod {
-  id: string;
-  type: 'eSewa' | 'Stripe';
-  accountName: string;
-  accountNumber: string;
-  isDefault: boolean;
-}
+const PaymentMethods: React.FC = () => {
+  const [showModal, setShowModal] = useState(false);
+  const [editingPayment, setEditingPayment] = useState<PaymentMethodUnion | null>(null);
 
-interface PaymentMethodsProps {
-  paymentMethods: PaymentMethod[];
-  onPaymentMethodsUpdate: (methods: PaymentMethod[]) => void;
-}
+  // React Query hooks
+  const { data, isLoading, error } = usePaymentMethods();
+  const paymentMethods = data?.body || [];
+  
+  const { createPaymentMethod, updatePaymentMethod, deletePaymentMethod } = usePaymentMethodMutations();
 
-const PaymentMethods: React.FC<PaymentMethodsProps> = ({ 
-  paymentMethods, 
-  onPaymentMethodsUpdate 
-}) => {
-  const [showAddPayment, setShowAddPayment] = useState(false);
-  const [newPayment, setNewPayment] = useState<Omit<PaymentMethod, 'id'>>({
-    type: 'eSewa',
-    accountName: '',
-    accountNumber: '',
-    isDefault: false
-  });
+  // Check existing types for validation
+  const existingEsewa = paymentMethods.some(method => method.type === 'ESEWA');
+  const existingStripe = paymentMethods.some(method => method.type === 'STRIPE');
 
-  const handleAddPayment = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newPayment.accountName.trim() && newPayment.accountNumber.trim()) {
-      const updatedMethods = newPayment.isDefault 
-        ? paymentMethods.map(method => ({ ...method, isDefault: false }))
-        : [...paymentMethods];
-      
-      updatedMethods.push({
-        id: Date.now().toString(),
-        ...newPayment
-      });
-      
-      onPaymentMethodsUpdate(updatedMethods);
-      setNewPayment({ 
-        type: 'eSewa', 
-        accountName: '', 
-        accountNumber: '', 
-        isDefault: false 
-      });
-      setShowAddPayment(false);
+  // Handle add payment method
+  const handleAddPayment = (methodData: Omit<PaymentMethodUnion, "id"> | PaymentMethodUnion) => {
+    createPaymentMethod.mutate(methodData as Omit<PaymentMethodUnion, "id">, {
+      onSuccess: () => {
+        setShowModal(false);
+      },
+    });
+  };
+
+  // Handle edit payment method
+  const handleEditPayment = (payment: PaymentMethodUnion) => {
+    setEditingPayment(payment);
+    setShowModal(true);
+  };
+
+  // Handle update payment method
+  const handleUpdatePayment = (updatedPayment: Omit<PaymentMethodUnion, "id"> | PaymentMethodUnion) => {
+    if (!editingPayment) return;
+
+    updatePaymentMethod.mutate(
+      { id: editingPayment.id, updates: updatedPayment },
+      {
+        onSuccess: () => {
+          setEditingPayment(null);
+          setShowModal(false);
+        },
+      }
+    );
+  };
+
+  // Handle delete payment method
+  const handleDeletePayment = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this payment method?")) {
+      deletePaymentMethod.mutate(id);
     }
   };
 
-  const setDefaultPayment = (id: string) => {
-    const updatedMethods = paymentMethods.map(method => ({
-      ...method,
-      isDefault: method.id === id
-    }));
-    onPaymentMethodsUpdate(updatedMethods);
+  // Handle save based on mode
+  const handleSave = (payment: Omit<PaymentMethodUnion, "id"> | PaymentMethodUnion) => {
+    if (editingPayment) {
+      handleUpdatePayment(payment);
+    } else {
+      handleAddPayment(payment);
+    }
   };
 
-  const removePayment = (id: string) => {
-    const updatedMethods = paymentMethods.filter(method => method.id !== id);
-    onPaymentMethodsUpdate(updatedMethods);
+  // Get payment icon
+  const getPaymentIcon = (type: string) => {
+    switch (type) {
+      case "ESEWA":
+        return "📱";
+      case "STRIPE":
+        return "💳";
+      default:
+        return "💰";
+    }
+  };
+
+  // Get display text for payment method
+  const getPaymentDisplayText = (method: PaymentMethodUnion) => {
+    if (method.type === "ESEWA") {
+      return `${method.accountName} • ${method.phoneNumber}`;
+    } else if (method.type === "STRIPE") {
+      return method.businessName || "Stripe Account";
+    }
+    return "Unknown Payment Method";
   };
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
+      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold text-gray-900">Payment Methods</h2>
         <button
-          onClick={() => setShowAddPayment(true)}
-          className="bg-[var(--primary-color)] text-white px-4 py-2 rounded-md hover:bg-[var(--primary-dark)] transition-colors text-sm font-medium"
+          onClick={() => setShowModal(true)}
+          className="bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] text-white px-4 py-2 rounded-md disabled:opacity-50"
+          disabled={isLoading || createPaymentMethod.isPending}
         >
-          Add Payment Method
+          + Add Payment Method
         </button>
       </div>
 
-      {/* Add Payment Form */}
-      {showAddPayment && (
-        <div className="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Add New Payment Method</h3>
-          <form onSubmit={handleAddPayment} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Type</label>
-              <select
-                value={newPayment.type}
-                onChange={(e) => setNewPayment({...newPayment, type: e.target.value as 'eSewa' | 'Stripe'})}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
-              >
-                <option value="eSewa">eSewa</option>
-                <option value="Stripe">Stripe</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Account Name</label>
-              <input
-                type="text"
-                value={newPayment.accountName}
-                onChange={(e) => setNewPayment({...newPayment, accountName: e.target.value})}
-                placeholder="Account holder name"
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Account Number</label>
-              <input
-                type="text"
-                value={newPayment.accountNumber}
-                onChange={(e) => setNewPayment({...newPayment, accountNumber: e.target.value})}
-                placeholder="Account number"
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
-                required
-              />
-            </div>
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="defaultPayment"
-                checked={newPayment.isDefault}
-                onChange={(e) => setNewPayment({...newPayment, isDefault: e.target.checked})}
-                className="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded"
-              />
-              <label htmlFor="defaultPayment" className="ml-2 text-sm text-gray-700">
-                Set as default payment method
-              </label>
-            </div>
-            <div className="flex space-x-3">
-              <button
-                type="submit"
-                className="bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700 transition-colors text-sm font-medium"
-              >
-                Add Payment Method
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowAddPayment(false)}
-                className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-colors text-sm font-medium"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
+      {/* Error Display */}
+      {error && (
+        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          Failed to load payment methods
         </div>
       )}
 
       {/* Payment Methods List */}
       <div className="space-y-4">
-        {paymentMethods.length === 0 ? (
+        {isLoading && paymentMethods.length === 0 ? (
+          <div className="text-center py-8">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+            <p className="mt-2 text-gray-500">Loading payment methods...</p>
+          </div>
+        ) : paymentMethods.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-gray-500">No payment methods added</p>
+            <p className="text-sm text-gray-400 mt-1">
+              Add your first payment method to start accepting payments
+            </p>
           </div>
         ) : (
-          paymentMethods.map(method => (
-            <PaymentMethodCard 
-              key={method.id} 
-              method={method} 
-              onSetDefault={setDefaultPayment}
-              onRemove={removePayment}
-            />
+          paymentMethods.map((method) => (
+            <div
+              key={method.id}
+              className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <span className="text-2xl">{getPaymentIcon(method.type)}</span>
+                  <div>
+                    <p className="font-medium text-gray-900">
+                      {method.type === "ESEWA"
+                        ? method.accountName
+                        : method.businessName || "Stripe Account"}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {getPaymentDisplayText(method)}
+                      {method.isDefault && (
+                        <span className="ml-2 bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                          Default
+                        </span>
+                      )}
+                    </p>
+                    <p className="text-xs text-gray-400 capitalize">
+                      {method.type.toLowerCase()}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex space-x-4">
+                  <button
+                    onClick={() => handleEditPayment(method)}
+                    className="text-blue-600 hover:text-blue-800 text-sm font-medium disabled:opacity-50"
+                    disabled={
+                      updatePaymentMethod.isPending ||
+                      deletePaymentMethod.isPending
+                    }
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeletePayment(method.id)}
+                    className="text-red-600 hover:text-red-800 text-sm font-medium disabled:opacity-50"
+                    disabled={
+                      updatePaymentMethod.isPending ||
+                      deletePaymentMethod.isPending
+                    }
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </div>
           ))
         )}
       </div>
-    </div>
-  );
-};
 
-// Payment Method Card Sub-component
-const PaymentMethodCard: React.FC<{
-  method: PaymentMethod;
-  onSetDefault: (id: string) => void;
-  onRemove: (id: string) => void;
-}> = ({ method, onSetDefault, onRemove }) => {
-  const getPaymentIcon = (type: string) => {
-    switch (type) {
-      case 'eSewa': return '📱';
-      case 'Stripe': return '💳';
-      default: return '💰';
-    }
-  };
-
-  return (
-    <div className="border border-gray-200 rounded-lg p-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <span className="text-2xl">{getPaymentIcon(method.type)}</span>
-          <div>
-            <p className="font-medium text-gray-900">{method.accountName}</p>
-            <p className="text-sm text-gray-500">
-              {method.accountNumber}
-              {method.isDefault && (
-                <span className="ml-2 bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
-                  Default
-                </span>
-              )}
-            </p>
-            <p className="text-sm text-gray-500 capitalize">
-              {method.type}
-            </p>
-          </div>
-        </div>
-        <div className="flex space-x-2">
-          {!method.isDefault && (
-            <button
-              onClick={() => onSetDefault(method.id)}
-              className="text-teal-600 hover:text-teal-800 text-sm font-medium"
-            >
-              Set Default
-            </button>
-          )}
-          <button
-            onClick={() => onRemove(method.id)}
-            className="text-red-600 hover:text-red-800 text-sm font-medium"
-          >
-            Remove
-          </button>
-        </div>
-      </div>
+      {/* Add/Edit Payment Modal */}
+      {(showModal || editingPayment) && (
+        <AddPaymentModal
+          onClose={() => {
+            setShowModal(false);
+            setEditingPayment(null);
+          }}
+          onSave={handleSave}
+          payment={editingPayment}
+          loading={
+            editingPayment
+              ? updatePaymentMethod.isPending
+              : createPaymentMethod.isPending
+          }
+          isEdit={!!editingPayment}
+          existingEsewa={existingEsewa && !editingPayment?.id}
+          existingStripe={existingStripe && !editingPayment?.id}
+        />
+      )}
     </div>
   );
 };

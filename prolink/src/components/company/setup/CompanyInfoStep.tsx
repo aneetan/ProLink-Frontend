@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import type { CompanyInfo, StepProps } from "../../../types/company.types";
+import type { CompanyInfo, StepProps } from "../../../types/company/company.types";
 import { validateField } from "../../../helpers/validateCompanyInfo";
 import { FaArrowRight } from "react-icons/fa";
 

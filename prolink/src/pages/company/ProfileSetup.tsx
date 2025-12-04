@@ -1,4 +1,4 @@
-import type { CompanyInfo, ServicePricing, VerificationDocuments } from '../../types/company.types';
+import type { CompanyInfo, ServicePricing, VerificationDocuments } from '../../types/company/company.types';
 import StepWiseForm from '../../components/company/setup/StepWiseForm';
 import { getUserIdFromToken } from '../../utils/jwt.utils';
 import { useMutation } from '@tanstack/react-query';

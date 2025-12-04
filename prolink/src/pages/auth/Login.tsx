@@ -45,10 +45,10 @@ const Login: React.FC = () => {
           else if(role === 'ADMIN') navigate('/admin');
       },
       onError: (err) => {
+          showErrorToast("Login Failed")
           if(err.response){
               console.log("Error status", err.response?.status);
               console.log("Error message", err.response?.data);
-              showErrorToast("Login Failed")
           }
       }
   });

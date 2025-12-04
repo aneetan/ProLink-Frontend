@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { StepProps, VerificationDocuments } from '../../../types/company.types';
+import type { StepProps, VerificationDocuments } from '../../../types/company/company.types';
 import { uploadToCloudinary } from '../../../utils/cloudinary.utils';
 
 interface Document {

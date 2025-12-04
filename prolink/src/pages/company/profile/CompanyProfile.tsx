@@ -1,5 +1,5 @@
 import React from 'react';
-import type { CompanyInfo, ServicePricing } from '../../../types/company.types';
+import type { CompanyInfo, ServicePricing } from '../../../types/company/company.types';
 
 interface CompanyProfileProps {
   companyInfo: CompanyInfo;

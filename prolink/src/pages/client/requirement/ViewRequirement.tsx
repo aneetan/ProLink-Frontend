@@ -2,8 +2,10 @@
 import React from 'react';
 import RequirementCard from '../../../components/cards/RequirementCard';
 import NewRequirement from '../../../components/client/NewRequirement';
+import { useNavigate } from 'react-router';
 
 const ViewRequirement: React.FC = () => {
+  const navigate = useNavigate();
   const requirement = {
     title: 'Full-Stack Web Application Development',
     description: 'We need a comprehensive web application with React frontend and Node.js backend.',
@@ -43,11 +45,10 @@ const ViewRequirement: React.FC = () => {
               quotesCount={4}
               onEdit={handleEdit}
               onDelete={handleDelete}
-              onViewQuotes={() => window.location.href = '/quotes/123'}
+              onViewQuotes={() => navigate("/client/view-quotes") }
               requirementId="123"
           />
           
-          {/* You can add more cards or related components here */}
         </div>
       </div>
     </div>

@@ -45,7 +45,7 @@ const ViewRequirement: React.FC = () => {
               quotesCount={4}
               onEdit={handleEdit}
               onDelete={handleDelete}
-              onViewQuotes={() => navigate("/client/view-quotes") }
+              onViewQuotes={() => navigate("/client/requirement/quotes") }
               requirementId="123"
           />
           

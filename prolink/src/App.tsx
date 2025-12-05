@@ -62,14 +62,14 @@ function App() {
                       </Route>
                     </Route>
 
-                        {/* <Route path='/requirement' element={<AddRequirement/>} /> */}
 
                     {/* <Route element={<ProtectedRoute requiredRole='CLIENT'/>}> */}
                       <Route path='/client' element={<ClientLayout/>}>
-                        <Route index element={<ClientDashboard/>} />
-                        <Route path='create-requirement' element={<AddRequirement/>} />
-                        <Route path='view-requirement' element={<ViewRequirement/>} />
-                        <Route path='view-quotes' element={<QuotesPage/>} />
+                        <Route path='dashboard' element={<ClientDashboard/>} />
+                        <Route path='requirement'>
+                          <Route path='view' element={<ViewRequirement/>} />
+                          <Route path='quotes' element={<QuotesPage/>} />
+                         </Route>
                         <Route path='7/companies' element={<SimilarCompanies/>} />
                       </Route>
                     {/* </Route> */}

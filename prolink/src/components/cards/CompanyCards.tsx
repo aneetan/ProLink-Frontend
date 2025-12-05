@@ -1,17 +1,28 @@
 import { useState } from "react";
 import type { CompanySimilarity } from "../../pages/client/SimilarCompanies";
 import { FcBiotech, FcCurrencyExchange } from "react-icons/fc";
+import { useNavigate } from "react-router";
 
 interface CompanyCardProps {
   company: CompanySimilarity;
-  onContact?: (companyId: string) => void;
-  onViewProfile?: (companyId: string) => void;
+  onViewProfile?: (companyId: number) => void;
 }
 
-const CompanyCard: React.FC<CompanyCardProps> = ({ company, onContact, onViewProfile }) => {
+const CompanyCard: React.FC<CompanyCardProps> = ({ company, onViewProfile }) => {
   const { metadata, score } = company;
-    const [expandedDesc, setExpandedDesc] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const [expandedDesc, setExpandedDesc] = useState<string | null>(null);
+  const [isRequestBid, setIsRequestBid] = useState(false);
   const matchPercentage = (score * 100).toFixed(0);
+
+  const handleRequestBid = (companyId: number) => {
+    console.log(companyId)
+    setIsRequestBid(true);
+  }
+
+  const handleViewProfile = (companyId: number) => {
+    navigate('/client/requirement/profile')
+  }
 
   return (
     <div className="group bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200 overflow-hidden h-full flex flex-col">
@@ -111,18 +122,37 @@ const CompanyCard: React.FC<CompanyCardProps> = ({ company, onContact, onViewPro
       <div className="px-5 pb-5 pt-4 border-t border-gray-100 bg-gray-50">
         <div className="flex gap-2">
           <button
-            onClick={() => onContact?.(metadata.id)}
+            onClick={() => handleViewProfile(metadata.id)}
             className="flex-1 bg-[var(--primary-light)] hover:bg-[var(--primary-color)] text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-200 text-sm"
           >
             View Profile
           </button>
-          <button
-            onClick={() => onViewProfile?.(metadata.id)}
-            className="flex-1 bg-white hover:bg-gray-50 text-gray-800 font-medium py-2.5 px-4 rounded-lg border border-gray-300
-            pointer hover:border-gray-400 transition-colors duration-200 text-sm"
-          >
-            Request Bid
-          </button>
+           
+           {isRequestBid ? (
+            <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-lg border border-emerald-200">
+              <svg 
+                className="w-5 h-5" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M5 13l4 4L19 7" 
+                />
+              </svg>
+              <span className="font-medium">Bid Requested</span>
+            </div>
+          ) : (
+            <button 
+              onClick={() => handleRequestBid(metadata.id)}
+              className="flex-1 border-1 border-[var(--primary-color)] hover:bg-gray-100 text-[var(--primary-color)] font-medium py-2.5 px-4 rounded-lg transition-colors duration-200 text-sm"
+            >
+              Request Bid
+            </button>
+          )}
         </div>
       </div>
     </div>

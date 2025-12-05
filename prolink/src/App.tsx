@@ -23,6 +23,7 @@ import Profile from './pages/company/Profile'
 import SimilarCompanies from './pages/client/SimilarCompanies'
 import ViewRequirement from './pages/client/requirement/ViewRequirement'
 import QuotesPage from './pages/client/quotes/QuotesPage'
+import CompanyProfileContainer from './pages/company/Profile'
 
 function App() {
    const queryClient = new QueryClient();
@@ -68,6 +69,7 @@ function App() {
                         <Route path='requirement'>
                           <Route path='view' element={<ViewRequirement/>} />
                           <Route path='quotes' element={<QuotesPage/>} />
+                          <Route path='profile' element={<CompanyProfileContainer/>} />
                          </Route>
                         <Route path='7/companies' element={<SimilarCompanies/>} />
                       </Route>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSimilarCompanies } from '../../hooks/useSimilarCompanies';
 import CompanyCard from '../../components/cards/CompanyCards';
 
@@ -16,7 +16,7 @@ interface CompanyMetadata {
 }
 
 export interface CompanySimilarity {
-  id: string;
+  id: number;
   score: number;
   text: string;
   metadata: CompanyMetadata;
@@ -167,7 +167,7 @@ const SimilarCompanies: React.FC<SimilarCompaniesProps> = ({ topK = 5 }) => {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
             {matches.map((company) => (
-              <CompanyCard key={company.id} company={company} />
+              <CompanyCard key={company.id} company={company}/>
             ))}
           </div>
         )}

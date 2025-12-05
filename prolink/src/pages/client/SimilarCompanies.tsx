@@ -36,7 +36,7 @@ interface SimilarCompaniesProps {
 const SimilarCompanies: React.FC<SimilarCompaniesProps> = ({ topK = 5 }) => {
   // Get requirementId from URL params
 //   const { requirementId } = useParams<{ requirementId: string }>();
-  const requirementId  = "7";
+  const requirementId  = "1";
   const parsedRequirementId = requirementId ? parseInt(requirementId) : null;
 
   const { 
@@ -96,7 +96,7 @@ const SimilarCompanies: React.FC<SimilarCompaniesProps> = ({ topK = 5 }) => {
             <p className="text-gray-600 mb-6">{error?.message || 'An error occurred while loading companies'}</p>
             <button 
               onClick={() => refetch()} 
-              className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 transform hover:scale-105"
+              className="bg-[var(--primary-light)] hover:bg-[var(--primary-color)] text-white font-semibold py-3 px-6 rounded-lg transition duration-200 transform hover:scale-105"
             >
               Try Again
             </button>

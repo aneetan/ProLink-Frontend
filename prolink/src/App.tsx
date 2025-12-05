@@ -22,7 +22,6 @@ import ProtectedRoute from './pages/auth/ProtectedRoutes'
 import Profile from './pages/company/Profile'
 import SimilarCompanies from './pages/client/SimilarCompanies'
 import ViewRequirement from './pages/client/requirement/ViewRequirement'
-import AddRequirement from './pages/client/requirement/AddRequirement'
 import QuotesPage from './pages/client/quotes/QuotesPage'
 
 function App() {

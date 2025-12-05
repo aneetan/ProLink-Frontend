@@ -1,4 +1,3 @@
-// Example usage component: RequirementCardDemo.tsx
 import React from 'react';
 import RequirementCard from '../../../components/cards/RequirementCard';
 import NewRequirement from '../../../components/client/NewRequirement';

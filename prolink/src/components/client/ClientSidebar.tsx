@@ -8,7 +8,7 @@ interface SidebarProps {
 const ClientSidebar:React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
   const menuItems = [
     { icon: FiHome, label: 'Dashboard', path: '/dashboard' },
-    { icon: FiUsers, label: 'Requirements', path: '/requirement' },
+    { icon: FiUsers, label: 'Requirements', path: '/client/view-requirement' },
     { icon: FiBarChart2, label: 'Analytics', path: '/client/7/companies' },
     { icon: FiFileText, label: 'Projects', path: '/projects' },
     { icon: FiCalendar, label: 'Calendar', path: '/calendar' },
@@ -53,7 +53,7 @@ const ClientSidebar:React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
         <nav className="p-4 space-y-2">
           {menuItems.map((item, index) => {
             const Icon = item.icon;
-            const isActive = item.path === '/dashboard'; // Static active state for demo
+            const isActive = item.path === '/dashboard'; 
 
             return (
               <a

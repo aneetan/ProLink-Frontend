@@ -17,8 +17,8 @@ import {
   ChevronRight
 } from 'lucide-react';
 import type { RequirementFormData } from '../../types/client/requirement.types';
-import type { BidFormData } from '../modal/SendBidForm';
 import BidModal from '../modal/SendBidForm';
+import type { BidFormData } from '../../types/company/bidRequest.types';
 
 export interface Quote {
   id: string;
@@ -31,7 +31,7 @@ export interface Quote {
 }
 
 interface RequirementCardProps {
-  requirement: RequirementFormData;
+  requirement: RequirementFormData[];
   quotesCount?: number;
   onEdit?: () => void;
   onDelete?: () => void;
@@ -108,6 +108,9 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
   };
 
   return (
+    <>
+      {requirement.map((requirement) => (
+        <>
     <div className={`bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 ${className}`}>
       {/* Card Header with Gradient */}
       <div className="relative p-6 border-b border-gray-100">        
@@ -299,7 +302,7 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
         </div>
       </div>
 
-       <BidModal
+      <BidModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleSubmitBid}
@@ -307,6 +310,9 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
         itemName="Professional Website Design"
       />
     </div>
+      </>
+    ))}
+    </>
   );
 };
 

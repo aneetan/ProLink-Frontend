@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router';
 
 const BidRequestPage: React.FC = () => {
   const navigate = useNavigate();
-  const requirement = {
+  const requirement = [
+    {
     title: 'Full-Stack Web Application Development',
     description: 'We need a comprehensive web application with React frontend and Node.js backend.',
     workType: 'REMOTE' as const,
@@ -16,7 +17,21 @@ const BidRequestPage: React.FC = () => {
     attachment: 'https://example.com/project-brief.pdf',
     urgency: 'HIGH' as const,
     userId: 12345
-  };
+  },
+  {
+    title: 'Full-Stack Web Application Development',
+    description: 'We need a comprehensive web application with React frontend and Node.js backend.',
+    workType: 'REMOTE' as const,
+    minimumBudget: 15000,
+    maximumBudget: 25000,
+    category: 'Web Development',
+    timeline: '3-4 months',
+    skills: ['React', 'TypeScript', 'Node.js', 'MongoDB'],
+    attachment: 'https://example.com/project-brief.pdf',
+    urgency: 'HIGH' as const,
+    userId: 12345
+  },
+];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-4 md:p-8">

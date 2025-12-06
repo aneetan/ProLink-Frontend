@@ -6,6 +6,7 @@ import { notificationService } from "../../api/notifications/notification.api";
 import { useMutation } from "@tanstack/react-query";
 import { getUserFromToken } from "../../utils/jwt.utils";
 import { showSuccessToast } from "../../utils/toast.utils";
+import { requestBidService } from "../../api/bid.api";
 
 interface CompanyCardProps {
   company: CompanySimilarity;
@@ -22,7 +23,7 @@ const CompanyCard: React.FC<CompanyCardProps> = ({ company }) => {
   const user = getUserFromToken(token);
 
   const sendQuoteRequestMutation = useMutation({
-    mutationFn: notificationService.quoteRequest,
+    mutationFn: requestBidService.requestBidWithNotifications,
     onSuccess: () => {
       console.log("Quote request notification sent!");
     },
@@ -33,9 +34,10 @@ const CompanyCard: React.FC<CompanyCardProps> = ({ company }) => {
 
   const handleRequestBid = (companyId: number) => {
     const formData = {
-      userId: companyId,
+      userId: user.id,
       userName: user.name,
-      requirementId: 1
+      requirementId: 1,
+      companyId: companyId
     }
     sendQuoteRequestMutation.mutate(formData);
     setIsRequestBid(true);

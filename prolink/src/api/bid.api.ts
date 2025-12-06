@@ -1,8 +1,7 @@
 import type { AxiosResponse } from "axios";
-import { api } from "../../lib/api";
+import { api } from "../lib/api";
 
-// Project API functions
-export const notificationService = {
+export const requestBidService = {
   // Get all notification for user
   getNotificationForUser: async (): Promise<AxiosResponse> => {
     try {
@@ -15,9 +14,9 @@ export const notificationService = {
   },
 
   // send new notification about quote request
-  quoteRequest: async (data: {userId: number, userName: string, requirementId: number}): Promise<AxiosResponse> => {
+  requestBidWithNotifications: async (data: {userId: number, userName: string, requirementId: number, companyId: number}): Promise<AxiosResponse> => {
       try {
-         const response = await api.post("/notification/send-quote-request", data);
+         const response = await api.post("/client/request-bid", data);
          return response.data;
       } catch (error) {
          console.error("Error sending quote request notification:", error);

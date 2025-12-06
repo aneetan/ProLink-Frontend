@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowLeft, DollarSign, Calendar, CheckCircle, XCircle, Clock, MessageSquare, Download, Filter, Search, ChevronDown, Award, MessageCircle } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router';
 import type { Quote } from '../../../components/cards/RequirementCard';
+import type { BidFormData } from '../../../components/modal/SendBidForm';
 
 // Mock data for quotes
 const mockQuotes: Quote[] = [

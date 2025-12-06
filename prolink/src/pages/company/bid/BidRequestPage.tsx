@@ -1,6 +1,5 @@
 import React from 'react';
 import RequirementCard from '../../../components/cards/RequirementCard';
-import NewRequirement from '../../../components/client/NewRequirement';
 import { useNavigate } from 'react-router';
 
 const BidRequestPage: React.FC = () => {
@@ -26,7 +25,7 @@ const BidRequestPage: React.FC = () => {
       <div className="max-w-6xl">
         <div className="grid grid-col-1 md:grid-cols-2 gap-6">
           <RequirementCard
-             requirement={requirement}
+              requirement={requirement}
               quotesCount={4}
               onViewQuotes={() => navigate("/client/requirement/quotes") }
               requirementId="123"

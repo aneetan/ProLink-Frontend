@@ -1,5 +1,5 @@
 // RequirementCard.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Edit, 
   Trash2, 
@@ -17,6 +17,8 @@ import {
   ChevronRight
 } from 'lucide-react';
 import type { RequirementFormData } from '../../types/client/requirement.types';
+import type { BidFormData } from '../modal/SendBidForm';
+import BidModal from '../modal/SendBidForm';
 
 export interface Quote {
   id: string;
@@ -49,6 +51,16 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
   className = '',
   isCompany = false
 }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentBid, setCurrentBid] = useState(150);
+
+   const handleSubmitBid = (data: BidFormData) => {
+    console.log('Bid submitted:', data);
+    // Here you would typically send the bid to your API
+    setCurrentBid(data.amount);
+    setIsModalOpen(false);
+    alert(`Bid submitted successfully! Amount: $${data.amount}`);
+  };
   // Urgency configuration
   const urgencyConfig = {
     LOW: { 
@@ -109,10 +121,9 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
                 </div>
                 <h2 className="text-xl font-bold text-gray-800">{requirement.title}</h2>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 w-1/3">
                 <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold border ${urgencyConfig[requirement.urgency].color}`}>
                   <div className={`w-2 h-2 rounded-full ${urgencyConfig[requirement.urgency].dot}`}></div>
-                  {urgencyConfig[requirement.urgency].icon}
                   {urgencyConfig[requirement.urgency].label}
                 </div>
               </div>
@@ -253,7 +264,7 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
           {isCompany ? (
             <div className='flex justify-end items-center gap-4'>
               <button
-                onClick={onViewQuotes}
+                onClick={() => setIsModalOpen(true)}
                 className="group w-full sm:w-auto px-6 py-3 bg-[var(--primary-color)] text-white rounded-xl font-semibold hover:bg-[var(--primary-dark)] transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-3"
               >
                 <div className="flex items-center gap-2">
@@ -287,6 +298,14 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
           )}
         </div>
       </div>
+
+       <BidModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleSubmitBid}
+        currentHighestBid={currentBid}
+        itemName="Professional Website Design"
+      />
     </div>
   );
 };

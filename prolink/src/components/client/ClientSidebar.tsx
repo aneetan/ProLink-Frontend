@@ -1,20 +1,39 @@
 import type { Dispatch, SetStateAction } from "react";
 import { FiHome, FiUsers, FiSettings, FiBarChart2, FiFileText, FiCalendar,FiMail, FiX, FiChevronDown, FiUser} from 'react-icons/fi';
+import { useLocation } from "react-router";
+import Logo from "../Logo";
 
 interface SidebarProps {
    isOpen: boolean;
    setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 const ClientSidebar:React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
+  const location = useLocation();
+
   const menuItems = [
-    { icon: FiHome, label: 'Dashboard', path: '/dashboard' },
-    { icon: FiUsers, label: 'Requirements', path: '/requirement' },
+    { icon: FiHome, label: 'Dashboard', path: '/client/dashboard' },
+    { icon: FiUsers, label: 'Requirements', path: '/client/requirement/view' },
     { icon: FiBarChart2, label: 'Analytics', path: '/client/7/companies' },
     { icon: FiFileText, label: 'Projects', path: '/projects' },
     { icon: FiCalendar, label: 'Calendar', path: '/calendar' },
     { icon: FiMail, label: 'Messages', path: '/messages' },
     { icon: FiSettings, label: 'Settings', path: '/settings' },
   ];
+
+  const isActivePath = (menuPath: string) => {
+    // Exact match for home/dashboard
+    if (menuPath === '/dashboard' && location.pathname === '/dashboard') {
+      return true;
+    }
+    
+    // For other paths, check if current path starts with the menu path
+    // This handles nested routes like '/client/view-requirement/details'
+    if (menuPath !== '/dashboard' && location.pathname.startsWith(menuPath)) {
+      return true;
+    }
+    
+    return false;
+  };
 
   return (
     <>
@@ -34,12 +53,9 @@ const ClientSidebar:React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
         ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         {/* Logo Section */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-[var(--primary-color)] rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">L</span>
-            </div>
-            <span className="text-xl font-bold text-gray-800">Logo</span>
+            <Logo isName={true}/>
           </div>
           <button 
             onClick={() => setIsOpen(false)}
@@ -53,7 +69,7 @@ const ClientSidebar:React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
         <nav className="p-4 space-y-2">
           {menuItems.map((item, index) => {
             const Icon = item.icon;
-            const isActive = item.path === '/dashboard'; // Static active state for demo
+            const isActive = isActivePath(item.path); 
 
             return (
               <a
@@ -67,8 +83,28 @@ const ClientSidebar:React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
                   }
                 `}
               >
-                <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-400'}`} />
-                <span className="font-medium">{item.label}</span>
+                 <div className="relative">
+                    <Icon 
+                      className={`w-5 h-5 transition-colors duration-200
+                        ${isActive 
+                          ? 'text-white scale-110' 
+                          : 'text-gray-400 group-hover:text-[var(--primary-color)]'
+                        }`} 
+                    />
+                  </div>
+                  <span className={`font-medium transition-colors duration-200
+                    ${isActive 
+                      ? 'font-semibold' 
+                      : 'group-hover:font-medium'
+                    }`}>
+                    {item.label}
+                  </span>
+
+                   {item.label === 'Messages' && (
+                    <span className="ml-auto px-2 py-1 text-xs bg-red-500 text-white rounded-full">
+                      3
+                    </span>
+                  )}
               </a>
             );
           })}

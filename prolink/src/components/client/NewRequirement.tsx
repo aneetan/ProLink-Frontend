@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { FiPlus } from 'react-icons/fi'
-import { useNavigate } from 'react-router';
-import AddRequirement from '../../pages/client/AddRequirement';
+import AddRequirement from '../../pages/client/requirement/AddRequirement';
 
 const NewRequirement = () => {
    const [isModalOpen, setIsModalOpen] = useState(false);

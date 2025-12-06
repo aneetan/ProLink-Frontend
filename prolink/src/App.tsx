@@ -19,9 +19,11 @@ import CompanyProfileSetup from './pages/company/ProfileSetup'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ToastContainer } from 'react-toastify'
 import ProtectedRoute from './pages/auth/ProtectedRoutes'
-import AddRequirement from './pages/client/AddRequirement'
 import Profile from './pages/company/Profile'
 import SimilarCompanies from './pages/client/SimilarCompanies'
+import ViewRequirement from './pages/client/requirement/ViewRequirement'
+import QuotesPage from './pages/client/quotes/QuotesPage'
+import CompanyProfileContainer from './pages/company/Profile'
 
 function App() {
    const queryClient = new QueryClient();
@@ -60,12 +62,15 @@ function App() {
                       </Route>
                     </Route>
 
-                        {/* <Route path='/requirement' element={<AddRequirement/>} /> */}
 
                     {/* <Route element={<ProtectedRoute requiredRole='CLIENT'/>}> */}
                       <Route path='/client' element={<ClientLayout/>}>
-                        <Route index element={<ClientDashboard/>} />
-                        <Route path='create-requirement' element={<AddRequirement/>} />
+                        <Route path='dashboard' element={<ClientDashboard/>} />
+                        <Route path='requirement'>
+                          <Route path='view' element={<ViewRequirement/>} />
+                          <Route path='quotes' element={<QuotesPage/>} />
+                          <Route path='profile' element={<CompanyProfileContainer/>} />
+                         </Route>
                         <Route path='7/companies' element={<SimilarCompanies/>} />
                       </Route>
                     {/* </Route> */}

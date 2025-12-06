@@ -7,7 +7,7 @@ export interface RequirementFormData {
   category: string;
   timeline: string;
   skills: string[];
-  attachment: '';
+  attachment?: string;
   urgency: 'LOW' | 'MEDIUM' | 'HIGH';
   userId?: number;
 }

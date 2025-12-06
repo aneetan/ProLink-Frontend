@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { FiFileText, FiUpload, FiX } from 'react-icons/fi';
 import { validateRequirementForm } from '../../../helpers/validateRequirement';
-import type { RequirementFormData } from '../../../types/requirement.types';
+import type { RequirementFormData } from '../../../types/client/requirement.types';
 import { uploadToCloudinary } from '../../../utils/cloudinary.utils';
 import { getUserIdFromToken } from '../../../utils/jwt.utils';
 import { useMutation } from '@tanstack/react-query';

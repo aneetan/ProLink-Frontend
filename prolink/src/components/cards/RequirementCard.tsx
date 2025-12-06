@@ -16,7 +16,7 @@ import {
   ExternalLink,
   ChevronRight
 } from 'lucide-react';
-import type { RequirementFormData } from '../../types/requirement.types';
+import type { RequirementFormData } from '../../types/client/requirement.types';
 
 export interface Quote {
   id: string;
@@ -36,6 +36,7 @@ interface RequirementCardProps {
   onViewQuotes?: () => void; // Callback for viewing quotes
   requirementId?: string | number; // For navigation
   className?: string;
+  isCompany?: boolean;
 }
 
 const RequirementCard: React.FC<RequirementCardProps> = ({
@@ -45,7 +46,8 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
   onDelete,
   onViewQuotes,
   requirementId,
-  className = ''
+  className = '',
+  isCompany = false
 }) => {
   // Urgency configuration
   const urgencyConfig = {
@@ -180,6 +182,7 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
           </div>
           
           {/* Action Buttons - Desktop */}
+      {!isCompany && (
           <div className="flex gap-2 ml-4">
             {onEdit && (
               <button
@@ -200,9 +203,11 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
               </button>
             )}
           </div>
+      )}
         </div>
         
         {/* Action Buttons - Mobile */}
+      {!isCompany && (
         <div className="sm:hidden flex gap-2 mt-4">
           {onEdit && (
             <button
@@ -223,6 +228,7 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
             </button>
           )}
         </div>
+      )}
       </div>
 
       {/* Footer with Quotes and Attachment */}
@@ -244,7 +250,26 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
           </div>
           
           {/* Right: Quotes Button */}
-          <button
+          {isCompany ? (
+            <div className='flex justify-end items-center gap-4'>
+              <button
+                onClick={onViewQuotes}
+                className="group w-full sm:w-auto px-6 py-3 bg-[var(--primary-color)] text-white rounded-xl font-semibold hover:bg-[var(--primary-dark)] transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-3"
+              >
+                <div className="flex items-center gap-2">
+                  <span> Send Quote</span>
+                </div>
+              </button>
+
+              <button
+                onClick={onViewQuotes}
+                className="group w-full sm:w-auto px-6 py-3 bg-red-500 text-white rounded-xl font-semibold hover:bg-red-600 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-3"
+              > Decline
+              </button>
+            </div>
+          ) : (
+            <> 
+            <button
             onClick={onViewQuotes}
             className="group w-full sm:w-auto px-6 py-3 bg-[var(--primary-color)] text-white rounded-xl font-semibold hover:bg-[var(--primary-dark)] transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-3"
           >
@@ -258,6 +283,8 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
               <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </div>
           </button>
+          </>
+          )}
         </div>
       </div>
     </div>

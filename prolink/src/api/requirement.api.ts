@@ -1,7 +1,7 @@
 import type { AxiosResponse } from "axios";
 import { API_URL } from "../utils/url.utils";
 import axios from "axios";
-import type { RequirementFormData } from "../types/requirement.types";
+import type { RequirementFormData } from "../types/client/requirement.types";
 
 export const addRequirement = async(formData: RequirementFormData) : Promise<AxiosResponse> => {
    const token = localStorage.getItem("token");

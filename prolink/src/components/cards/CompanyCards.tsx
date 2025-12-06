@@ -2,22 +2,44 @@ import { useState } from "react";
 import type { CompanySimilarity } from "../../pages/client/SimilarCompanies";
 import { FcBiotech, FcCurrencyExchange } from "react-icons/fc";
 import { useNavigate } from "react-router";
+import { notificationService } from "../../api/notifications/notification.api";
+import { useMutation } from "@tanstack/react-query";
+import { getUserFromToken } from "../../utils/jwt.utils";
+import { showSuccessToast } from "../../utils/toast.utils";
 
 interface CompanyCardProps {
   company: CompanySimilarity;
-  onViewProfile?: (companyId: number) => void;
 }
 
-const CompanyCard: React.FC<CompanyCardProps> = ({ company, onViewProfile }) => {
+const CompanyCard: React.FC<CompanyCardProps> = ({ company }) => {
   const { metadata, score } = company;
   const navigate = useNavigate();
   const [expandedDesc, setExpandedDesc] = useState<string | null>(null);
   const [isRequestBid, setIsRequestBid] = useState(false);
   const matchPercentage = (score * 100).toFixed(0);
 
+  const token = localStorage.getItem("token") || null;
+  const user = getUserFromToken(token);
+
+  const sendQuoteRequestMutation = useMutation({
+    mutationFn: notificationService.quoteRequest,
+    onSuccess: () => {
+      console.log("Quote request notification sent!");
+    },
+    onError: (error) => {
+      console.error("Failed to send quote request:", error);
+    }
+  });
+
   const handleRequestBid = (companyId: number) => {
-    console.log(companyId)
+    const formData = {
+      userId: companyId,
+      userName: user.name,
+      requirementId: 1
+    }
+    sendQuoteRequestMutation.mutate(formData);
     setIsRequestBid(true);
+    showSuccessToast("Request sent for quotation");
   }
 
   const handleViewProfile = (companyId: number) => {

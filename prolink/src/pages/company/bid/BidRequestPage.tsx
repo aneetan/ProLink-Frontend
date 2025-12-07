@@ -36,11 +36,6 @@ const BidRequestPage: React.FC = () => {
     refetchOnWindowFocus: false,
   });
 
-  // Handle filter change
-  const handleStatusFilterChange = (status: string) => {
-    setFilters(prev => ({ ...prev, status, page: 1 }));
-  };
-
   // Handle pagination
   const handlePageChange = (newPage: number) => {
     setFilters(prev => ({ ...prev, page: newPage }));
@@ -101,46 +96,12 @@ const BidRequestPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-4 md:p-8">
-      <div className="flex justify-end mb-4">
-        <button
-          onClick={() => refetch()}
-          disabled={isFetching}
-          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 disabled:opacity-50 flex items-center gap-2"
-        >
-          {isFetching ? (
-            <>
-              <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-700"></span>
-              Refreshing...
-            </>
-          ) : (
-            'Refresh'
-          )}
-        </button>
-      </div>
-
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div>
           <h1 className="font-semibold text-2xl mb-2 text-gray-800">Requested Quotes</h1>
           <p className="text-base mb-4 text-gray-800">
             See all the requirements with requested quotes!
           </p>
-        </div>
-        
-        {/* Status Filter */}
-        <div className="flex gap-2 mb-4 md:mb-0">
-          {['all', 'pending', 'accepted', 'rejected'].map((status) => (
-            <button
-              key={status}
-              className={`px-4 py-2 rounded-lg capitalize ${
-                filters.status === status
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-700 border border-gray-300'
-              }`}
-              onClick={() => handleStatusFilterChange(status)}
-            >
-              {status}
-            </button>
-          ))}
         </div>
       </div>
 

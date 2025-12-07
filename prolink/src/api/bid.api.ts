@@ -1,5 +1,6 @@
 import type { AxiosResponse } from "axios";
 import { api } from "../lib/api";
+import type { GetRequirementsWithBidsParams, RequirementsWithBidsResponse } from "../types/company/bidRequest.types";
 
 export const requestBidService = {
   // Get all notification for user
@@ -23,4 +24,26 @@ export const requestBidService = {
          throw error;
       }
    },
+
+  getRequirementsWithBidRequests: async (
+    params: GetRequirementsWithBidsParams
+  ): Promise<RequirementsWithBidsResponse> => {
+    try{
+      // Build query string
+      const queryParams = new URLSearchParams();
+      
+      // Required parameter
+      queryParams.append('companyId', String(params.companyId));
+      
+      // Optional parameters
+      if (params.status) queryParams.append('status', params.status);
+      if (params.page) queryParams.append('page', params.page.toString());
+      if (params.limit) queryParams.append('limit', params.limit.toString());
+
+      const response = await api.get(`/company/requirements-with-bids?${queryParams}`);
+      return response.data;
+    } catch (e) {
+      console.log(e)
+    }
+  },
 };

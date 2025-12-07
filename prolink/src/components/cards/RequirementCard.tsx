@@ -1,21 +1,5 @@
-// RequirementCard.tsx
 import React, { useState } from 'react';
-import { 
-  Edit, 
-  Trash2, 
-  DollarSign, 
-  Calendar, 
-  MapPin, 
-  Tag, 
-  AlertCircle,
-  Users,
-  Clock,
-  TrendingUp,
-  FileText,
-  Briefcase,
-  ExternalLink,
-  ChevronRight
-} from 'lucide-react';
+import { Edit, Trash2, DollarSign, Calendar, MapPin, Tag, AlertCircle,Users,Clock,TrendingUp,FileText,Briefcase,ExternalLink,ChevronRight} from 'lucide-react';
 import type { RequirementFormData } from '../../types/client/requirement.types';
 import BidModal from '../modal/SendBidForm';
 import type { BidFormData } from '../../types/company/bidRequest.types';
@@ -31,12 +15,11 @@ export interface Quote {
 }
 
 interface RequirementCardProps {
-  requirement: RequirementFormData[];
+  requirement: RequirementFormData;
   quotesCount?: number;
   onEdit?: () => void;
   onDelete?: () => void;
   onViewQuotes?: () => void; // Callback for viewing quotes
-  requirementId?: string | number; // For navigation
   className?: string;
   isCompany?: boolean;
 }
@@ -47,7 +30,6 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
   onEdit,
   onDelete,
   onViewQuotes,
-  requirementId,
   className = '',
   isCompany = false
 }) => {
@@ -109,7 +91,6 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
 
   return (
     <>
-      {requirement.map((requirement) => (
         <>
     <div className={`bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 ${className}`}>
       {/* Card Header with Gradient */}
@@ -311,7 +292,6 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
       />
     </div>
       </>
-    ))}
     </>
   );
 };

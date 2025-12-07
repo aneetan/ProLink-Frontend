@@ -25,3 +25,24 @@ export interface BidFormData {
   status?: BidStatus;
   submittedDate?: Date;
 }
+
+export interface RequirementsWithBidsResponse {
+  success: boolean;
+  message: string;
+  data: {
+    requirements: BidRequestData[];
+    pagination: {
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    };
+  };
+}
+
+export interface GetRequirementsWithBidsParams {
+  companyId: number;
+  status?: string;
+  page?: number;
+  limit?: number;
+}

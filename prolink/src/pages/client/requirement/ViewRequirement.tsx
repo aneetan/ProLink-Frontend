@@ -46,6 +46,7 @@ const ViewRequirement: React.FC = () => {
               onDelete={handleDelete}
               onViewQuotes={() => navigate("/client/requirement/quotes") }
               requirementId="123"
+              isCompany={false}
           />
           
         </div>

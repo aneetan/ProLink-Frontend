@@ -11,14 +11,30 @@ interface SidebarProps {
 const CompanySidebar:React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
   const menuItems = [
     { icon: FiHome, label: 'Dashboard', path: '/dashboard' },
-    { icon: FiUsers, label: 'Quote Requests', path: '/users' },
-    { icon: FiFileText, label: 'My Quotes', path: '/analytics' },
+    { icon: FiUsers, label: 'Quote Requests', path: '/company/quote-request' },
+    { icon: FiFileText, label: 'My Quotes', path: '/quotes-company' },
     { icon: FaNetworkWired, label: 'Projects', path: '/projects' },
-    { icon: FiMessageCircle, label: 'Inbox', path: '/inbox' },
+    { icon: FiMessageCircle, label: 'Messages', path: '/messages' },
     { icon: MdOutlinePerson, label: 'Profile Setup', path: '/company/setup' },
     { icon: MdOutlineReviews, label: 'Reviews', path: '/setup' },
 
   ];
+
+    const isActivePath = (menuPath: string) => {
+    // Exact match for home/dashboard
+    if (menuPath === '/dashboard' && location.pathname === '/dashboard') {
+      return true;
+    }
+    
+    // For other paths, check if current path starts with the menu path
+    // This handles nested routes like '/client/view-requirement/details'
+    if (menuPath !== '/dashboard' && location.pathname.startsWith(menuPath)) {
+      return true;
+    }
+    
+    return false;
+  };
+
 
   return (
     <>
@@ -54,7 +70,7 @@ const CompanySidebar:React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
         <nav className="p-4 space-y-2">
           {menuItems.map((item, index) => {
             const Icon = item.icon;
-            const isActive = item.path === '/dashboard'; // Static active state for demo
+            const isActive = isActivePath(item.path); 
 
             return (
               <a
@@ -68,8 +84,28 @@ const CompanySidebar:React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
                   }
                 `}
               >
-                <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-400'}`} />
-                <span className="font-medium">{item.label}</span>
+                 <div className="relative">
+                    <Icon 
+                      className={`w-5 h-5 transition-colors duration-200
+                        ${isActive 
+                          ? 'text-white scale-110' 
+                          : 'text-gray-400 group-hover:text-[var(--primary-color)]'
+                        }`} 
+                    />
+                  </div>
+                  <span className={`font-medium transition-colors duration-200
+                    ${isActive 
+                      ? 'font-semibold' 
+                      : 'group-hover:font-medium'
+                    }`}>
+                    {item.label}
+                  </span>
+
+                   {item.label === 'Messages' && (
+                    <span className="ml-auto px-2 py-1 text-xs bg-red-500 text-white rounded-full">
+                      3
+                    </span>
+                  )}
               </a>
             );
           })}

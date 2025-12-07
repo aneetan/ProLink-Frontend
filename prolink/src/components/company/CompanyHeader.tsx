@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from "react";
-import { FiBell, FiMail, FiMenu, FiUser } from "react-icons/fi";
+import { FiBell, FiMenu, FiUser } from "react-icons/fi";
 
 
 type CompanyHeaderProps = {
@@ -26,12 +26,6 @@ const CompanyHeader = ({ setIsSidebarOpen }: CompanyHeaderProps) => {
           <button className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors">
             <FiBell className="w-5 h-5 text-gray-600" />
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-          </button>
-
-          {/* Messages */}
-          <button className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors">
-            <FiMail className="w-5 h-5 text-gray-600" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full"></span>
           </button>
 
           {/* User Profile */}

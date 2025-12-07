@@ -24,6 +24,7 @@ import SimilarCompanies from './pages/client/SimilarCompanies'
 import ViewRequirement from './pages/client/requirement/ViewRequirement'
 import QuotesPage from './pages/client/quotes/QuotesPage'
 import CompanyProfileContainer from './pages/company/Profile'
+import BidRequestPage from './pages/company/bid/BidRequestPage'
 
 function App() {
    const queryClient = new QueryClient();
@@ -48,13 +49,14 @@ function App() {
                     <Route path="*" element={<Navigate to="/" replace />} />
 
 
-                    {/* <Route element={<ProtectedRoute requiredRole='COMPANY'/>}> */}
+                    <Route element={<ProtectedRoute requiredRole='COMPANY'/>}>
                       <Route path='/company' element={<CompanyLayout/>}>
                         <Route path='' element={<CompanyDashboard/>} />
                         <Route path='setup' element={<CompanyProfileSetup/>}/>
                         <Route path='profile' element={<Profile/>}/>
+                        <Route path='quote-request' element={<BidRequestPage/>}/>
                       </Route>
-                    {/* </Route> */}
+                    </Route>
 
                     <Route element={<ProtectedRoute requiredRole='ADMIN'/>}>
                       <Route path='/admin' element={<AdminLayout/>}>
@@ -63,7 +65,7 @@ function App() {
                     </Route>
 
 
-                    {/* <Route element={<ProtectedRoute requiredRole='CLIENT'/>}> */}
+                    <Route element={<ProtectedRoute requiredRole='CLIENT'/>}>
                       <Route path='/client' element={<ClientLayout/>}>
                         <Route path='dashboard' element={<ClientDashboard/>} />
                         <Route path='requirement'>
@@ -73,7 +75,7 @@ function App() {
                          </Route>
                         <Route path='7/companies' element={<SimilarCompanies/>} />
                       </Route>
-                    {/* </Route> */}
+                    </Route>
                 </Routes>
               </BrowserRouter>
         </QueryClientProvider>

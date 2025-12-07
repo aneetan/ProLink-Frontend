@@ -1,22 +1,12 @@
-// RequirementCard.tsx
-import React from 'react';
-import { 
-  Edit, 
-  Trash2, 
-  DollarSign, 
-  Calendar, 
-  MapPin, 
-  Tag, 
-  AlertCircle,
-  Users,
-  Clock,
-  TrendingUp,
-  FileText,
-  Briefcase,
-  ExternalLink,
-  ChevronRight
-} from 'lucide-react';
-import type { RequirementFormData } from '../../types/requirement.types';
+import React, { useState } from 'react';
+import { Edit, Trash2, DollarSign, Calendar, MapPin, Tag, AlertCircle,Users,Clock,TrendingUp,FileText,Briefcase,ExternalLink,ChevronRight} from 'lucide-react';
+import type { RequirementFormData } from '../../types/client/requirement.types';
+import BidModal from '../modal/SendBidForm';
+import { BidStatus, type BidFormData } from '../../types/company/bidRequest.types';
+import { useMutation } from '@tanstack/react-query';
+import { requestBidService } from '../../api/bid.api';
+import { showSuccessToast } from '../../utils/toast.utils';
+import { getUserIdFromToken } from '../../utils/jwt.utils';
 
 export interface Quote {
   id: string;
@@ -34,8 +24,8 @@ interface RequirementCardProps {
   onEdit?: () => void;
   onDelete?: () => void;
   onViewQuotes?: () => void; // Callback for viewing quotes
-  requirementId?: string | number; // For navigation
   className?: string;
+  isCompany?: boolean;
 }
 
 const RequirementCard: React.FC<RequirementCardProps> = ({
@@ -44,9 +34,35 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
   onEdit,
   onDelete,
   onViewQuotes,
-  requirementId,
-  className = ''
+  className = '',
+  isCompany = false
 }) => {
+  const token = localStorage.getItem("token");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentBid, setCurrentBid] = useState(150);
+
+  const mutation = useMutation({
+    mutationFn: requestBidService.sendQuote,
+    onSuccess: () => {
+      showSuccessToast(`Quote submitted for ${requirement.title}`)
+    },
+    onError: (e) => {
+      console.log(e)
+    }
+  })
+
+   const handleSubmitBid = (data: BidFormData) => {
+    const quoteData = {
+      ...data,
+      companyId: getUserIdFromToken(token),
+      requirementId: requirement.id,
+      status: "PENDING",
+    }
+    console.log('Bid submitted:', quoteData);
+    mutation.mutate(quoteData);
+    setCurrentBid(data.amount);
+    setIsModalOpen(false);
+  };
   // Urgency configuration
   const urgencyConfig = {
     LOW: { 
@@ -94,6 +110,8 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
   };
 
   return (
+    <>
+        <>
     <div className={`bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 ${className}`}>
       {/* Card Header with Gradient */}
       <div className="relative p-6 border-b border-gray-100">        
@@ -107,10 +125,9 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
                 </div>
                 <h2 className="text-xl font-bold text-gray-800">{requirement.title}</h2>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 w-1/3">
                 <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold border ${urgencyConfig[requirement.urgency].color}`}>
                   <div className={`w-2 h-2 rounded-full ${urgencyConfig[requirement.urgency].dot}`}></div>
-                  {urgencyConfig[requirement.urgency].icon}
                   {urgencyConfig[requirement.urgency].label}
                 </div>
               </div>
@@ -180,6 +197,7 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
           </div>
           
           {/* Action Buttons - Desktop */}
+      {!isCompany && (
           <div className="flex gap-2 ml-4">
             {onEdit && (
               <button
@@ -200,9 +218,11 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
               </button>
             )}
           </div>
+      )}
         </div>
         
         {/* Action Buttons - Mobile */}
+      {!isCompany && (
         <div className="sm:hidden flex gap-2 mt-4">
           {onEdit && (
             <button
@@ -223,6 +243,7 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
             </button>
           )}
         </div>
+      )}
       </div>
 
       {/* Footer with Quotes and Attachment */}
@@ -244,7 +265,26 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
           </div>
           
           {/* Right: Quotes Button */}
-          <button
+          {isCompany ? (
+            <div className='flex justify-end items-center gap-4'>
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="group w-full sm:w-auto px-6 py-3 bg-[var(--primary-color)] text-white rounded-xl font-semibold hover:bg-[var(--primary-dark)] transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-3"
+              >
+                <div className="flex items-center gap-2">
+                  <span> Send Quote</span>
+                </div>
+              </button>
+
+              <button
+                onClick={onViewQuotes}
+                className="group w-full sm:w-auto px-6 py-3 bg-red-500 text-white rounded-xl font-semibold hover:bg-red-600 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-3"
+              > Decline
+              </button>
+            </div>
+          ) : (
+            <> 
+            <button
             onClick={onViewQuotes}
             className="group w-full sm:w-auto px-6 py-3 bg-[var(--primary-color)] text-white rounded-xl font-semibold hover:bg-[var(--primary-dark)] transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-3"
           >
@@ -258,9 +298,21 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
               <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </div>
           </button>
+          </>
+          )}
         </div>
       </div>
+
+      <BidModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleSubmitBid}
+        currentHighestBid={currentBid}
+        requirement = {requirement}
+      />
     </div>
+      </>
+    </>
   );
 };
 

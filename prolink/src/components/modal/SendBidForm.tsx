@@ -2,13 +2,14 @@ import React from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { X } from 'lucide-react';
 import type { BidFormData } from '../../types/company/bidRequest.types';
+import type { RequirementFormData } from '../../types/client/requirement.types';
 
 interface BidModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: BidFormData) => void;
   currentHighestBid?: number;
-  itemName?: string;
+  requirement?: RequirementFormData;
 }
 
 const BidModal: React.FC<BidModalProps> = ({
@@ -16,7 +17,7 @@ const BidModal: React.FC<BidModalProps> = ({
   onClose,
   onSubmit,
   currentHighestBid = 0,
-  itemName = 'Item'
+  requirement
 }) => {
   const {
     register,
@@ -63,7 +64,7 @@ const BidModal: React.FC<BidModalProps> = ({
                 Submit Your Bid
               </h3>
               <p className="text-sm text-gray-500">
-                For: {itemName}
+                For: {requirement.title}
               </p>
             </div>
             <button

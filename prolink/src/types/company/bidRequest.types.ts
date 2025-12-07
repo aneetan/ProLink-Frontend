@@ -1,6 +1,6 @@
 import type { RequirementFormData } from "../client/requirement.types";
 
-type BidStatus = 'DECLINED' | 'ACCEPTED' | 'INITIATED' | 'PENDING'
+export enum BidStatus { 'DECLINED' , 'ACCEPTED' , 'INITIATED' , 'PENDING'}
 
 export interface BidRequestData {
   id: number;
@@ -22,7 +22,7 @@ export interface BidFormData {
   termsAccepted: boolean;
   companyId?: number;
   requirementId?: number;
-  status?: BidStatus;
+  status?: string;
   submittedDate?: Date;
 }
 

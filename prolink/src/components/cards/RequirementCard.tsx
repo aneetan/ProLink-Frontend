@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { Edit, Trash2, DollarSign, Calendar, MapPin, Tag, AlertCircle,Users,Clock,TrendingUp,FileText,Briefcase,ExternalLink,ChevronRight} from 'lucide-react';
 import type { RequirementFormData } from '../../types/client/requirement.types';
 import BidModal from '../modal/SendBidForm';
-import type { BidFormData } from '../../types/company/bidRequest.types';
+import { BidStatus, type BidFormData } from '../../types/company/bidRequest.types';
+import { useMutation } from '@tanstack/react-query';
+import { requestBidService } from '../../api/bid.api';
+import { showSuccessToast } from '../../utils/toast.utils';
+import { getUserIdFromToken } from '../../utils/jwt.utils';
 
 export interface Quote {
   id: string;
@@ -33,15 +37,31 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
   className = '',
   isCompany = false
 }) => {
+  const token = localStorage.getItem("token");
     const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentBid, setCurrentBid] = useState(150);
 
+  const mutation = useMutation({
+    mutationFn: requestBidService.sendQuote,
+    onSuccess: () => {
+      showSuccessToast(`Quote submitted for ${requirement.title}`)
+    },
+    onError: (e) => {
+      console.log(e)
+    }
+  })
+
    const handleSubmitBid = (data: BidFormData) => {
-    console.log('Bid submitted:', data);
-    // Here you would typically send the bid to your API
+    const quoteData = {
+      ...data,
+      companyId: getUserIdFromToken(token),
+      requirementId: requirement.id,
+      status: "PENDING",
+    }
+    console.log('Bid submitted:', quoteData);
+    mutation.mutate(quoteData);
     setCurrentBid(data.amount);
     setIsModalOpen(false);
-    alert(`Bid submitted successfully! Amount: $${data.amount}`);
   };
   // Urgency configuration
   const urgencyConfig = {
@@ -288,7 +308,7 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleSubmitBid}
         currentHighestBid={currentBid}
-        itemName="Professional Website Design"
+        requirement = {requirement}
       />
     </div>
       </>

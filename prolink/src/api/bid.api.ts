@@ -1,6 +1,6 @@
 import type { AxiosResponse } from "axios";
 import { api } from "../lib/api";
-import type { GetRequirementsWithBidsParams, RequirementsWithBidsResponse } from "../types/company/bidRequest.types";
+import type { BidFormData, GetRequirementsWithBidsParams, RequirementsWithBidsResponse } from "../types/company/bidRequest.types";
 
 export const requestBidService = {
   // Get all notification for user
@@ -46,4 +46,15 @@ export const requestBidService = {
       console.log(e)
     }
   },
+
+  // send new quote to client
+  sendQuote: async (data: BidFormData): Promise<AxiosResponse> => {
+      try {
+         const response = await api.post("/company/submit-quote", data);
+         return response.data;
+      } catch (error) {
+         console.error("Error sending quote to client:", error);
+         throw error;
+      }
+   },
 };

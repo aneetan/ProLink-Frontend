@@ -1,4 +1,5 @@
 export interface RequirementFormData {
+  id?: number;
   title: string;
   description: string;
   workType: 'REMOTE' | 'ONSITE';

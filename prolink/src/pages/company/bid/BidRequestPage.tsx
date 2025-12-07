@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { requestBidService } from '../../../api/bid.api';
 import type { RequirementsWithBidsResponse } from '../../../types/company/bidRequest.types';
+import { getUserIdFromToken } from '../../../utils/jwt.utils';
 
 const BidRequestPage: React.FC = () => {
   const navigate = useNavigate();
@@ -13,7 +14,8 @@ const BidRequestPage: React.FC = () => {
     limit: 10,
   });
 
-  const companyId = 1; // Replace with actual company ID from auth/context
+  const token = localStorage.getItem("token");
+  const companyId = getUserIdFromToken(token);
 
   // Use React Query directly
   const {

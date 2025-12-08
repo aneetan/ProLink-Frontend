@@ -46,3 +46,23 @@ export interface GetRequirementsWithBidsParams {
   page?: number;
   limit?: number;
 }
+
+
+// Update your Quote type
+export interface Quote {
+  id: number;
+  amount: number;
+  deliveryTime: string;
+  message?: string;
+  status?: string;
+  submittedDate?: string;
+  companyName?: string; // For backward compatibility
+  companyId?: number;
+  company?: {
+    id: number;
+    name: string;
+    docs?: Array<{
+      logo?: string;
+    }>;
+  };
+}

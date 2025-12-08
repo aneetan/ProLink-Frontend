@@ -57,4 +57,11 @@ export const requestBidService = {
          throw error;
       }
    },
+
+   //get Quote for a requirement
+  getQuoteForRequirement: async (requirementId: string | number) => {
+    const response = await api.get(`/client/${requirementId}/quote`);
+    return response.data;
+  },
+  
 };

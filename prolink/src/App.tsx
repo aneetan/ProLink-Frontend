@@ -68,9 +68,9 @@ function App() {
                     <Route element={<ProtectedRoute requiredRole='CLIENT'/>}>
                       <Route path='/client' element={<ClientLayout/>}>
                         <Route path='dashboard' element={<ClientDashboard/>} />
+                        <Route path=':requirementId/quotes' element={<QuotesPage/>} />
                         <Route path='requirement'>
                           <Route path='view' element={<ViewRequirement/>} />
-                          <Route path='quotes' element={<QuotesPage/>} />
                           <Route path='profile' element={<CompanyProfileContainer/>} />
                          </Route>
                         <Route path='7/companies' element={<SimilarCompanies/>} />

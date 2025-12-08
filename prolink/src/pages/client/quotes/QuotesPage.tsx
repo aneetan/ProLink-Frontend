@@ -1,87 +1,92 @@
-import React, { useState } from 'react';
-import { ArrowLeft, DollarSign, Calendar, CheckCircle, XCircle, Clock, MessageSquare, Download, Filter, Search, ChevronDown, Award, MessageCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, DollarSign, Filter, Search, ChevronDown } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router';
-import type { Quote } from '../../../components/cards/RequirementCard';
-import type { BidFormData } from '../../../components/modal/SendBidForm';
+import { useQuery } from '@tanstack/react-query';
+import QuoteCard from '../../../components/cards/QuoteCard';
+import { api } from '../../../lib/api';
+import type { Quote } from '../../../types/company/bidRequest.types';
 
-// Mock data for quotes
-const mockQuotes: Quote[] = [
-  {
-    id: '1',
-    companyName: 'TechSolutions Inc.',
-    amount: 22000,
-    deliveryTime: '3 months',
-    status: 'PENDING',
-    submittedDate: '2024-01-15',
-    message: 'We have extensive experience with similar projects and can deliver high-quality results within your timeline. Our team includes certified React and Node.js developers.'
-  },
-  {
-    id: '2',
-    companyName: 'Digital Innovations LLC',
-    amount: 18000,
-    deliveryTime: '4 months',
-    status: 'ACCEPTED',
-    submittedDate: '2024-01-10',
-    message: 'We offer competitive pricing without compromising on quality. Our approach focuses on scalable architecture and maintainable code.'
-  },
-  {
-    id: '3',
-    companyName: 'WebMasters Pro',
-    amount: 28000,
-    deliveryTime: '2.5 months',
-    status: 'REJECTED',
-    submittedDate: '2024-01-12',
-    message: 'Premium development services with 24/7 support, daily updates, and dedicated project manager.'
-  },
-  {
-    id: '4',
-    companyName: 'CodeCrafters Studio',
-    amount: 24000,
-    deliveryTime: '3.5 months',
-    status: 'PENDING',
-    submittedDate: '2024-01-18'
-  }
-];
+// Define the API response type
+interface ApiQuote {
+  id: number;
+  amount: number;
+  deliveryTime: string;
+  message: string;
+  companyId: number;
+  status: string;
+  company: {
+    id: number;
+    name: string;
+    docs: Array<{
+      logo: string;
+    }>;
+  };
+}
+
+// API function to fetch quotes
+const fetchQuotesForRequirement = async (requirementId: string): Promise<Quote[]> => {
+  const response = await api.get(`/client/${requirementId}/quote`);
+  const apiQuotes: ApiQuote[] = response.data;
+  
+  // Transform API response to match Quote type
+  return apiQuotes.map(quote => ({
+    id: quote.id,
+    amount: quote.amount,
+    deliveryTime: quote.deliveryTime,
+    message: quote.message,
+    companyName: quote.company.name,
+    companyId: quote.companyId,
+    company: quote.company,
+    status: quote.status, // Default status from API
+    submittedDate: new Date().toISOString().split('T')[0], // Use current date or get from API if available
+  }));
+};
 
 const QuotesPage: React.FC = () => {
-  const { requirementId } = useParams();
+  const { requirementId } = useParams<{ requirementId: string }>();
   const navigate = useNavigate();
-  const [quotes, setQuotes] = useState<Quote[]>(mockQuotes);
   const [filter, setFilter] = useState<'ALL' | 'PENDING' | 'ACCEPTED' | 'REJECTED'>('ALL');
   const [search, setSearch] = useState('');
-  const [expandedQuote, setExpandedQuote] = useState<string | null>(null);
+  const [expandedQuote, setExpandedQuote] = useState<number | null>(null);
+  const [localQuotes, setLocalQuotes] = useState<Quote[]>([]);
 
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(amount);
-  };
+  // React Query to fetch quotes
+  const {
+    data: apiQuotes = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ['quotes', requirementId],
+    queryFn: () => fetchQuotesForRequirement(requirementId!),
+    enabled: !!requirementId,
+  });
 
-  // Format date
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
+  // Initialize local quotes with API data
+  useEffect(() => {
+    if (apiQuotes.length > 0) {
+      setLocalQuotes(apiQuotes);
+    }
+  }, [apiQuotes]);
 
   // Filter quotes
-  const filteredQuotes = quotes.filter(quote => {
+  const filteredQuotes = localQuotes.filter(quote => {
     const matchesFilter = filter === 'ALL' || quote.status === filter;
-    const matchesSearch = quote.companyName.toLowerCase().includes(search.toLowerCase()) ||
-                         quote.message?.toLowerCase().includes(search.toLowerCase());
+    const matchesSearch = 
+      (quote.companyName?.toLowerCase().includes(search.toLowerCase()) || 
+       quote.message?.toLowerCase().includes(search.toLowerCase()) ||
+       quote.company?.name.toLowerCase().includes(search.toLowerCase()));
     return matchesFilter && matchesSearch;
   });
 
   // Handle quote actions
-  const handleAcceptQuote = (quoteId: string) => {
+  const handleAcceptQuote = async (quoteId: number) => {
     if (window.confirm('Are you sure you want to accept this quote?')) {
-      setQuotes(prevQuotes => 
+      // You can add API call here to update quote status on the server
+      // await api.put(`/client/quote/${quoteId}/accept`);
+      
+      setLocalQuotes(prevQuotes => 
         prevQuotes.map(quote => {
           if (quote.id === quoteId) {
             return { ...quote, status: 'ACCEPTED' };
@@ -96,9 +101,12 @@ const QuotesPage: React.FC = () => {
     }
   };
 
-  const handleRejectQuote = (quoteId: string) => {
+  const handleRejectQuote = async (quoteId: number) => {
     if (window.confirm('Are you sure you want to reject this quote?')) {
-      setQuotes(prevQuotes =>
+      // You can add API call here to update quote status on the server
+      // await api.put(`/client/quote/${quoteId}/reject`);
+      
+      setLocalQuotes(prevQuotes =>
         prevQuotes.map(quote =>
           quote.id === quoteId ? { ...quote, status: 'REJECTED' } : quote
         )
@@ -106,24 +114,52 @@ const QuotesPage: React.FC = () => {
     }
   };
 
-  // Quote status configuration
-  const statusConfig = {
-    PENDING: {
-      color: 'bg-amber-100 text-amber-800 border-amber-200',
-      icon: <Clock size={14} />,
-      label: 'Pending Review'
-    },
-    ACCEPTED: {
-      color: 'bg-emerald-100 text-emerald-800 border-emerald-200',
-      icon: <CheckCircle size={14} />,
-      label: 'Accepted'
-    },
-    REJECTED: {
-      color: 'bg-rose-100 text-rose-800 border-rose-200',
-      icon: <XCircle size={14} />,
-      label: 'Rejected'
-    }
+  const handleToggleExpand = (quoteId: number) => {
+    setExpandedQuote(expandedQuote === quoteId ? null : quoteId);
   };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary-color)] mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading quotes...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (isError) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex items-center justify-center">
+        <div className="bg-white p-8 rounded-2xl shadow-lg text-center max-w-md">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <ArrowLeft size={24} className="text-red-600" />
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">Error Loading Quotes</h3>
+          <p className="text-gray-600 mb-6">
+            {error instanceof Error ? error.message : 'Failed to load quotes. Please try again.'}
+          </p>
+          <div className="flex gap-3 justify-center">
+            <button
+              onClick={() => refetch()}
+              className="px-6 py-3 bg-[var(--primary-color)] text-white rounded-xl font-semibold hover:bg-[var(--primary-dark)] transition-colors"
+            >
+              Retry
+            </button>
+            <button
+              onClick={() => navigate(-1)}
+              className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition-colors"
+            >
+              Go Back
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
@@ -141,14 +177,20 @@ const QuotesPage: React.FC = () => {
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">Quotes & Proposals</h1>
                 <p className="text-gray-600">
-                  Review and manage quotes for <span className="font-semibold">Full-Stack Web Application Development</span>
+                  Review and manage quotes for <span className="font-semibold">Requirement #{requirementId}</span>
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <div className="px-4 py-2 bg-[var(--primary-light)] rounded-full text-white">
-                {quotes.length} Total Quotes
+                {localQuotes.length} Total Quotes
               </div>
+              <button
+                onClick={() => refetch()}
+                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors"
+              >
+                Refresh
+              </button>
             </div>
           </div>
         </div>
@@ -200,142 +242,14 @@ const QuotesPage: React.FC = () => {
         {/* Quotes Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {filteredQuotes.map((quote) => (
-            <div
+            <QuoteCard
               key={quote.id}
-              className={`bg-white rounded-2xl shadow-lg border overflow-hidden transition-all duration-300 hover:shadow-xl ${
-                quote.status === 'ACCEPTED'
-                  ? 'border-emerald-300'
-                  : quote.status === 'REJECTED'
-                  ? 'border-rose-300'
-                  : 'border-gray-200'
-              }`}
-            >
-              {/* Quote Header */}
-              <div className="p-6 border-b border-gray-100">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 w-18 h-18 rounded-full">
-                      <img src='https://imgs.search.brave.com/UdGbnPJENo2m9qwWSvhZxU2od0jrhKaPGXcL1rHNXVI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/cHJlbWl1bS12ZWN0/b3IvYnJ1c2gtbGV0/dGVycy1sb2dvXzY4/NjU5Ny00NTM4Ni5q/cGc_c2VtdD1haXNf/aHlicmlkJnc9NzQw/JnE9ODA' alt='company-logo'/>
-                    </div>
-                    <div>
-                     <a className='cursor-pointer hover:underline transition-all duration-400 '>
-                      <span className="text-lg font-bold text-gray-900 hover:text-[var(--primary-color)]">{quote.companyName}</span>
-                     </a>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 ${statusConfig[quote.status].color}`}>
-                          {statusConfig[quote.status].icon}
-                          {statusConfig[quote.status].label}
-                        </span>
-                        <span className="text-xs text-gray-500">
-                          Submitted: {formatDate(quote.submittedDate)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {quote.status === 'ACCEPTED' && (
-                    <div className="flex items-center gap-1 px-3 py-1 bg-emerald-50 border border-emerald-200 rounded-lg">
-                      <Award size={14} className="text-emerald-600" />
-                      <span className="text-sm font-semibold text-emerald-700">Selected</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Quote Details */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl">
-                    <div className="flex items-center gap-2 mb-2">
-                      <DollarSign size={16} className="text-teal-600" />
-                      <span className="text-sm font-semibold text-teal-600 uppercase tracking-wide">Quote Amount</span>
-                    </div>
-                    <div className="text-2xl font-bold text-gray-900">{formatCurrency(quote.amount)}</div>
-                  </div>
-                  
-                  <div className="p-4 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Calendar size={16} className="text-amber-600" />
-                      <span className="text-sm font-semibold text-amber-600 uppercase tracking-wide">Delivery Time</span>
-                    </div>
-                    <div className="text-xl font-bold text-gray-900">{quote.deliveryTime}</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Quote Message */}
-              {quote.message && (
-                <div className="p-6 bg-gray-50 border-b border-gray-200">
-                  <div className="flex items-center gap-2 mb-3">
-                    <MessageSquare size={16} className="text-gray-500" />
-                    <span className="text-sm font-semibold text-gray-700">Company Message</span>
-                  </div>
-                  <p className="text-gray-600 line-clamp-3">
-                    {expandedQuote === quote.id ? quote.message : `${quote.message.substring(0, 120)}...`}
-                  </p>
-                  {quote.message.length && (
-                    <button
-                      onClick={() => setExpandedQuote(expandedQuote === quote.id ? null : quote.id)}
-                      className="mt-2 text-sm text-blue-600 hover:text-blue-800 font-medium"
-                    >
-                      {expandedQuote === quote.id ? 'Show Less' : 'Read More'}
-                    </button>
-                  )}
-                </div>
-              )}
-
-              {/* Quote Actions */}
-              <div className="p-6">
-                <div className="flex flex-col sm:flex-row gap-3">
-                  {/* Status-based actions */}
-                  {quote.status === 'PENDING' && (
-                    <>
-                      <button
-                        onClick={() => handleAcceptQuote(quote.id)}
-                        className="flex-1 py-3 bg-[var(--primary-light)] text-white rounded-xl font-semibold hover:bg-[var(--primary-color)] transition-all duration-300 hover:shadow-lg flex items-center justify-center gap-2"
-                      >
-                        <CheckCircle size={18} />
-                        Accept Quote
-                      </button>
-                      <button
-                        onClick={() => handleRejectQuote(quote.id)}
-                        className="flex-1 py-3 bg-red-600 text-white rounded-xl font-semibold hover:bg-red-700 transition-all duration-300 hover:shadow-lg flex items-center justify-center gap-2"
-                      >
-                        <XCircle size={18} />
-                        Reject
-                      </button>
-                    </>
-                  )}
-                  
-                  {quote.status === 'ACCEPTED' && (
-                     <>
-                     <button
-                        onClick={() => handleAcceptQuote(quote.id)}
-                        className="flex-1 py-3 bg-[var(--primary-light)] text-white rounded-xl font-semibold hover:bg-[var(--primary-color)] transition-all duration-300 hover:shadow-lg flex items-center justify-center gap-2"
-                      >
-                        <MessageCircle size={18} />
-                        Chat
-                      </button>
-                    <button
-                      className="flex-1 py-3 border-teal-600 border-1 text-[var(--primary-color)] rounded-xl font-semibold hover:bg-gray-200 transition-all duration-300 flex items-center justify-center gap-2"
-                      onClick={() => alert('Downloading contract...')}
-                    >
-                      <Download size={18} />
-                      Download Contract
-                    </button>
-                    </>
-                  )}
-                  
-                  {quote.status === 'REJECTED' && (
-                    <button
-                      onClick={() => handleAcceptQuote(quote.id)}
-                      className="flex-1 py-3 bg-[var(--primary-light)] text-white rounded-xl font-semibold hover:bg-[var(--primary-color)] transition-all duration-300 hover:shadow-lg flex items-center justify-center gap-2"
-                    >
-                      Reconsider Quote
-                    </button>
-                  )}
-
-                </div>
-              </div>
-            </div>
+              quote={quote}
+              onAccept={handleAcceptQuote}
+              onReject={handleRejectQuote}
+              expandedQuote={expandedQuote}
+              onToggleExpand={handleToggleExpand}
+            />
           ))}
         </div>
 
@@ -345,25 +259,35 @@ const QuotesPage: React.FC = () => {
             <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center">
               <DollarSign size={40} className="text-gray-400" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No quotes found</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              {localQuotes.length === 0 ? 'No quotes received yet' : 'No quotes found'}
+            </h3>
             <p className="text-gray-600 mb-6">
               {search
                 ? `No quotes match "${search}"`
                 : filter !== 'ALL'
                 ? `No ${filter.toLowerCase()} quotes`
-                : 'No quotes have been submitted yet'}
+                : 'No quotes have been submitted for this requirement yet'}
             </p>
-            {(search || filter !== 'ALL') && (
+            <div className="flex gap-3 justify-center">
+              {(search || filter !== 'ALL') && (
+                <button
+                  onClick={() => {
+                    setSearch('');
+                    setFilter('ALL');
+                  }}
+                  className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors"
+                >
+                  Clear Filters
+                </button>
+              )}
               <button
-                onClick={() => {
-                  setSearch('');
-                  setFilter('ALL');
-                }}
-                className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors"
+                onClick={() => refetch()}
+                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition-colors"
               >
-                Clear Filters
+                Refresh
               </button>
-            )}
+            </div>
           </div>
         )}
       </div>

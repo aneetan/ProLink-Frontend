@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router';
 const ViewRequirement: React.FC = () => {
   const navigate = useNavigate();
   const requirement = {
+    id: 1,
     title: 'Full-Stack Web Application Development',
     description: 'We need a comprehensive web application with React frontend and Node.js backend.',
     workType: 'REMOTE' as const,
@@ -44,8 +45,7 @@ const ViewRequirement: React.FC = () => {
               quotesCount={4}
               onEdit={handleEdit}
               onDelete={handleDelete}
-              onViewQuotes={() => navigate("/client/requirement/quotes") }
-              requirementId="123"
+              onViewQuotes={() => navigate(`/client/${requirement.id}/quotes`) }
               isCompany={false}
           />
           

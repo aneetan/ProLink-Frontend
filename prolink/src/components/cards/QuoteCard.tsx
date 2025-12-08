@@ -199,12 +199,17 @@ const QuoteCard: React.FC<QuoteCardProps> = ({
                 <MessageCircle size={18} />
                 Chat
               </button>
+            </>
+          )}
+
+           {quote.status === 'INITIATED' && (
+            <>
               <button
                 className="flex-1 py-3 border-teal-600 border-1 text-[var(--primary-color)] rounded-xl font-semibold hover:bg-gray-200 transition-all duration-300 flex items-center justify-center gap-2"
                 onClick={() => alert('Downloading contract...')}
               >
                 <Download size={18} />
-                Download Contract
+                View Contract
               </button>
             </>
           )}

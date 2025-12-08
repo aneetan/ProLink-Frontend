@@ -3,8 +3,10 @@ import { ArrowLeft, DollarSign, Filter, Search, ChevronDown } from 'lucide-react
 import { useParams, useNavigate } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import QuoteCard from '../../../components/cards/QuoteCard';
-import type { Quote } from '../../../types/company/bidRequest.types';
+import type { QuoteResponse } from '../../../types/company/bidRequest.types';
 import { requestBidService } from '../../../api/bid.api';
+import { useModal } from '../../../store/useModal';
+import AcceptDeclineModal, { type ModalType } from '../../../components/modal/AcceptDeclineModal';
 
 const QuotesPage: React.FC = () => {
   const { requirementId } = useParams<{ requirementId: string }>();
@@ -12,6 +14,7 @@ const QuotesPage: React.FC = () => {
   const [filter, setFilter] = useState<'ALL' | 'PENDING' | 'ACCEPTED' | 'REJECTED'>('ALL');
   const [search, setSearch] = useState('');
   const [expandedQuote, setExpandedQuote] = useState<number | null>(null);
+   const { modalState, openModal, closeModal, handleConfirm } = useModal();
 
   // React Query to fetch quotes
   const {
@@ -27,7 +30,7 @@ const QuotesPage: React.FC = () => {
   });
   
   // Transform API response to match Quote type with proper typing
-  const quotes: Quote[] = useMemo(() => {
+  const quotes: QuoteResponse[] = useMemo(() => {
     if (!apiResponse) return [];
     
     // Handle both array response and object with data property
@@ -71,37 +74,41 @@ const QuotesPage: React.FC = () => {
 
   // Handle quote actions
   const handleAcceptQuote = async (quoteId: number) => {
-    if (window.confirm('Are you sure you want to accept this quote?')) {
-      try {
-        // Call your API to accept the quote
-        // await requestBidService.acceptQuote(quoteId);
-        
-        // For now, just refetch to show actual data
-        refetch();
-        
-        alert('Quote accepted successfully!');
-      } catch (error) {
-        console.error('Error accepting quote:', error);
-        alert('Failed to accept quote. Please try again.');
-      }
-    }
+     openModal({
+      title: 'Accept Quote',
+      description: 'Are you sure you want to accept this quote? Once accepted, you can proceed with chat negotiation.',
+      type: 'ACCEPT',
+      confirmText: 'Accept Quote',
+      cancelText: 'Cancel',
+      onConfirm: async () => {
+        // Your API call to accept the quote
+        await requestBidService.acceptQuote(quoteId);
+        refetch(); // Refresh quotes list
+      },
+      additionalContent: (
+        <div className="mt-3 p-3 bg-emerald-50 rounded-lg border border-emerald-200">
+          <p className="text-sm text-emerald-700">
+            <span className="font-semibold">Note:</span> This action cannot be undone. You will enter into a phase of contract with selected company.
+          </p>
+        </div>
+      )
+    });
   };
 
   const handleRejectQuote = async (quoteId: number) => {
-    if (window.confirm('Are you sure you want to reject this quote?')) {
-      try {
-        // Call your API to reject the quote
-        // await requestBidService.rejectQuote(quoteId);
-        
-        // For now, just refetch to show actual data
-        refetch();
-        
-        alert('Quote rejected successfully!');
-      } catch (error) {
-        console.error('Error rejecting quote:', error);
-        alert('Failed to reject quote. Please try again.');
+   openModal({
+      title: 'Reject Quote',
+      description: 'Are you sure you want to reject this quote? This action cannot be undone.',
+      type: 'DECLINE',
+      confirmText: 'Reject Quote',
+      cancelText: 'Cancel',
+      isDestructive: true,
+      onConfirm: async () => {
+        // Your API call to reject the quote
+        await requestBidService.declineQuote(quoteId);
+        refetch(); // Refresh quotes list
       }
-    }
+    });
   };
 
   const handleToggleExpand = (quoteId: number) => {
@@ -340,6 +347,20 @@ const QuotesPage: React.FC = () => {
           </div>
         )}
       </div>
+
+        <AcceptDeclineModal
+        isOpen={modalState.isOpen}
+        onClose={closeModal}
+        onConfirm={handleConfirm}
+        title={modalState.title}
+        description={modalState.description}
+        type={modalState.type as ModalType}
+        confirmText={modalState.confirmText}
+        cancelText={modalState.cancelText}
+        isLoading={modalState.isLoading}
+        isDestructive={modalState.isDestructive}
+        additionalContent={modalState.additionalContent}
+      />
     </div>
   );
 };

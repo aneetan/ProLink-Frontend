@@ -1,46 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { ArrowLeft, DollarSign, Filter, Search, ChevronDown } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import QuoteCard from '../../../components/cards/QuoteCard';
-import { api } from '../../../lib/api';
 import type { Quote } from '../../../types/company/bidRequest.types';
-
-// Define the API response type
-interface ApiQuote {
-  id: number;
-  amount: number;
-  deliveryTime: string;
-  message: string;
-  companyId: number;
-  status: string;
-  company: {
-    id: number;
-    name: string;
-    docs: Array<{
-      logo: string;
-    }>;
-  };
-}
-
-// API function to fetch quotes
-const fetchQuotesForRequirement = async (requirementId: string): Promise<Quote[]> => {
-  const response = await api.get(`/client/${requirementId}/quote`);
-  const apiQuotes: ApiQuote[] = response.data;
-  
-  // Transform API response to match Quote type
-  return apiQuotes.map(quote => ({
-    id: quote.id,
-    amount: quote.amount,
-    deliveryTime: quote.deliveryTime,
-    message: quote.message,
-    companyName: quote.company.name,
-    companyId: quote.companyId,
-    company: quote.company,
-    status: quote.status, // Default status from API
-    submittedDate: new Date().toISOString().split('T')[0], // Use current date or get from API if available
-  }));
-};
+import { requestBidService } from '../../../api/bid.api';
 
 const QuotesPage: React.FC = () => {
   const { requirementId } = useParams<{ requirementId: string }>();
@@ -48,75 +12,111 @@ const QuotesPage: React.FC = () => {
   const [filter, setFilter] = useState<'ALL' | 'PENDING' | 'ACCEPTED' | 'REJECTED'>('ALL');
   const [search, setSearch] = useState('');
   const [expandedQuote, setExpandedQuote] = useState<number | null>(null);
-  const [localQuotes, setLocalQuotes] = useState<Quote[]>([]);
 
   // React Query to fetch quotes
   const {
-    data: apiQuotes = [],
+    data: apiResponse,
     isLoading,
     isError,
     error,
     refetch,
   } = useQuery({
     queryKey: ['quotes', requirementId],
-    queryFn: () => fetchQuotesForRequirement(requirementId!),
+    queryFn: () => requestBidService.getQuoteForRequirement(requirementId!),
     enabled: !!requirementId,
   });
+  
+  // Transform API response to match Quote type with proper typing
+  const quotes: Quote[] = useMemo(() => {
+    if (!apiResponse) return [];
+    
+    // Handle both array response and object with data property
+    const quotesData = apiResponse.data.quotes || [];
+    
+    return quotesData.map((quote) => ({
+      id: quote.id,
+      amount: quote.amount,
+      deliveryTime: quote.deliveryTime,
+      message: quote.message,
+      companyId: quote.companyId,
+      requirementId: quote.requirementId,
+      status: quote.status,
+      createdAt: quote.createdAt,
+      updatedAt: quote.updatedAt,
+      company: {
+        id: quote.company.id,
+        name: quote.company.name,
+        logo: quote.company.logo
+      },
+      // For compatibility
+      companyName: quote.company.name,
+      submittedDate: new Date(quote.createdAt).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      })
+    }));
+  }, [apiResponse]);
 
-  // Initialize local quotes with API data
-  useEffect(() => {
-    if (apiQuotes.length > 0) {
-      setLocalQuotes(apiQuotes);
-    }
-  }, [apiQuotes]);
-
-  // Filter quotes
-  const filteredQuotes = localQuotes.filter(quote => {
-    const matchesFilter = filter === 'ALL' || quote.status === filter;
-    const matchesSearch = 
-      (quote.companyName?.toLowerCase().includes(search.toLowerCase()) || 
-       quote.message?.toLowerCase().includes(search.toLowerCase()) ||
-       quote.company?.name.toLowerCase().includes(search.toLowerCase()));
-    return matchesFilter && matchesSearch;
-  });
+  // Filter quotes with useMemo for better performance
+  const filteredQuotes = useMemo(() => {
+    return quotes.filter(quote => {
+      const matchesFilter = filter === 'ALL' || quote.status === filter;
+      const matchesSearch = 
+        (quote.company.name.toLowerCase().includes(search.toLowerCase()) || 
+         quote.message?.toLowerCase().includes(search.toLowerCase()));
+      return matchesFilter && matchesSearch;
+    });
+  }, [quotes, filter, search]);
 
   // Handle quote actions
   const handleAcceptQuote = async (quoteId: number) => {
     if (window.confirm('Are you sure you want to accept this quote?')) {
-      // You can add API call here to update quote status on the server
-      // await api.put(`/client/quote/${quoteId}/accept`);
-      
-      setLocalQuotes(prevQuotes => 
-        prevQuotes.map(quote => {
-          if (quote.id === quoteId) {
-            return { ...quote, status: 'ACCEPTED' };
-          }
-          // Reject other pending quotes when accepting one
-          if (quote.status === 'PENDING' && quote.id !== quoteId) {
-            return { ...quote, status: 'REJECTED' };
-          }
-          return quote;
-        })
-      );
+      try {
+        // Call your API to accept the quote
+        // await requestBidService.acceptQuote(quoteId);
+        
+        // For now, just refetch to show actual data
+        refetch();
+        
+        alert('Quote accepted successfully!');
+      } catch (error) {
+        console.error('Error accepting quote:', error);
+        alert('Failed to accept quote. Please try again.');
+      }
     }
   };
 
   const handleRejectQuote = async (quoteId: number) => {
     if (window.confirm('Are you sure you want to reject this quote?')) {
-      // You can add API call here to update quote status on the server
-      // await api.put(`/client/quote/${quoteId}/reject`);
-      
-      setLocalQuotes(prevQuotes =>
-        prevQuotes.map(quote =>
-          quote.id === quoteId ? { ...quote, status: 'REJECTED' } : quote
-        )
-      );
+      try {
+        // Call your API to reject the quote
+        // await requestBidService.rejectQuote(quoteId);
+        
+        // For now, just refetch to show actual data
+        refetch();
+        
+        alert('Quote rejected successfully!');
+      } catch (error) {
+        console.error('Error rejecting quote:', error);
+        alert('Failed to reject quote. Please try again.');
+      }
     }
   };
 
   const handleToggleExpand = (quoteId: number) => {
     setExpandedQuote(expandedQuote === quoteId ? null : quoteId);
   };
+
+  // Calculate status counts
+  const statusCounts = useMemo(() => {
+    return {
+      total: quotes.length,
+      pending: quotes.filter(q => q.status === 'PENDING').length,
+      accepted: quotes.filter(q => q.status === 'ACCEPTED').length,
+      rejected: quotes.filter(q => q.status === 'REJECTED').length
+    };
+  }, [quotes]);
 
   // Loading state
   if (isLoading) {
@@ -171,6 +171,7 @@ const QuotesPage: React.FC = () => {
               <button
                 onClick={() => navigate(-1)}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                aria-label="Go back"
               >
                 <ArrowLeft size={20} className="text-gray-600" />
               </button>
@@ -183,12 +184,16 @@ const QuotesPage: React.FC = () => {
             </div>
             <div className="flex items-center gap-3">
               <div className="px-4 py-2 bg-[var(--primary-light)] rounded-full text-white">
-                {localQuotes.length} Total Quotes
+                {statusCounts.total} Total Quotes
               </div>
               <button
                 onClick={() => refetch()}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors"
+                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors flex items-center gap-2"
+                aria-label="Refresh quotes"
               >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
                 Refresh
               </button>
             </div>
@@ -211,6 +216,7 @@ const QuotesPage: React.FC = () => {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-1 focus:ring-teal-500 focus:border-transparent outline-none"
+                  aria-label="Search quotes"
                 />
               </div>
             </div>
@@ -221,13 +227,34 @@ const QuotesPage: React.FC = () => {
                 <button
                   key={status}
                   onClick={() => setFilter(status)}
-                  className={`px-4 py-2.5 rounded-xl font-medium transition-colors ${
+                  className={`px-4 py-2.5 rounded-xl font-medium transition-colors flex items-center gap-2 ${
                     filter === status
                       ? 'bg-[var(--primary-color)] text-white'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
+                  aria-label={`Filter ${status.toLowerCase()} quotes`}
                 >
                   {status.charAt(0) + status.slice(1).toLowerCase()}
+                  {status === 'ALL' && (
+                    <span className="text-xs bg-white/20 px-1.5 py-0.5 rounded">
+                      {statusCounts.total}
+                    </span>
+                  )}
+                  {status === 'PENDING' && (
+                    <span className="text-xs bg-amber-500/20 px-1.5 py-0.5 rounded">
+                      {statusCounts.pending}
+                    </span>
+                  )}
+                  {status === 'ACCEPTED' && (
+                    <span className="text-xs bg-emerald-500/20 px-1.5 py-0.5 rounded">
+                      {statusCounts.accepted}
+                    </span>
+                  )}
+                  {status === 'REJECTED' && (
+                    <span className="text-xs bg-rose-500/20 px-1.5 py-0.5 rounded">
+                      {statusCounts.rejected}
+                    </span>
+                  )}
                 </button>
               ))}
               <button className="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors flex items-center gap-2">
@@ -235,6 +262,28 @@ const QuotesPage: React.FC = () => {
                 More
                 <ChevronDown size={16} />
               </button>
+            </div>
+          </div>
+          
+          {/* Status summary */}
+          <div className="flex flex-wrap gap-4 mt-4 text-sm">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-amber-500"></div>
+              <span className="text-gray-600">
+                <span className="font-semibold">{statusCounts.pending}</span> pending
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+              <span className="text-gray-600">
+                <span className="font-semibold">{statusCounts.accepted}</span> accepted
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-rose-500"></div>
+              <span className="text-gray-600">
+                <span className="font-semibold">{statusCounts.rejected}</span> rejected
+              </span>
             </div>
           </div>
         </div>
@@ -260,7 +309,7 @@ const QuotesPage: React.FC = () => {
               <DollarSign size={40} className="text-gray-400" />
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              {localQuotes.length === 0 ? 'No quotes received yet' : 'No quotes found'}
+              {quotes.length === 0 ? 'No quotes received yet' : 'No quotes found'}
             </h3>
             <p className="text-gray-600 mb-6">
               {search

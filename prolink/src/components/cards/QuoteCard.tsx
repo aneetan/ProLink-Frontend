@@ -1,9 +1,9 @@
 import React from 'react';
 import { DollarSign, Calendar, CheckCircle, XCircle, Clock, MessageSquare, Download, Award, MessageCircle } from 'lucide-react';
-import type { Quote } from '../../types/company/bidRequest.types';
+import type { QuoteResponse } from '../../types/company/bidRequest.types';
 
 interface QuoteCardProps {
-  quote: Quote;
+  quote: QuoteResponse;
   onAccept: (quoteId: number) => void;
   onReject: (quoteId: number) => void;
   expandedQuote: number | null;
@@ -70,9 +70,9 @@ const QuoteCard: React.FC<QuoteCardProps> = ({
         <div className="flex justify-between items-start mb-4">
           <div className="flex items-center gap-3">
             <div className="p-2 w-18 h-18 rounded-full">
-               {quote.company?.docs?.[0]?.logo ? (
+               {quote.company?.logo ? (
                <img 
-                  src={quote.company.docs[0].logo} 
+                  src={quote.company.logo} 
                   alt={`${quote.companyName || quote.company?.name} logo`}
                   className="w-full h-full object-cover rounded-full"
                />
@@ -83,7 +83,6 @@ const QuoteCard: React.FC<QuoteCardProps> = ({
                   </span>
                </div>
             )}
-              <img src='https://imgs.search.brave.com/UdGbnPJENo2m9qwWSvhZxU2od0jrhKaPGXcL1rHNXVI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/cHJlbWl1bS12ZWN0/b3IvYnJ1c2gtbGV0/dGVycy1sb2dvXzY4/NjU5Ny00NTM4Ni5q/cGc_c2VtdD1haXNf/aHlicmlkJnc9NzQw/JnE9ODA' alt='company-logo'/>
             </div>
             <div>
               <a className='cursor-pointer hover:underline transition-all duration-400 '>
@@ -131,23 +130,41 @@ const QuoteCard: React.FC<QuoteCardProps> = ({
 
       {/* Quote Message */}
       {quote.message && (
-        <div className="p-6 bg-gray-50 border-b border-gray-200">
-          <div className="flex items-center gap-2 mb-3">
+      <div className="p-6 bg-gray-50 border-b border-gray-200">
+         <div className="flex items-center gap-2 mb-3">
             <MessageSquare size={16} className="text-gray-500" />
             <span className="text-sm font-semibold text-gray-700">Company Message</span>
-          </div>
-          <p className="text-gray-600 line-clamp-3">
-            {expandedQuote === quote.id ? quote.message : `${quote.message.substring(0, 120)}...`}
-          </p>
-          {quote.message.length && (
+         </div>
+         
+         {/* Determine if we need truncation */}
+         {quote.message.length <= 120 || expandedQuote === quote.id ? (
+            // Show full message if short or expanded
+            <p className="text-gray-600">{quote.message}</p>
+         ) : (
+            // Show truncated message
+            <>
+            <p className="text-gray-600">
+               {`${quote.message.substring(0, 120)}...`}
+            </p>
             <button
-              onClick={() => onToggleExpand(quote.id)}
-              className="mt-2 text-sm text-blue-600 hover:text-blue-800 font-medium"
+               onClick={() => onToggleExpand(quote.id)}
+               className="mt-2 text-sm text-blue-600 hover:text-blue-800 font-medium"
             >
-              {expandedQuote === quote.id ? 'Show Less' : 'Read More'}
+               Read More
             </button>
-          )}
-        </div>
+            </>
+         )}
+         
+         {/* Show "Show Less" only when expanded */}
+         {expandedQuote === quote.id && quote.message.length > 120 && (
+            <button
+            onClick={() => onToggleExpand(quote.id)}
+            className="mt-2 text-sm text-blue-600 hover:text-blue-800 font-medium"
+            >
+            Show Less
+            </button>
+         )}
+      </div>
       )}
 
       {/* Quote Actions */}

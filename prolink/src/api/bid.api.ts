@@ -60,8 +60,18 @@ export const requestBidService = {
 
    //get Quote for a requirement
   getQuoteForRequirement: async (requirementId: string | number) => {
-    const response = await api.get(`/client/${requirementId}/quote`);
-    return response.data;
+    try{
+      const response = await api.get(`/client/quote`,{
+        params: {
+          requirementId: requirementId
+        }
+      }
+      );
+      return response.data;
+    } catch (e) {
+      console.log(e)
+    }
+    
   },
-  
+
 };

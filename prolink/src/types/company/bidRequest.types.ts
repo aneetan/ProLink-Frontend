@@ -48,21 +48,22 @@ export interface GetRequirementsWithBidsParams {
 }
 
 
-// Update your Quote type
-export interface Quote {
+export interface QuoteResponse {
   id: number;
   amount: number;
   deliveryTime: string;
-  message?: string;
-  status?: string;
-  submittedDate?: string;
-  companyName?: string; // For backward compatibility
-  companyId?: number;
-  company?: {
+  message: string;
+  companyId: number;
+  requirementId: number;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  company: {
     id: number;
     name: string;
-    docs?: Array<{
-      logo?: string;
-    }>;
+    logo: string; // Changed from docs array to direct logo
   };
+  // For compatibility with QuoteCard component
+  companyName?: string;
+  submittedDate?: string;
 }

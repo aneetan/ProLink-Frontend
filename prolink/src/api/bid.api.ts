@@ -91,4 +91,17 @@ export const requestBidService = {
     }
   },
 
+  checkBidStatus: async (requirementId: number | string) => {
+    try {
+      const response = await api.get(`/company/bid-status/${requirementId}`);
+      return response.data;
+    } catch (error) {
+      // If not found, return false
+      if (error.response?.status === 404) {
+        return { hasSubmitted: false, bid: null };
+      }
+      throw error;
+    }
+},
+
 };

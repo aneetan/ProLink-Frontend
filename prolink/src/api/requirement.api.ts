@@ -1,7 +1,7 @@
 import type { AxiosResponse } from "axios";
 import { API_URL } from "../utils/url.utils";
 import axios from "axios";
-import type { RequirementFormData } from "../types/client/requirement.types";
+import type { ApiRequirementsResponse, RequirementFormData } from "../types/client/requirement.types";
 import { api } from "../lib/api";
 
 export const addRequirement = async(formData: RequirementFormData) : Promise<AxiosResponse> => {
@@ -14,7 +14,7 @@ export const addRequirement = async(formData: RequirementFormData) : Promise<Axi
    return response;
 } 
 
-export const getRequirementsForUser = async (): Promise<AxiosResponse> => {
+export const getRequirementsForUser = async (): Promise<ApiRequirementsResponse> => {
   const res = await api.get("/client/requirement");
   return res.data;
 };

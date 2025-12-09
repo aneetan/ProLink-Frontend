@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ArrowLeft, DollarSign, Filter, Search, ChevronDown } from 'lucide-react';
+import { ArrowLeft, DollarSign, Filter, Search, ChevronDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import QuoteCard from '../../../components/cards/QuoteCard';
@@ -8,13 +8,16 @@ import { requestBidService } from '../../../api/bid.api';
 import { useModal } from '../../../store/useModal';
 import AcceptDeclineModal, { type ModalType } from '../../../components/modal/AcceptDeclineModal';
 
+type SortOption = 'PRICE_LOW_TO_HIGH' | 'PRICE_HIGH_TO_LOW' | 'DATE_NEW_TO_OLD' | 'DATE_OLD_TO_NEW' | 'DELIVERY_FAST_TO_SLOW' | 'DELIVERY_SLOW_TO_FAST';
+
 const QuotesPage: React.FC = () => {
   const { requirementId } = useParams<{ requirementId: string }>();
   const navigate = useNavigate();
   const [filter, setFilter] = useState<'ALL' | 'PENDING' | 'ACCEPTED' | 'REJECTED'>('ALL');
   const [search, setSearch] = useState('');
   const [expandedQuote, setExpandedQuote] = useState<number | null>(null);
-   const { modalState, openModal, closeModal, handleConfirm } = useModal();
+  const [sortBy, setSortBy] = useState<SortOption>('PRICE_LOW_TO_HIGH');
+  const { modalState, openModal, closeModal, handleConfirm } = useModal();
 
   // React Query to fetch quotes
   const {
@@ -63,14 +66,62 @@ const QuotesPage: React.FC = () => {
 
   // Filter quotes with useMemo for better performance
   const filteredQuotes = useMemo(() => {
-    return quotes.filter(quote => {
+    let filtered = quotes.filter(quote => {
       const matchesFilter = filter === 'ALL' || quote.status === filter;
       const matchesSearch = 
         (quote.company.name.toLowerCase().includes(search.toLowerCase()) || 
          quote.message?.toLowerCase().includes(search.toLowerCase()));
       return matchesFilter && matchesSearch;
     });
-  }, [quotes, filter, search]);
+
+    // Apply sorting
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'PRICE_LOW_TO_HIGH':
+          return a.amount - b.amount;
+        case 'PRICE_HIGH_TO_LOW':
+          return b.amount - a.amount;
+        case 'DATE_NEW_TO_OLD':
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        case 'DATE_OLD_TO_NEW':
+          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        case 'DELIVERY_FAST_TO_SLOW':
+          return a.deliveryTime - b.deliveryTime;
+        case 'DELIVERY_SLOW_TO_FAST':
+          return b.deliveryTime - a.deliveryTime;
+        default:
+          return 0;
+      }
+    });
+
+    return filtered;
+  }, [quotes, filter, search, sortBy]);
+
+  // Get sort icon based on current sort option
+  const getSortIcon = () => {
+    const isAscending = sortBy === 'PRICE_LOW_TO_HIGH' || sortBy === 'DATE_OLD_TO_NEW' || sortBy === 'DELIVERY_FAST_TO_SLOW';
+    return isAscending ? <ArrowUp size={14} /> : <ArrowDown size={14} />;
+  };
+
+  // Get current sort label
+  const getSortLabel = (): string => {
+    switch (sortBy) {
+      case 'PRICE_LOW_TO_HIGH':
+        return 'Price: Low to High';
+      case 'PRICE_HIGH_TO_LOW':
+        return 'Price: High to Low';
+      case 'DATE_NEW_TO_OLD':
+        return 'Date: Newest';
+      case 'DATE_OLD_TO_NEW':
+        return 'Date: Oldest';
+      case 'DELIVERY_FAST_TO_SLOW':
+        return 'Delivery: Fastest';
+      case 'DELIVERY_SLOW_TO_FAST':
+        return 'Delivery: Slowest';
+      default:
+        return 'Sort By';
+    }
+  };
 
   // Handle quote actions
   const handleAcceptQuote = async (quoteId: number) => {
@@ -228,6 +279,75 @@ const QuotesPage: React.FC = () => {
               </div>
             </div>
             
+            {/* Sort Dropdown */}
+            <div className="relative">
+              <div className="dropdown">
+                <button
+                  className="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors flex items-center gap-2"
+                  aria-label="Sort quotes"
+                >
+                  {getSortLabel()}
+                  {getSortIcon()}
+                  <ChevronDown size={16} />
+                </button>
+                <div className="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-10 hidden">
+                  <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Sort by Price
+                  </div>
+                  <button
+                    onClick={() => setSortBy('PRICE_LOW_TO_HIGH')}
+                    className={`w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center justify-between ${sortBy === 'PRICE_LOW_TO_HIGH' ? 'text-[var(--primary-color)] font-medium' : 'text-gray-700'}`}
+                  >
+                    Price: Low to High
+                    {sortBy === 'PRICE_LOW_TO_HIGH' && <ArrowUp size={14} />}
+                  </button>
+                  <button
+                    onClick={() => setSortBy('PRICE_HIGH_TO_LOW')}
+                    className={`w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center justify-between ${sortBy === 'PRICE_HIGH_TO_LOW' ? 'text-[var(--primary-color)] font-medium' : 'text-gray-700'}`}
+                  >
+                    Price: High to Low
+                    {sortBy === 'PRICE_HIGH_TO_LOW' && <ArrowDown size={14} />}
+                  </button>
+                  
+                  <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mt-2">
+                    Sort by Date
+                  </div>
+                  <button
+                    onClick={() => setSortBy('DATE_NEW_TO_OLD')}
+                    className={`w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center justify-between ${sortBy === 'DATE_NEW_TO_OLD' ? 'text-[var(--primary-color)] font-medium' : 'text-gray-700'}`}
+                  >
+                    Date: Newest First
+                    {sortBy === 'DATE_NEW_TO_OLD' && <ArrowDown size={14} />}
+                  </button>
+                  <button
+                    onClick={() => setSortBy('DATE_OLD_TO_NEW')}
+                    className={`w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center justify-between ${sortBy === 'DATE_OLD_TO_NEW' ? 'text-[var(--primary-color)] font-medium' : 'text-gray-700'}`}
+                  >
+                    Date: Oldest First
+                    {sortBy === 'DATE_OLD_TO_NEW' && <ArrowUp size={14} />}
+                  </button>
+                  
+                  <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mt-2">
+                    Sort by Delivery
+                  </div>
+                  <button
+                    onClick={() => setSortBy('DELIVERY_FAST_TO_SLOW')}
+                    className={`w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center justify-between ${sortBy === 'DELIVERY_FAST_TO_SLOW' ? 'text-[var(--primary-color)] font-medium' : 'text-gray-700'}`}
+                  >
+                    Delivery: Fastest
+                    {sortBy === 'DELIVERY_FAST_TO_SLOW' && <ArrowUp size={14} />}
+                  </button>
+                  <button
+                    onClick={() => setSortBy('DELIVERY_SLOW_TO_FAST')}
+                    className={`w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center justify-between ${sortBy === 'DELIVERY_SLOW_TO_FAST' ? 'text-[var(--primary-color)] font-medium' : 'text-gray-700'}`}
+                  >
+                    Delivery: Slowest
+                    {sortBy === 'DELIVERY_SLOW_TO_FAST' && <ArrowDown size={14} />}
+                  </button>
+                </div>
+              </div>
+            </div>
+
             {/* Filter */}
             <div className="flex gap-2">
               {(['ALL', 'PENDING', 'ACCEPTED', 'REJECTED'] as const).map((status) => (
@@ -264,34 +384,36 @@ const QuotesPage: React.FC = () => {
                   )}
                 </button>
               ))}
-              <button className="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors flex items-center gap-2">
-                <Filter size={16} />
-                More
-                <ChevronDown size={16} />
-              </button>
             </div>
           </div>
           
-          {/* Status summary */}
-          <div className="flex flex-wrap gap-4 mt-4 text-sm">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-amber-500"></div>
-              <span className="text-gray-600">
-                <span className="font-semibold">{statusCounts.pending}</span> pending
-              </span>
+          {/* Status summary and current sort info */}
+          <div className="flex flex-wrap justify-between items-center mt-4">
+            <div className="flex flex-wrap gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-amber-500"></div>
+                <span className="text-gray-600">
+                  <span className="font-semibold">{statusCounts.pending}</span> pending
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                <span className="text-gray-600">
+                  <span className="font-semibold">{statusCounts.accepted}</span> accepted
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-rose-500"></div>
+                <span className="text-gray-600">
+                  <span className="font-semibold">{statusCounts.rejected}</span> rejected
+                </span>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
-              <span className="text-gray-600">
-                <span className="font-semibold">{statusCounts.accepted}</span> accepted
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-rose-500"></div>
-              <span className="text-gray-600">
-                <span className="font-semibold">{statusCounts.rejected}</span> rejected
-              </span>
-            </div>
+            {filteredQuotes.length > 0 && (
+              <div className="text-sm text-gray-500 mt-2 sm:mt-0">
+                Sorted by: <span className="font-medium text-gray-700">{getSortLabel()}</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -348,7 +470,7 @@ const QuotesPage: React.FC = () => {
         )}
       </div>
 
-        <AcceptDeclineModal
+      <AcceptDeclineModal
         isOpen={modalState.isOpen}
         onClose={closeModal}
         onConfirm={handleConfirm}

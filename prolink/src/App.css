@@ -12,3 +12,11 @@
  body{
   font-family: "Poppins", sans-serif;
  }
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown-menu {
+  display: none;
+}

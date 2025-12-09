@@ -46,3 +46,24 @@ export interface GetRequirementsWithBidsParams {
   page?: number;
   limit?: number;
 }
+
+
+export interface QuoteResponse {
+  id: number;
+  amount: number;
+  deliveryTime: string;
+  message: string;
+  companyId: number;
+  requirementId: number;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  company: {
+    id: number;
+    name: string;
+    logo: string; // Changed from docs array to direct logo
+  };
+  // For compatibility with QuoteCard component
+  companyName?: string;
+  submittedDate?: string;
+}

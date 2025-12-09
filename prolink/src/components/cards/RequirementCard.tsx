@@ -2,21 +2,11 @@ import React, { useState } from 'react';
 import { Edit, Trash2, DollarSign, Calendar, MapPin, Tag, AlertCircle,Users,Clock,TrendingUp,FileText,Briefcase,ExternalLink,ChevronRight} from 'lucide-react';
 import type { RequirementFormData } from '../../types/client/requirement.types';
 import BidModal from '../modal/SendBidForm';
-import { BidStatus, type BidFormData } from '../../types/company/bidRequest.types';
+import { type BidFormData } from '../../types/company/bidRequest.types';
 import { useMutation } from '@tanstack/react-query';
 import { requestBidService } from '../../api/bid.api';
 import { showSuccessToast } from '../../utils/toast.utils';
 import { getUserIdFromToken } from '../../utils/jwt.utils';
-
-export interface Quote {
-  id: string;
-  companyName: string;
-  amount: number;
-  deliveryTime: string;
-  status: 'PENDING' | 'ACCEPTED' | 'REJECTED';
-  submittedDate: string;
-  message?: string;
-}
 
 interface RequirementCardProps {
   requirement: RequirementFormData;
@@ -58,7 +48,6 @@ const RequirementCard: React.FC<RequirementCardProps> = ({
       requirementId: requirement.id,
       status: "PENDING",
     }
-    console.log('Bid submitted:', quoteData);
     mutation.mutate(quoteData);
     setCurrentBid(data.amount);
     setIsModalOpen(false);

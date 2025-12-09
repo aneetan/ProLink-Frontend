@@ -57,4 +57,38 @@ export const requestBidService = {
          throw error;
       }
    },
+
+   //get Quote for a requirement
+  getQuoteForRequirement: async (requirementId: string | number) => {
+    try{
+      const response = await api.get(`/client/quote`,{
+        params: {
+          requirementId: requirementId
+        }
+      }
+      );
+      return response.data;
+    } catch (e) {
+      console.log(e)
+    }
+  },
+
+  acceptQuote: async (quoteId: string | number) => {
+    try{
+      const response = await api.put(`/client/accept-quote/${quoteId}`);
+      return response.data;
+    } catch (e) {
+      console.log(e)
+    }
+  },
+
+  declineQuote: async (quoteId: string | number) => {
+    try{
+      const response = await api.put(`/client/decline-quote/${quoteId}`);     
+      return response.data;
+    } catch (e) {
+      console.log(e)
+    }
+  },
+
 };

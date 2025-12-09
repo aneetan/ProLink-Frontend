@@ -2,26 +2,33 @@ import React from 'react';
 import RequirementCard from '../../../components/cards/RequirementCard';
 import NewRequirement from '../../../components/client/NewRequirement';
 import { useNavigate } from 'react-router';
+import { getRequirementsForUser } from '../../../api/requirement.api';
+import { useQuery } from '@tanstack/react-query';
+import {type AxiosResponse } from 'axios';
+import type { ApiRequirementsResponse, RequirementResponse } from '../../../types/client/requirement.types';
+
 
 const ViewRequirement: React.FC = () => {
   const navigate = useNavigate();
-  const requirement = {
-    title: 'Full-Stack Web Application Development',
-    description: 'We need a comprehensive web application with React frontend and Node.js backend.',
-    workType: 'REMOTE' as const,
-    minimumBudget: 15000,
-    maximumBudget: 25000,
-    category: 'Web Development',
-    timeline: '3-4 months',
-    skills: ['React', 'TypeScript', 'Node.js', 'MongoDB'],
-    attachment: 'https://example.com/project-brief.pdf',
-    urgency: 'HIGH' as const,
-    userId: 12345
-  };
 
-   const handleEdit = () => {
-    // Open edit modal or navigate to edit page
-    console.log('Edit requirement');
+  const { data: apiResponse, isLoading, error } = useQuery<ApiRequirementsResponse, AxiosResponse>({
+    queryKey: ["requirements"],
+    queryFn: getRequirementsForUser
+  });  
+
+  // Extract requirements from the API response
+  const requirements = apiResponse?.requirements || [];
+
+   if (isLoading) {
+    return <p className="p-8 text-gray-600">Loading requirements...</p>;
+  }
+
+  if (error) {
+    return <p className="p-8 text-red-600">Something went wrong</p>;
+  }
+
+   const handleEdit = (requirementId: number) => {
+    navigate(`/client/requirement/${requirementId}/edit`)
   };
 
   const handleDelete = () => {
@@ -39,16 +46,17 @@ const ViewRequirement: React.FC = () => {
         </div>
         
         <div className="grid gap-6">
-          <RequirementCard
-             requirement={requirement}
-              quotesCount={4}
-              onEdit={handleEdit}
+           {requirements.map((req: RequirementResponse) => (
+            <RequirementCard
+              key={req.id}
+              requirement={req}
+              quotesCount={req.bid.length}
+              onEdit={() => handleEdit(req.id)}
               onDelete={handleDelete}
-              onViewQuotes={() => navigate("/client/requirement/quotes") }
-              requirementId="123"
+              onViewQuotes={() => navigate(`/client/${req.id}/quotes`)}
               isCompany={false}
-          />
-          
+            />
+          ))}
         </div>
       </div>
     </div>

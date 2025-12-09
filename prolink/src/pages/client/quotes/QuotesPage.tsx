@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ArrowLeft, DollarSign, Filter, Search, ChevronDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { ArrowLeft, DollarSign, Search, ChevronDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import QuoteCard from '../../../components/cards/QuoteCard';
@@ -8,12 +8,12 @@ import { requestBidService } from '../../../api/bid.api';
 import { useModal } from '../../../store/useModal';
 import AcceptDeclineModal, { type ModalType } from '../../../components/modal/AcceptDeclineModal';
 
-type SortOption = 'PRICE_LOW_TO_HIGH' | 'PRICE_HIGH_TO_LOW' | 'DATE_NEW_TO_OLD' | 'DATE_OLD_TO_NEW' | 'DELIVERY_FAST_TO_SLOW' | 'DELIVERY_SLOW_TO_FAST';
+type SortOption = 'PRICE_LOW_TO_HIGH' | 'PRICE_HIGH_TO_LOW' | 'DATE_NEW_TO_OLD' | 'DATE_OLD_TO_NEW';
 
 const QuotesPage: React.FC = () => {
   const { requirementId } = useParams<{ requirementId: string }>();
   const navigate = useNavigate();
-  const [filter, setFilter] = useState<'ALL' | 'PENDING' | 'ACCEPTED' | 'REJECTED'>('ALL');
+  const [filter, setFilter] = useState<'ALL' | 'PENDING' | 'ACCEPTED' | 'DECLINED'>('ALL');
   const [search, setSearch] = useState('');
   const [expandedQuote, setExpandedQuote] = useState<number | null>(null);
   const [sortBy, setSortBy] = useState<SortOption>('PRICE_LOW_TO_HIGH');
@@ -66,7 +66,7 @@ const QuotesPage: React.FC = () => {
 
   // Filter quotes with useMemo for better performance
   const filteredQuotes = useMemo(() => {
-    let filtered = quotes.filter(quote => {
+    const filtered = quotes.filter(quote => {
       const matchesFilter = filter === 'ALL' || quote.status === filter;
       const matchesSearch = 
         (quote.company.name.toLowerCase().includes(search.toLowerCase()) || 
@@ -85,10 +85,6 @@ const QuotesPage: React.FC = () => {
           return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
         case 'DATE_OLD_TO_NEW':
           return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-        case 'DELIVERY_FAST_TO_SLOW':
-          return a.deliveryTime - b.deliveryTime;
-        case 'DELIVERY_SLOW_TO_FAST':
-          return b.deliveryTime - a.deliveryTime;
         default:
           return 0;
       }
@@ -99,7 +95,7 @@ const QuotesPage: React.FC = () => {
 
   // Get sort icon based on current sort option
   const getSortIcon = () => {
-    const isAscending = sortBy === 'PRICE_LOW_TO_HIGH' || sortBy === 'DATE_OLD_TO_NEW' || sortBy === 'DELIVERY_FAST_TO_SLOW';
+    const isAscending = sortBy === 'PRICE_LOW_TO_HIGH' || sortBy === 'DATE_OLD_TO_NEW';
     return isAscending ? <ArrowUp size={14} /> : <ArrowDown size={14} />;
   };
 
@@ -114,10 +110,6 @@ const QuotesPage: React.FC = () => {
         return 'Date: Newest';
       case 'DATE_OLD_TO_NEW':
         return 'Date: Oldest';
-      case 'DELIVERY_FAST_TO_SLOW':
-        return 'Delivery: Fastest';
-      case 'DELIVERY_SLOW_TO_FAST':
-        return 'Delivery: Slowest';
       default:
         return 'Sort By';
     }
@@ -156,7 +148,8 @@ const QuotesPage: React.FC = () => {
       isDestructive: true,
       onConfirm: async () => {
         // Your API call to reject the quote
-        await requestBidService.declineQuote(quoteId);
+        const data = await requestBidService.declineQuote(quoteId);
+        console.log(data)
         refetch(); // Refresh quotes list
       }
     });
@@ -172,7 +165,7 @@ const QuotesPage: React.FC = () => {
       total: quotes.length,
       pending: quotes.filter(q => q.status === 'PENDING').length,
       accepted: quotes.filter(q => q.status === 'ACCEPTED').length,
-      rejected: quotes.filter(q => q.status === 'REJECTED').length
+      declined: quotes.filter(q => q.status === 'DECLINED').length
     };
   }, [quotes]);
 
@@ -326,31 +319,13 @@ const QuotesPage: React.FC = () => {
                     Date: Oldest First
                     {sortBy === 'DATE_OLD_TO_NEW' && <ArrowUp size={14} />}
                   </button>
-                  
-                  <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mt-2">
-                    Sort by Delivery
-                  </div>
-                  <button
-                    onClick={() => setSortBy('DELIVERY_FAST_TO_SLOW')}
-                    className={`w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center justify-between ${sortBy === 'DELIVERY_FAST_TO_SLOW' ? 'text-[var(--primary-color)] font-medium' : 'text-gray-700'}`}
-                  >
-                    Delivery: Fastest
-                    {sortBy === 'DELIVERY_FAST_TO_SLOW' && <ArrowUp size={14} />}
-                  </button>
-                  <button
-                    onClick={() => setSortBy('DELIVERY_SLOW_TO_FAST')}
-                    className={`w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center justify-between ${sortBy === 'DELIVERY_SLOW_TO_FAST' ? 'text-[var(--primary-color)] font-medium' : 'text-gray-700'}`}
-                  >
-                    Delivery: Slowest
-                    {sortBy === 'DELIVERY_SLOW_TO_FAST' && <ArrowDown size={14} />}
-                  </button>
                 </div>
               </div>
             </div>
 
             {/* Filter */}
             <div className="flex gap-2">
-              {(['ALL', 'PENDING', 'ACCEPTED', 'REJECTED'] as const).map((status) => (
+              {(['ALL', 'PENDING', 'ACCEPTED', 'DECLINED'] as const).map((status) => (
                 <button
                   key={status}
                   onClick={() => setFilter(status)}
@@ -377,9 +352,9 @@ const QuotesPage: React.FC = () => {
                       {statusCounts.accepted}
                     </span>
                   )}
-                  {status === 'REJECTED' && (
+                  {status === 'DECLINED' && (
                     <span className="text-xs bg-rose-500/20 px-1.5 py-0.5 rounded">
-                      {statusCounts.rejected}
+                      {statusCounts.declined}
                     </span>
                   )}
                 </button>
@@ -405,7 +380,7 @@ const QuotesPage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-rose-500"></div>
                 <span className="text-gray-600">
-                  <span className="font-semibold">{statusCounts.rejected}</span> rejected
+                  <span className="font-semibold">{statusCounts.declined}</span> Declined
                 </span>
               </div>
             </div>

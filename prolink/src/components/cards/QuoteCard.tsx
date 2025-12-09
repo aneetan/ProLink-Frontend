@@ -48,10 +48,10 @@ const QuoteCard: React.FC<QuoteCardProps> = ({
       icon: <CheckCircle size={14} />,
       label: 'Accepted'
     },
-    REJECTED: {
+    DECLINED: {
       color: 'bg-rose-100 text-rose-800 border-rose-200',
       icon: <XCircle size={14} />,
-      label: 'Rejected'
+      label: 'Declined'
     }
   };
 
@@ -60,7 +60,7 @@ const QuoteCard: React.FC<QuoteCardProps> = ({
       className={`bg-white rounded-2xl shadow-lg border overflow-hidden transition-all duration-300 hover:shadow-xl ${
         quote.status === 'ACCEPTED'
           ? 'border-emerald-300'
-          : quote.status === 'REJECTED'
+          : quote.status === 'DECLINED'
           ? 'border-rose-300'
           : 'border-gray-200'
       }`}
@@ -214,7 +214,7 @@ const QuoteCard: React.FC<QuoteCardProps> = ({
             </>
           )}
           
-          {quote.status === 'REJECTED' && (
+          {quote.status === 'DECLINED' && (
             <button
               onClick={() => onAccept(quote.id)}
               className="flex-1 py-3 bg-[var(--primary-light)] text-white rounded-xl font-semibold hover:bg-[var(--primary-color)] transition-all duration-300 hover:shadow-lg flex items-center justify-center gap-2"

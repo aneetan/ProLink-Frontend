@@ -75,12 +75,7 @@ export const requestBidService = {
 
   acceptQuote: async (quoteId: string | number) => {
     try{
-      const response = await api.put(`/client/accept-quote`,{
-        params: {
-          quoteId: quoteId
-        }
-      }
-      );
+      const response = await api.put(`/client/accept-quote/${quoteId}`);
       return response.data;
     } catch (e) {
       console.log(e)
@@ -89,12 +84,7 @@ export const requestBidService = {
 
   declineQuote: async (quoteId: string | number) => {
     try{
-      const response = await api.put(`/client/decline-quote`,{
-        params: {
-          quoteId: quoteId
-        }
-      }
-      );
+      const response = await api.put(`/client/decline-quote/${quoteId}`);     
       return response.data;
     } catch (e) {
       console.log(e)

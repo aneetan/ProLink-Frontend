@@ -26,6 +26,7 @@ import QuotesPage from './pages/client/quotes/QuotesPage'
 import CompanyProfileContainer from './pages/company/Profile'
 import BidRequestPage from './pages/company/bid/BidRequestPage'
 import UnauthorizedPage from './pages/status/403Page'
+import PageNotFound from './pages/status/404Page'
 
 function App() {
    const queryClient = new QueryClient();
@@ -47,7 +48,7 @@ function App() {
                     <Route path='/login' element={<Login/>} />
                     <Route path='/register' element={<Register/>} />
                     <Route path='/otp' element={<OtpVerify/>} />
-                    <Route path="*" element={<Navigate to="/" replace />} />
+                    <Route path="*" element={<PageNotFound/>} />
                     <Route path='/unauthorized' element={<UnauthorizedPage/>} />
 
 

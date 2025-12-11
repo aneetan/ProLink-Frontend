@@ -25,6 +25,7 @@ import ViewRequirement from './pages/client/requirement/ViewRequirement'
 import QuotesPage from './pages/client/quotes/QuotesPage'
 import CompanyProfileContainer from './pages/company/Profile'
 import BidRequestPage from './pages/company/bid/BidRequestPage'
+import UnauthorizedPage from './pages/status/403Page'
 
 function App() {
    const queryClient = new QueryClient();
@@ -47,6 +48,7 @@ function App() {
                     <Route path='/register' element={<Register/>} />
                     <Route path='/otp' element={<OtpVerify/>} />
                     <Route path="*" element={<Navigate to="/" replace />} />
+                    <Route path='/unauthorized' element={<UnauthorizedPage/>} />
 
 
                     <Route element={<ProtectedRoute requiredRole='COMPANY'/>}>

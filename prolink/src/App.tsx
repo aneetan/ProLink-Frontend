@@ -27,6 +27,7 @@ import CompanyProfileContainer from './pages/company/Profile'
 import BidRequestPage from './pages/company/bid/BidRequestPage'
 import UnauthorizedPage from './pages/status/403Page'
 import PageNotFound from './pages/status/404Page'
+import ChatRoom from './pages/ChatRoom'
 
 function App() {
    const queryClient = new QueryClient();
@@ -50,6 +51,9 @@ function App() {
                     <Route path='/otp' element={<OtpVerify/>} />
                     <Route path="*" element={<PageNotFound/>} />
                     <Route path='/unauthorized' element={<UnauthorizedPage/>} />
+
+                    <Route path="/chat" element={<ChatRoom/>} />
+
 
 
                     <Route element={<ProtectedRoute requiredRole='COMPANY'/>}>

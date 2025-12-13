@@ -11,7 +11,7 @@ interface ChatState {
   openChatWithUser: (otherUserId: number) => Promise<void>;
   fetchChats: () => Promise<void>;
   selectChat: (chat: Chat) => Promise<void>;
-  sendMessage: (receiverId: number, content: string) => Promise<void>;
+  sendMessage: (receiverId: number, content: string, attachments?: File[]) => Promise<void>;
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -55,13 +55,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
    // Send message & update UI optimistically
-  sendMessage: async (receiverId, content) => {
+  sendMessage: async (receiverId, content, attachments) => {
     const activeChat = get().activeChat;
     if (!activeChat) return;
 
     const response = await chatService.sendMessage({
       receiverId,
       content,
+      attachments
     });
 
     set((state) => ({

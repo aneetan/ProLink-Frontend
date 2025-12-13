@@ -5,7 +5,7 @@ export default function ChatLayout() {
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <div className="w-80 border-r bg-white">
+      <div className="w-[25%] border-r bg-white">
         <ChatList />
       </div>
 

@@ -4,6 +4,7 @@ export interface ChatParticipant {
   email: string;
   isOnline?: boolean;
   lastSeen?: string | null;
+  role: string;
 }
 
 export interface ChatMessage {
@@ -31,7 +32,7 @@ export interface Chat {
 export interface SendMessageDto {
   receiverId: number;
   content: string;
-  attachments?: string[];
+  attachments?: File[];
 }
 
 export interface MarkAsReadDto {

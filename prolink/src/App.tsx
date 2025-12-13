@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
+import { BrowserRouter, Route, Routes } from 'react-router'
 import './App.css'
 import CustomLayout from './components/landing/CustomLayout'
 import LandingPage from './pages/LandingPage'
@@ -27,7 +27,7 @@ import CompanyProfileContainer from './pages/company/Profile'
 import BidRequestPage from './pages/company/bid/BidRequestPage'
 import UnauthorizedPage from './pages/status/403Page'
 import PageNotFound from './pages/status/404Page'
-import ChatRoom from './pages/ChatRoom'
+import ChatLayout from './pages/ChatLayout'
 
 function App() {
    const queryClient = new QueryClient();
@@ -52,9 +52,7 @@ function App() {
                     <Route path="*" element={<PageNotFound/>} />
                     <Route path='/unauthorized' element={<UnauthorizedPage/>} />
 
-                    <Route path="/chat" element={<ChatRoom/>} />
-
-
+                    <Route path="/chat" element={<ChatLayout/>} />
 
                     <Route element={<ProtectedRoute requiredRole='COMPANY'/>}>
                       <Route path='/company' element={<CompanyLayout/>}>

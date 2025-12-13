@@ -1,6 +1,8 @@
 import React from 'react';
 import { DollarSign, Calendar, CheckCircle, XCircle, Clock, MessageSquare, Download, Award, MessageCircle } from 'lucide-react';
 import type { QuoteResponse } from '../../types/company/bidRequest.types';
+import { useChatStore } from '../../store/useChatStore';
+import { useNavigate } from 'react-router';
 
 interface QuoteCardProps {
   quote: QuoteResponse;
@@ -17,6 +19,9 @@ const QuoteCard: React.FC<QuoteCardProps> = ({
   expandedQuote, 
   onToggleExpand 
 }) => {
+   const openChatWithUser = useChatStore((state) => state.openChatWithUser);
+   const navigate = useNavigate();
+
   // Format currency
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -54,6 +59,11 @@ const QuoteCard: React.FC<QuoteCardProps> = ({
       label: 'Declined'
     }
   };
+
+  const handleChat = async(otherUserId) => {
+    await openChatWithUser(otherUserId);
+    navigate("/chat")
+  }
 
   return (
     <div
@@ -193,7 +203,7 @@ const QuoteCard: React.FC<QuoteCardProps> = ({
           {quote.status === 'ACCEPTED' && (
             <>
               <button
-                onClick={() => onAccept(quote.id)}
+                onClick={() => handleChat(quote.company.id)}
                 className="flex-1 py-3 bg-[var(--primary-light)] text-white rounded-xl font-semibold hover:bg-[var(--primary-color)] transition-all duration-300 hover:shadow-lg flex items-center justify-center gap-2"
               >
                 <MessageCircle size={18} />

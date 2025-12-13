@@ -14,7 +14,7 @@ const CompanySidebar:React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
     { icon: FiUsers, label: 'Quote Requests', path: '/company/quote-request' },
     { icon: FiFileText, label: 'My Quotes', path: '/quotes-company' },
     { icon: FaNetworkWired, label: 'Projects', path: '/projects' },
-    { icon: FiMessageCircle, label: 'Messages', path: '/messages' },
+    { icon: FiMessageCircle, label: 'Messages', path: '/chat' },
     { icon: MdOutlinePerson, label: 'Profile Setup', path: '/company/setup' },
     { icon: MdOutlineReviews, label: 'Reviews', path: '/setup' },
 

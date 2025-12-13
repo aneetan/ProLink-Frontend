@@ -36,7 +36,6 @@ export default function MessageInput() {
   return (
     <div className="border-t bg-white p-3">
       {/* Attachment preview */}
-      {/* Attachment preview */}
       {attachments.length > 0 && (
       <div className="mb-2 flex gap-2 flex-wrap">
          {attachments.map((file, idx) => (

@@ -40,6 +40,12 @@ export interface MarkAsReadDto {
   messageIds: number[];
 }
 
+export interface MessageReadEvent {
+  type: "READ";
+  messageIds: number[];
+  userId?: number;
+}
+
 export interface UserPresence {
   userId: number;
   isOnline: boolean;

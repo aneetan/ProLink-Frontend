@@ -35,7 +35,7 @@ export const chatService = {
 
   // Mark messages as read
   async markAsRead(data: MarkAsReadDto): Promise<{ success: boolean; count: number }> {
-    const response = await api.put('/chat/messages/read', data);
+    const response = await api.put("/chat/messages/read", { data });
     return response.data;
   },
 

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Chat, ChatMessage, UserPresence } from "../types/chat.type";
+import type { Chat, ChatMessage, MessageReadEvent, UserPresence } from "../types/chat.type";
 import { chatService } from "../api/chat.api";
 import { pusherConfig } from "../config/pusher";
 import Pusher, { Channel } from "pusher-js";
@@ -18,10 +18,11 @@ interface ChatState {
   fetchChats: () => Promise<void>;
   selectChat: (chat: Chat) => Promise<void>;
   sendMessage: (receiverId: number, content: string, attachments?: File[]) => Promise<void>;
-  setTyping: (userId: number, isTyping: boolean) => void;
   setPresence: (presence: UserPresence) => void;
    addMessage: (msg: ChatMessage) => void;
   subscribeToChat: (chatId: number) => void;
+  markChatAsRead: (chatId: number, messageIds: number[] ) => Promise<void>;
+
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -74,7 +75,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     const messages = await chatService.getMessages(chat.id);
     set({ messages, loading: false });
 
-     get().subscribeToChat(chat.id);
+     get().subscribeToChat(chat.id);   
   },
 
    // Send message & update UI optimistically
@@ -88,12 +89,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
       attachments
     });
   },
-
-   setTyping(userId, isTyping) {
-      set((state) => ({
-         typingUsers: { ...state.typingUsers, [userId]: isTyping },
-      }));
-   },
    
    setPresence(presence) {
       set((state) => ({
@@ -114,8 +109,44 @@ export const useChatStore = create<ChatState>((set, get) => ({
       });
 
       // Presence updates
-      channel.bind("presence-updated", (data: UserPresence) => {
+      channel.bind("presence-updates", (data: UserPresence) => {
          get().setPresence(data);
       });
+
+       channel.bind("message-updated", (data: MessageReadEvent) => {
+         if (data.type === "READ") {
+            set((state) => ({
+               messages: state.messages.map((m) =>
+               data.messageIds.includes(m.id)
+                  ? { ...m, status: "READ" }
+                  : m
+               ),
+            }));
+         }
+      });
   },
+  markChatAsRead: async (chatId, messageIds) => {
+        try {
+         await chatService.markAsRead({
+            chatId,
+            messageIds,
+         });
+
+         // 🔥 Optimistic update (instant UI)
+         set((state) => ({
+            messages: state.messages.map((msg) =>
+            messageIds.includes(msg.id)
+               ? {
+                  ...msg,
+                  status: "READ",
+                  readBy: [...msg.readBy, state.activeChat!.participant1Id],
+                  }
+               : msg
+            ),
+         }));
+      } catch (err) {
+         console.error("Failed to mark messages as read", err);
+      }
+   },
+
 }));

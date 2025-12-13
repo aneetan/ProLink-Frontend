@@ -1,10 +1,17 @@
+import { useEffect } from 'react';
 import { useChatStore } from '../../store/useChatStore';
 import MessageInput from './MessageInput';
 import MessageList from './MessageList';
 
 export default function ChatWindow() {
-  const { activeChat } = useChatStore();
+  const { activeChat, markChatAsRead  } = useChatStore();
   const presences = useChatStore((s) => s.presences);
+
+  useEffect(() => {
+    if (activeChat) {
+      markChatAsRead(activeChat.id);
+    }
+  }, [activeChat, markChatAsRead]);
 
   if (!activeChat) {
     return (

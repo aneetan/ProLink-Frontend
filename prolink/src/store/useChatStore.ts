@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Chat, ChatMessage } from "../types/chat.type";
+import type { Chat, ChatMessage, UserPresence } from "../types/chat.type";
 import { chatService } from "../api/chat.api";
 
 interface ChatState {
@@ -7,11 +7,15 @@ interface ChatState {
   activeChat: Chat | null;
   messages: ChatMessage[];
   loading: boolean;
+  presences: Record<number, UserPresence>; 
+  typingUsers: Record<number, boolean>; 
 
   openChatWithUser: (otherUserId: number) => Promise<void>;
   fetchChats: () => Promise<void>;
   selectChat: (chat: Chat) => Promise<void>;
   sendMessage: (receiverId: number, content: string, attachments?: File[]) => Promise<void>;
+  setTyping: (userId: number, isTyping: boolean) => void;
+  setPresence: (presence: UserPresence) => void;
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -19,6 +23,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
   activeChat: null,
   messages: [],
   loading: false,
+  presences: {},
+  typingUsers: {},
 
    /**
       * Opens a chat room with another user.
@@ -69,4 +75,16 @@ export const useChatStore = create<ChatState>((set, get) => ({
       messages: [...state.messages, response.message],
     }));
   },
+
+   setTyping(userId, isTyping) {
+      set((state) => ({
+         typingUsers: { ...state.typingUsers, [userId]: isTyping },
+      }));
+   },
+   
+   setPresence(presence) {
+      set((state) => ({
+         presences: { ...state.presences, [presence.userId]: presence },
+      }));
+   },
 }));

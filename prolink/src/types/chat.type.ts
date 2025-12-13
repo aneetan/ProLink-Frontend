@@ -39,3 +39,17 @@ export interface MarkAsReadDto {
   chatId: number;
   messageIds: number[];
 }
+
+export interface UserPresence {
+  userId: number;
+  isOnline: boolean;
+  lastSeen: string | Date; // ISO string from API or Date object
+  socketId?: string;
+}
+
+// Presence update payload
+export interface PresenceUpdateDto {
+  userId: number;
+  isOnline: boolean;
+  socketId?: string;
+}

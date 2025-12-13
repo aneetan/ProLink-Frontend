@@ -4,6 +4,7 @@ import MessageList from './MessageList';
 
 export default function ChatWindow() {
   const { activeChat } = useChatStore();
+  const presences = useChatStore((s) => s.presences);
 
   if (!activeChat) {
     return (
@@ -14,6 +15,7 @@ export default function ChatWindow() {
   }
 
   const { otherParticipant } = activeChat;
+  const presence = presences[otherParticipant.id];
 
   return (
     <div className="flex flex-col h-full">
@@ -34,10 +36,14 @@ export default function ChatWindow() {
           {/* Online Status Dot */}
           <div
             className={`ml-2 w-3.5 h-3.5 rounded-full border-2 border-white flex-shrink-0 ${
-              otherParticipant.isOnline ? 'bg-green-500 animate-pulse' : 'bg-gray-300'
+              presence?.isOnline ? 'bg-green-500 animate-pulse' : 'bg-gray-300'
             }`}
-            title={otherParticipant.isOnline ? 'Online' : 'Offline'}
+            title={presence?.isOnline ? 'Online' : 'Offline'}
           />
+
+          <span className="text-xs text-gray-500">
+            {presence?.isOnline ? "Online" : "Offline"}
+         </span>
         </div>
       </div>
 

@@ -31,8 +31,6 @@ export default function MessageItem({ message, sender }: Props) {
          {message.content}
          </div>
 
-      {/* Placeholder for your own avatar space */}
-      {isMine && <div className="w-8 h-8 flex-shrink-0" />}
     </div>
   );
 }

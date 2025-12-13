@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import type { Chat, ChatMessage, UserPresence } from "../types/chat.type";
 import { chatService } from "../api/chat.api";
+import { pusherConfig } from "../config/pusher";
+import Pusher, { Channel } from "pusher-js";
 
 interface ChatState {
   chats: Chat[];
@@ -9,6 +11,8 @@ interface ChatState {
   loading: boolean;
   presences: Record<number, UserPresence>; 
   typingUsers: Record<number, boolean>; 
+   pusher?: Pusher;
+   channel: Channel | null;
 
   openChatWithUser: (otherUserId: number) => Promise<void>;
   fetchChats: () => Promise<void>;
@@ -16,6 +20,8 @@ interface ChatState {
   sendMessage: (receiverId: number, content: string, attachments?: File[]) => Promise<void>;
   setTyping: (userId: number, isTyping: boolean) => void;
   setPresence: (presence: UserPresence) => void;
+   addMessage: (msg: ChatMessage) => void;
+  subscribeToChat: (chatId: number) => void;
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -25,6 +31,13 @@ export const useChatStore = create<ChatState>((set, get) => ({
   loading: false,
   presences: {},
   typingUsers: {},
+  pusher: null,
+  channel: null,
+
+    // Add a new message to state
+  addMessage: (message) => {
+    set((state) => ({ messages: [...state.messages, message] }));
+  },
 
    /**
       * Opens a chat room with another user.
@@ -44,6 +57,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
          messages,
          loading: false,
       });
+
+       get().subscribeToChat(chat.id);
    },
 
    // Load all chats for sidebar
@@ -58,6 +73,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
     set({ activeChat: chat, loading: true });
     const messages = await chatService.getMessages(chat.id);
     set({ messages, loading: false });
+
+     get().subscribeToChat(chat.id);
   },
 
    // Send message & update UI optimistically
@@ -65,15 +82,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
     const activeChat = get().activeChat;
     if (!activeChat) return;
 
-    const response = await chatService.sendMessage({
+    await chatService.sendMessage({
       receiverId,
       content,
       attachments
     });
-
-    set((state) => ({
-      messages: [...state.messages, response.message],
-    }));
   },
 
    setTyping(userId, isTyping) {
@@ -87,4 +100,22 @@ export const useChatStore = create<ChatState>((set, get) => ({
          presences: { ...state.presences, [presence.userId]: presence },
       }));
    },
+
+   subscribeToChat: (chatId) => {
+    const pusher = pusherConfig;
+    set({ pusher });
+
+    const channel = pusher.subscribe(`chat-${chatId}`);
+     set({ channel });
+
+     // When a new message is sent
+      channel.bind("message-sent", (data: { message: ChatMessage }) => {
+         get().addMessage(data.message); // Add it to your messages state
+      });
+
+      // Presence updates
+      channel.bind("presence-updated", (data: UserPresence) => {
+         get().setPresence(data);
+      });
+  },
 }));

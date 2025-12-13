@@ -3,13 +3,7 @@ import { useChatStore } from '../../store/useChatStore';
 import { useAuthStore } from '../../store/authStore';
 
 export default function ChatList() {
-  const {
-    chats,
-    fetchChats,
-    selectChat,
-    activeChat,
-  } = useChatStore();
-
+  const { chats, fetchChats, selectChat, activeChat } = useChatStore();
   const currentUserId = useAuthStore((s) => s.userId);
 
   useEffect(() => {
@@ -51,13 +45,18 @@ export default function ChatList() {
           {chats.map((chat) => {
             const isSelected = activeChat?.id === chat.id;
             const lastMessage = chat.lastMessage;
+            const hasUnread = chat.unreadCount && chat.unreadCount > 0;
 
             return (
               <button
                 key={chat.id}
                 onClick={() => selectChat(chat)}
                 className={`w-full px-4 py-4 flex items-center gap-4 transition-colors ${
-                  isSelected ? 'bg-teal-50' : 'hover:bg-gray-50'
+                  isSelected
+                    ? 'bg-teal-50'
+                    : hasUnread
+                    ? 'bg-teal-300 hover:bg-teal-200'
+                    : 'bg-white hover:bg-gray-50'
                 }`}
               >
                 {/* Avatar */}
@@ -69,9 +68,7 @@ export default function ChatList() {
                   {/* Online Indicator */}
                   <span
                     className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white ${
-                      chat.otherParticipant.isOnline
-                        ? 'bg-green-500'
-                        : 'bg-gray-300'
+                      chat.otherParticipant.isOnline ? 'bg-green-500' : 'bg-gray-300'
                     }`}
                   />
                 </div>
@@ -88,19 +85,19 @@ export default function ChatList() {
                     </p>
 
                     {/* Unread Count */}
-                     {chat.unreadCount && chat.unreadCount > 0 && (
-                        <span className="ml-2 w-5 h-5 text-sm font-semibold flex items-center justify-center bg-red-400 text-white rounded-full">
+                  {chat.unreadCount > 0 && (
+                     <span className="ml-2 w-5 h-5 text-sm font-semibold flex items-center justify-center bg-red-400 text-white rounded-full">
                         {chat.unreadCount > 9 ? '9+' : chat.unreadCount}
-                        </span>
-                     )}
+                     </span>
+                  )}
+
+
                   </div>
 
                   {/* Last Message */}
                   <p
                     className={`text-sm truncate ${
-                      chat.unreadCount && chat.unreadCount > 0
-                        ? 'font-medium text-gray-900'
-                        : 'text-gray-500'
+                      hasUnread ? 'font-medium text-gray-900' : 'text-gray-500'
                     }`}
                   >
                     {lastMessage ? (
@@ -111,20 +108,18 @@ export default function ChatList() {
                         {lastMessage.content}
                       </>
                     ) : (
-                      <span className="italic text-gray-400">
-                        Start a conversation
-                      </span>
+                      <span className="italic text-gray-400">Start a conversation</span>
                     )}
                   </p>
 
-                   {lastMessage && (
-                      <span className="text-xs text-gray-400 float-end">
-                        {new Date(lastMessage.createdAt).toLocaleTimeString(
-                          [],
-                          { hour: '2-digit', minute: '2-digit' }
-                        )}
-                      </span>
-                    )}
+                  {lastMessage && (
+                    <span className="text-xs text-gray-400 float-end">
+                      {new Date(lastMessage.createdAt).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </span>
+                  )}
                 </div>
               </button>
             );

@@ -28,9 +28,16 @@ import BidRequestPage from './pages/company/bid/BidRequestPage'
 import UnauthorizedPage from './pages/status/403Page'
 import PageNotFound from './pages/status/404Page'
 import ChatLayout from './pages/ChatLayout'
+import { useChatStore } from './store/useChatStore'
+import { useEffect } from 'react'
 
 function App() {
    const queryClient = new QueryClient();
+
+  useEffect(() => {
+    useChatStore.getState().subscribeToPresence();
+  }, []);
+
 
   return (
     <>

@@ -3,7 +3,7 @@ import { useChatStore } from '../../store/useChatStore';
 import { useAuthStore } from '../../store/authStore';
 
 export default function ChatList() {
-  const { chats, fetchChats, selectChat, activeChat } = useChatStore();
+  const { chats, fetchChats, selectChat, activeChat, presences } = useChatStore();
   const currentUserId = useAuthStore((s) => s.userId);
 
   useEffect(() => {
@@ -47,6 +47,10 @@ export default function ChatList() {
             const lastMessage = chat.lastMessage;
             const hasUnread = chat.unreadCount && chat.unreadCount > 0;
 
+            const otherUser = chat.otherParticipant;
+            const presence = presences[otherUser.id];
+            const isOnline = presence?.isOnline;
+
             return (
               <button
                 key={chat.id}
@@ -68,7 +72,7 @@ export default function ChatList() {
                   {/* Online Indicator */}
                   <span
                     className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white ${
-                      chat.otherParticipant.isOnline ? 'bg-green-500' : 'bg-gray-300'
+                      isOnline ? 'bg-green-500' : 'bg-green-300'
                     }`}
                   />
                 </div>

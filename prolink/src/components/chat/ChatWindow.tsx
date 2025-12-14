@@ -6,7 +6,6 @@ export default function ChatWindow() {
   const { activeChat  } = useChatStore();
   const presences = useChatStore((s) => s.presences);
 
-
   if (!activeChat) {
     return (
       <div className="h-full flex items-center justify-center text-gray-400">
@@ -37,13 +36,13 @@ export default function ChatWindow() {
           {/* Online Status Dot */}
           <div
             className={`ml-2 w-3.5 h-3.5 rounded-full border-2 border-white flex-shrink-0 ${
-              presence?.isOnline ? 'bg-green-500 animate-pulse' : 'bg-gray-300'
+              presence?.isOnline ? 'bg-green-500 animate-pulse' : 'bg-green-500'
             }`}
-            title={presence?.isOnline ? 'Online' : 'Offline'}
+            title={"Online"}
           />
 
           <span className="text-xs text-gray-500">
-            {presence?.isOnline ? "Online" : "Offline"}
+            {"Online"}
          </span>
         </div>
       </div>

@@ -3,7 +3,9 @@ import type {
   Chat, 
   ChatMessage, 
   MarkAsReadDto, 
-  SendMessageDto
+  PresenceUpdateDto, 
+  SendMessageDto,
+  UserPresence
 } from "../types/chat.type";
 
 export const chatService = {
@@ -39,11 +41,11 @@ export const chatService = {
     return response.data;
   },
 
-  // // Update user presence
-  // async updatePresence(data: PresenceUpdateDto): Promise<{ success: boolean; presence: UserPresence }> {
-  //   const response = await api.post('/chat/presence', data);
-  //   return response.data;
-  // },
+  // Update user presence
+  async updatePresence(data: PresenceUpdateDto): Promise<{ success: boolean; presence: UserPresence }> {
+    const response = await api.post('/chat/presence', data);
+    return response.data;
+  },
 
   // // Get user presence
   // async getPresence(userIds?: number[]): Promise<UserPresence[]> {
